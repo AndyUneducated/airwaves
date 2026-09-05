@@ -1,0 +1,19 @@
+{
+  "name": "Airwaves — radio frequencies worth listening to",
+  "short_name": "Airwaves",
+  "description": "Curated radio frequencies by region for analog handhelds like the Yaesu VX-6. Aviation, weather, marine, parks, amateur, rail and broadcast. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#08090b",
+  "theme_color": "#08090b",
+  "lang": "en",
+  "categories": ["travel", "utilities", "education"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

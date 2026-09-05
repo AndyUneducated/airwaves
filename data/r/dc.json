@@ -1,0 +1,46 @@
+{
+  "id": "dc",
+  "intro": "DC is the most restricted airspace in the country and the most secretive radio environment. Federal law enforcement, the Secret Service and Capitol Police are encrypted and permanently out of reach. What is left is genuinely interesting anyway: the Flight Restricted Zone means every aircraft movement is heavily coordinated on air, Joint Base Andrews puts military traffic on the AM UHF band, and the region has an unusually strong public-radio dial.",
+  "introz": "华盛顿特区是全美管制最严的空域，也是最隐秘的无线电环境。联邦执法、特勤局和国会警察全部加密，永远收不到。但剩下的内容依然很有意思：飞行限制区意味着每一架飞机的动作都要在空中密集协调，Joint Base Andrews 的军机在 AM UHF 波段通话，而这一带的公共广播质量异常出色。",
+  "stations": [
+    { "f": 119.100, "n": "Reagan National Tower", "z": "里根国家机场塔台", "c": "air", "m": "AM", "conf": "check", "a": "Reagan National (KDCA)", "ref": "KDCA", "d": "The River Visual approach follows the Potomac to avoid restricted airspace — one of the most demanding approaches in the country and fascinating to hear coordinated. Gravelly Point is the classic listening spot.", "dz": "River Visual 进近沿波托马克河飞行以避开禁飞区——全美最有难度的进近之一，听协调过程非常精彩。Gravelly Point 是经典收听点。" },
+    { "f": 121.700, "n": "Reagan National Ground", "z": "里根国家地面管制", "c": "air", "m": "AM", "conf": "check", "a": "Reagan National (KDCA)", "ref": "KDCA" },
+    { "f": 132.650, "n": "Reagan National ATIS", "z": "里根国家自动通播", "c": "air", "m": "AM", "conf": "check", "a": "Reagan National (KDCA)", "ref": "KDCA" },
+    { "f": 120.100, "n": "Dulles Tower", "z": "杜勒斯塔台", "c": "air", "m": "AM", "conf": "check", "a": "Washington Dulles (KIAD)", "ref": "KIAD" },
+    { "f": 119.400, "n": "BWI Tower", "z": "巴尔的摩机场塔台", "c": "air", "m": "AM", "conf": "check", "a": "Baltimore/Washington (KBWI)", "ref": "KBWI" },
+    { "f": 126.100, "n": "Potomac Consolidated TRACON", "z": "波托马克联合终端管制", "c": "air", "m": "AM", "conf": "check", "a": "PCT", "d": "One facility handling DCA, IAD and BWI plus the Special Flight Rules Area. Sweep 124–134 MHz.", "dz": "一个单位同时负责 DCA、IAD、BWI 以及特别飞行规则区。在 124–134 MHz 扫一遍。" },
+    { "f": 118.950, "n": "DC SFRA / FRZ coordination", "z": "特区特别飞行规则区协调", "c": "air", "m": "AM", "conf": "check", "a": "Restricted Airspace", "d": "General aviation entering the Washington SFRA needs a code and continuous contact. You will occasionally hear an aircraft get very firmly redirected.", "dz": "通航飞机进入华盛顿特别飞行规则区需要应答码并保持联络。偶尔能听到某架飞机被非常严厉地要求改航。" },
+    { "f": 311.000, "n": "Joint Base Andrews — military air (scan)", "z": "Joint Base Andrews 军航（扫描）", "c": "air", "m": "AM", "conf": "check", "a": "Military 225–380 MHz", "d": "Set the VX-6 to AM and scan 225–380 MHz from southeast of the city. Andrews handles VIP and executive-airlift movements as well as routine military traffic.", "dz": "把 VX-6 设为 AM，在城市东南方向扫 225–380 MHz。Andrews 承担 VIP 与专机运输任务，也有常规军航流量。" },
+    { "f": 121.500, "n": "Guard", "z": "紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Emergency", "d": "In DC an aircraft straying toward restricted airspace gets contacted on Guard quickly, so this is less quiet here than elsewhere.", "dz": "在特区，飞机一旦偏向禁飞区就会很快在紧急频率上被呼叫，所以这里没有别处那么静默。" },
+
+    { "f": 162.550, "n": "NOAA — Washington DC (KEC83)", "z": "NOAA 华盛顿特区 KEC83", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio" },
+    { "f": 162.400, "n": "NOAA — Baltimore / Manassas", "z": "NOAA 巴尔的摩 / 马纳萨斯", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio" },
+
+    { "f": 88.5, "n": "WAMU — NPR Washington", "z": "WAMU 华盛顿公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "American University's station and one of the strongest news-talk public outlets in the country.", "dz": "美国大学的电台，全美最强的新闻谈话类公共电台之一。" },
+    { "f": 90.9, "n": "WETA — Classical", "z": "WETA 古典音乐", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast" },
+    { "f": 89.3, "n": "WPFW — Pacifica, jazz & justice", "z": "WPFW · Pacifica 爵士与社会议题", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Community-run, jazz-centred, unlike anything else on the dial here.", "dz": "社区运营、以爵士为核心，与本地其他电台完全不同。" },
+    { "f": 96.3, "n": "WHUR — Howard University", "z": "WHUR 霍华德大学", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Historic Black-owned university station, culturally central to the city.", "dz": "历史悠久的黑人大学电台，在这座城市的文化中处于核心位置。" },
+    { "f": 103.5, "n": "WTOP — News", "z": "WTOP 新闻台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Traffic and weather every ten minutes on the eights. Genuinely useful in a city this congested.", "dz": "每十分钟一次路况与天气。在这样拥堵的城市里确实实用。" },
+    { "f": 93.9, "n": "WKYS", "z": "WKYS", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
+
+    { "f": 160.920, "n": "Amtrak — Northeast Corridor", "z": "Amtrak 东北走廊", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "Union Station and the corridor south toward Richmond. MARC and VRE commuter trains share the territory.", "dz": "联合车站及往南通向里士满的走廊。MARC 和 VRE 通勤列车共用这一区段。" },
+    { "f": 160.500, "n": "CSX — Capital Subdivision (scan)", "z": "CSX 首都支线（扫描）", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail" },
+    { "f": 470.000, "n": "WMATA Metro operations (scan)", "z": "华盛顿地铁运营（扫描）", "c": "rail", "m": "NFM", "conf": "check", "a": "Transit", "d": "Metro train and maintenance channels sit in the UHF band. Scan 450–480 MHz on a platform; some of it remains analog.", "dz": "地铁的列车与维修频率位于 UHF 波段。在站台上扫 450–480 MHz，部分仍是模拟制式。" },
+
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex" },
+    { "f": 147.300, "n": "DC-area repeater", "z": "特区地区中继", "c": "ham", "m": "NFM", "conf": "check", "o": "+0.600", "t": "107.2", "a": "Repeaters", "d": "The Capital region has a dense, well-organised repeater network with many active nets, partly because so many federal emergency-communications people live here. Confirm on RepeaterBook for DC, Montgomery, Fairfax and Arlington.", "dz": "首都地区的中继网络密集且组织良好，通联网很多——部分原因是大量联邦应急通信人员住在这里。请在 RepeaterBook 查 DC、Montgomery、Fairfax 和 Arlington 确认。" },
+    { "f": 146.955, "n": "Northern Virginia repeater", "z": "北弗吉尼亚中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "a": "Repeaters" },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex" },
+
+    { "f": 0, "n": "Secret Service / Capitol Police / Park Police", "z": "特勤局 / 国会警察 / 公园警察", "c": "safety", "m": "Encrypted", "dig": true, "conf": "high", "a": "Not receivable", "d": "Federal protective agencies in DC operate encrypted digital systems. Not receivable on any consumer radio, including dedicated digital scanners. Listed here only so you know not to waste time looking.", "dz": "特区的联邦保护类机构使用加密数字系统。任何民用电台都收不到，包括专业数字扫描机。列在这里只是让你知道不必浪费时间。" },
+    { "f": 0, "n": "DC Fire & EMS — P25 digital", "z": "特区消防与急救 · P25 数字", "c": "safety", "m": "P25", "dig": true, "conf": "high", "a": "Not receivable", "d": "The District moved to a 700 MHz P25 system. Not decodable on the VX-6.", "dz": "特区已迁移到 700 MHz P25 系统，VX-6 无法解码。" },
+    { "f": 155.7525, "n": "VCALL10 — regional interop", "z": "VCALL10 区域互通", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "d": "National mutual-aid channels remain analog and are used in large multi-jurisdiction events, which DC has a lot of.", "dz": "全国互助频道仍是模拟制式，用于跨辖区大型事件——特区这类事件很多。" },
+    { "f": 462.5625, "n": "FRS — events & demonstrations", "z": "FRS · 活动与集会", "c": "safety", "m": "NFM", "conf": "std", "a": "Street Level", "d": "Marches, rallies, marathons and film crews all rely on consumer radios. Very active on the Mall.", "dz": "游行、集会、马拉松和拍摄团队都依赖民用对讲机。国家广场一带非常活跃。" },
+
+    { "f": 166.325, "n": "National Park Service — National Mall", "z": "国家公园局 · 国家广场", "c": "parks", "m": "NFM", "conf": "check", "a": "Federal Land", "d": "The Mall and the monuments are a national park unit. Scan 162–174 MHz — some NPS interpretive and maintenance traffic remains analog.", "dz": "国家广场和纪念碑区属于国家公园管理单元。扫 162–174 MHz——部分公园局讲解与维护通话仍是模拟制式。" },
+
+    { "f": 4.724, "n": "HFGCS — Skyking", "z": "美空军高频指挥网", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "d": "Fitting to listen to from the capital. Also 8.992, 11.175, 15.016 MHz.", "dz": "在首都听这个格外应景。另有 8.992、11.175、15.016 MHz。" },
+    { "f": 10.000, "n": "WWV Time Signal", "z": "WWV 标准时间信号", "c": "misc", "m": "AM", "conf": "std", "a": "Shortwave" },
+    { "f": 145.825, "n": "ISS APRS Digipeater", "z": "国际空间站 APRS 转发", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites" }
+  ]
+}

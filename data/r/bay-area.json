@@ -1,0 +1,53 @@
+{
+  "id": "bay-area",
+  "intro": "The Bay Area is a rewarding place to listen: three busy airports stacked into one small basin, an active Coast Guard sector, and the California Highway Patrol still running low-band VHF that carries for miles. Big-city police and fire, however, have gone digital P25 and are out of reach for the VX-6.",
+  "introz": "湾区非常适合收听：三个繁忙机场挤在一个小盆地里，海岸警卫队活动频繁，加州公路巡警仍在用能传很远的低波段 VHF。但大城市的警消已改用 P25 数字制式，VX-6 收不到。",
+  "stations": [
+    { "f": 120.500, "n": "SFO Tower", "z": "旧金山国际塔台", "c": "air", "m": "AM", "conf": "high", "a": "San Francisco Int'l (KSFO)", "ref": "KSFO", "d": "Takeoff and landing clearances for one of the busiest parallel-runway operations in the country. Best listened to from anywhere along the Peninsula.", "dz": "全美最繁忙的平行跑道运行之一的起降许可。在半岛任何地方都收得不错。" },
+    { "f": 121.800, "n": "SFO Ground", "z": "旧金山地面管制", "c": "air", "m": "AM", "conf": "high", "a": "San Francisco Int'l (KSFO)", "ref": "KSFO", "d": "Taxi instructions. Slower and easier to follow than tower if you are new to airband.", "dz": "滑行指令。刚开始听航空频率的话，比塔台节奏慢、更容易跟上。" },
+    { "f": 118.200, "n": "SFO Clearance Delivery", "z": "旧金山放行许可", "c": "air", "m": "AM", "conf": "high", "a": "San Francisco Int'l (KSFO)", "ref": "KSFO", "d": "Route clearances read to departing crews before pushback.", "dz": "推出前向离场机组宣读航路许可。" },
+    { "f": 135.450, "n": "SFO ATIS", "z": "旧金山机场自动通播", "c": "air", "m": "AM", "conf": "high", "a": "San Francisco Int'l (KSFO)", "ref": "KSFO", "d": "Looped recording of wind, visibility, runways in use. The single best frequency for a quick local weather read.", "dz": "循环播报风向、能见度、使用跑道。想快速了解当地天气，这是最好的一个频率。" },
+    { "f": 135.650, "n": "NorCal Approach — SFO arrivals", "z": "北加进场管制（SFO 进场）", "c": "air", "m": "AM", "conf": "check", "a": "Northern California TRACON", "d": "NorCal splits the Bay into many sectors and reassigns them by traffic volume. Scan 120–136 MHz to find whichever sector is live.", "dz": "北加管制把湾区切成很多扇区，并按流量动态调整。在 120–136 MHz 扫一遍就能找到当前在用的扇区。" },
+    { "f": 127.200, "n": "Oakland Tower — South Field", "z": "奥克兰塔台（南场）", "c": "air", "m": "AM", "conf": "check", "a": "Oakland Int'l (KOAK)", "ref": "KOAK" },
+    { "f": 118.300, "n": "Oakland Tower — North Field", "z": "奥克兰塔台（北场）", "c": "air", "m": "AM", "conf": "check", "a": "Oakland Int'l (KOAK)", "ref": "KOAK", "d": "North Field handles the general-aviation and flight-training side — much chattier than the airline runway.", "dz": "北场负责通航和飞行训练，比航班跑道热闹得多。" },
+    { "f": 128.500, "n": "Oakland ATIS", "z": "奥克兰自动通播", "c": "air", "m": "AM", "conf": "check", "a": "Oakland Int'l (KOAK)", "ref": "KOAK" },
+    { "f": 118.600, "n": "Palo Alto Tower", "z": "帕洛阿尔托塔台", "c": "air", "m": "AM", "conf": "check", "a": "Palo Alto (KPAO)", "ref": "KPAO", "d": "Small, extremely busy training field right on the Bay. Good listening from the Baylands.", "dz": "紧贴湾边的小型机场，训练流量极大。在 Baylands 湿地一带收听效果很好。" },
+    { "f": 119.000, "n": "San Carlos Tower", "z": "圣卡洛斯塔台", "c": "air", "m": "AM", "conf": "check", "a": "San Carlos (KSQL)", "ref": "KSQL" },
+    { "f": 120.200, "n": "Hayward Tower", "z": "海沃德塔台", "c": "air", "m": "AM", "conf": "check", "a": "Hayward Executive (KHWD)", "ref": "KHWD" },
+    { "f": 119.700, "n": "Concord Tower", "z": "康科德塔台", "c": "air", "m": "AM", "conf": "check", "a": "Buchanan Field (KCCR)", "ref": "KCCR" },
+    { "f": 118.100, "n": "Livermore Tower", "z": "利弗莫尔塔台", "c": "air", "m": "AM", "conf": "check", "a": "Livermore Muni (KLVK)", "ref": "KLVK" },
+    { "f": 122.800, "n": "Half Moon Bay CTAF", "z": "半月湾公共频率", "c": "air", "m": "AM", "conf": "check", "a": "Half Moon Bay (KHAF)", "ref": "KHAF", "d": "Uncontrolled coastal strip. Pilots self-announce; often quiet and atmospheric in fog.", "dz": "无塔台的海边小机场。飞行员自主通报，起雾时安静而有氛围。" },
+
+    { "f": 162.400, "n": "NOAA — San Francisco (KHB49)", "z": "NOAA 旧金山台 KHB49", "c": "wx", "m": "NFM", "conf": "high", "a": "NOAA Weather Radio", "d": "Primary Bay Area transmitter. Marine forecast segments are the most useful part if you are near the water.", "dz": "湾区主发射台。靠近海边时，海上预报部分最有用。" },
+    { "f": 162.475, "n": "NOAA — Point Reyes / North Bay", "z": "NOAA 雷耶斯角 / 北湾", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio" },
+
+    { "f": 156.700, "n": "SF Bay VTS — Ch 14", "z": "旧金山湾船舶交通管理 14 频道", "c": "marine", "m": "NFM", "conf": "high", "a": "Vessel Traffic Service", "d": "Coast Guard sequencing container ships and tankers under the Golden Gate. Excellent listening from Fort Point, Marin Headlands or Crissy Field.", "dz": "海警在金门大桥下为集装箱船和油轮排序。在 Fort Point、马林岬角或 Crissy Field 收听效果极佳。" },
+    { "f": 156.650, "n": "Bridge-to-Bridge — Ch 13", "z": "船桥互通 13 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Vessel Traffic Service", "d": "Tug and pilot coordination in the ship channels.", "dz": "航道内拖轮与引航员的协调。" },
+    { "f": 157.100, "n": "USCG Sector SF — Ch 22A", "z": "海警旧金山分区 22A", "c": "marine", "m": "NFM", "conf": "std", "a": "US Coast Guard" },
+    { "f": 156.800, "n": "Marine Ch 16", "z": "海事 16 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "US Coast Guard" },
+
+    { "f": 145.230, "n": "N6NFI — Palo Alto \"the 230\"", "z": "N6NFI 帕洛阿尔托中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "t": "100.0", "a": "Repeaters", "d": "One of the oldest and most social repeaters on the Peninsula, with a long-running late-night crowd.", "dz": "半岛上最老、最热闹的中继之一，有长期活跃的深夜聊天群体。" },
+    { "f": 145.270, "n": "W6ASH — Stanford ARC", "z": "W6ASH 斯坦福业余电台俱乐部", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "t": "100.0", "a": "Repeaters" },
+    { "f": 147.060, "n": "W6CX — Mount Diablo", "z": "W6CX 迪亚布罗山中继", "c": "ham", "m": "NFM", "conf": "check", "o": "+0.600", "t": "100.0", "a": "Repeaters", "d": "Sited near the summit of Mount Diablo, so coverage reaches most of the Bay and into the Central Valley. The club also runs 1.25 m and 70 cm machines from the same site — worth searching for with the VX-6's band scan.", "dz": "架在迪亚布罗山顶附近，覆盖大半个湾区并延伸到中央谷地。同一站点还有 1.25 米和 70 厘米中继——值得用 VX-6 的波段扫描找一找。" },
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Repeaters", "d": "Always worth a listen from a hilltop — Mount Tam, Grizzly Peak, Skyline.", "dz": "在山顶总值得听一下——塔玛佩斯山、Grizzly Peak、Skyline 一带。" },
+
+    { "f": 39.800, "n": "CHP — Golden Gate Division (low band)", "z": "加州公路巡警金门分局（低波段）", "c": "safety", "m": "NFM", "conf": "check", "a": "California Highway Patrol", "d": "The CHP still runs analog low-band VHF around 39.2–39.9 MHz, which propagates remarkably far and is fully receivable on the VX-6. Exact dispatch channel varies by division — scan the whole 39 MHz block along any freeway.", "dz": "加州公路巡警仍在 39.2–39.9 MHz 使用模拟低波段，传播距离很远，VX-6 完全可收。各分局的调度频率不同——沿高速把整个 39 MHz 段扫一遍。" },
+    { "f": 154.920, "n": "CDF / CAL FIRE (typical)", "z": "加州林业消防局（常用）", "c": "safety", "m": "NFM", "conf": "check", "a": "CAL FIRE", "d": "CAL FIRE remains largely analog VHF, unlike city departments. Very active during fire season in the East Bay and North Bay hills.", "dz": "与城市消防不同，CAL FIRE 大体仍是模拟 VHF。火季期间东湾和北湾山区非常活跃。" },
+    { "f": 0, "n": "SF Police & Fire — P25 digital", "z": "旧金山警消 · P25 数字", "c": "safety", "m": "P25", "dig": true, "conf": "high", "a": "Not receivable", "d": "San Francisco, Oakland and San Jose have all migrated to encrypted or digital P25 trunked systems in the 700/800 MHz band. The VX-6 is an analog-only receiver and cannot decode these. A separate digital scanner is required.", "dz": "旧金山、奥克兰、圣何塞均已迁移到 700/800 MHz 的加密或 P25 数字集群系统。VX-6 只能收模拟，无法解码，需要另配数字扫描机。" },
+
+    { "f": 160.410, "n": "Caltrain — road channel", "z": "Caltrain 通勤铁路行车频道", "c": "rail", "m": "NFM", "conf": "check", "a": "Commuter Rail", "d": "Crew and dispatcher traffic along the Peninsula corridor. Verify against RadioReference — Caltrain's electrification project changed operations.", "dz": "半岛走廊上车组与调度的通话。请对照 RadioReference 核实——电气化工程改变了运行方式。" },
+    { "f": 161.565, "n": "Union Pacific — Peninsula", "z": "联合太平洋 · 半岛线", "c": "rail", "m": "NFM", "conf": "check", "a": "Freight Rail" },
+
+    { "f": 88.5, "n": "KQED — NPR San Francisco", "z": "KQED 旧金山公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "The Bay Area's flagship public station. Strong signal across the whole region.", "dz": "湾区旗舰公共电台，全区信号都很强。" },
+    { "f": 89.7, "n": "KFJC — Foothill College", "z": "KFJC 山麓学院台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Genuinely one of the best freeform radio stations in the world. No format, no playlist, volunteer DJs playing whatever they want. Worth planning a drive around.", "dz": "全世界最好的自由形式电台之一。没有格式、没有歌单，志愿 DJ 想放什么放什么。值得为它专门开一趟车。" },
+    { "f": 90.7, "n": "KALX — UC Berkeley", "z": "KALX 加州大学伯克利台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Student and community freeform out of Berkeley. Best received in the East Bay.", "dz": "伯克利的学生与社区自由形式电台，东湾接收最佳。" },
+    { "f": 94.1, "n": "KPFA — Pacifica Berkeley", "z": "KPFA 伯克利 Pacifica 台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "The first listener-funded radio station in the United States, on air since 1949.", "dz": "美国第一家听众资助电台，1949 年开播至今。" },
+    { "f": 90.3, "n": "KDFC — Classical", "z": "KDFC 古典音乐", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast" },
+    { "f": 91.1, "n": "KCSM — Jazz, San Mateo", "z": "KCSM 圣马特奥爵士台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Full-time jazz, one of very few left in the country.", "dz": "全天候爵士，全美所剩不多的一家。" },
+    { "f": 90.1, "n": "KZSU — Stanford", "z": "KZSU 斯坦福台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast" },
+    { "f": 89.5, "n": "KPOO — SF community radio", "z": "KPOO 旧金山社区电台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "d": "Independent Black-owned community station in the Fillmore.", "dz": "位于 Fillmore 区的独立黑人社区电台。" },
+
+    { "f": 121.500, "n": "Guard", "z": "紧急守护频率", "c": "misc", "m": "AM", "conf": "std", "a": "Emergency" },
+    { "f": 453.000, "n": "Golden Gate Bridge District ops", "z": "金门大桥管理局作业频率", "c": "misc", "m": "NFM", "conf": "check", "a": "Infrastructure", "d": "Bridge maintenance, tow patrol and ironworkers. Scan 450–460 MHz while walking the span.", "dz": "桥梁维护、拖车巡逻和架桥工人。走桥时可扫 450–460 MHz。" }
+  ]
+}

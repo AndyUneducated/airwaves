@@ -1,0 +1,49 @@
+{
+  "id": "nyc",
+  "intro": "New York is the best analog scanning city left in America. While most large departments moved to encrypted digital, the NYPD and FDNY have historically stayed on conventional analog UHF in the T-band around 470–490 MHz — which means a plain VX-6 can actually hear the city work. Add three major airports, a busy harbour VTS and the Hudson River VFR corridor, and there is more on the air here than anywhere else on this site.",
+  "introz": "纽约是美国仅存的最好的模拟扫描城市。多数大城市部门已转向加密数字，而 NYPD 和 FDNY 长期以来仍在 470–490 MHz 的 T 波段使用常规模拟 UHF——也就是说，一台普通的 VX-6 真的能听到这座城市在运转。再加上三个大型机场、繁忙的港口交管和哈德逊河目视飞行走廊，这里空中的内容比本站任何地区都多。",
+  "stations": [
+    { "f": 470.000, "n": "NYPD — analog UHF T-band (scan)", "z": "NYPD 模拟 UHF T 波段（扫描）", "c": "safety", "m": "NFM", "conf": "check", "a": "Police", "d": "NYPD borough and precinct radio has traditionally been conventional analog in roughly 470–477 MHz, with each borough command on its own channel. Rather than one number, set the VX-6 to scan that span in NFM wherever you are standing — you will land on the local division. Verify current assignments on RadioReference, since the department has been modernising.", "dz": "NYPD 各区和分局电台传统上在约 470–477 MHz 使用常规模拟制式，每个区指挥部有自己的频率。不要只记一个数字，站在哪里就把 VX-6 设为 NFM 扫这一段，就能落到当地分局。由于该部门正在现代化改造，请在 RadioReference 上核实当前分配。" },
+    { "f": 482.000, "n": "FDNY — analog UHF T-band (scan)", "z": "FDNY 模拟 UHF T 波段（扫描）", "c": "safety", "m": "NFM", "conf": "check", "a": "Fire", "d": "FDNY dispatch and fireground operations have historically run analog in roughly 482–489 MHz, split by borough. Fireground channels are the most compelling radio in the city — verify current assignments locally.", "dz": "FDNY 的调度与火场作业长期在约 482–489 MHz 使用模拟制式，按区划分。火场频率是全城最引人入胜的无线电内容——请在当地核实当前分配。" },
+    { "f": 155.7525, "n": "VCALL10 — interop", "z": "VCALL10 互通呼叫", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability" },
+    { "f": 155.340, "n": "EMS / hospital", "z": "急救 / 医院", "c": "safety", "m": "NFM", "conf": "check", "a": "EMS" },
+
+    { "f": 119.100, "n": "JFK Tower", "z": "肯尼迪机场塔台", "c": "air", "m": "AM", "conf": "check", "a": "John F. Kennedy Int'l (KJFK)", "ref": "KJFK", "d": "International heavies all evening. Best listening from the Bayswater or Howard Beach side of Jamaica Bay.", "dz": "整晚都是国际宽体机。在牙买加湾的 Bayswater 或 Howard Beach 一侧收听最佳。" },
+    { "f": 128.725, "n": "JFK ATIS", "z": "肯尼迪自动通播", "c": "air", "m": "AM", "conf": "check", "a": "John F. Kennedy Int'l (KJFK)", "ref": "KJFK" },
+    { "f": 121.900, "n": "JFK Ground", "z": "肯尼迪地面管制", "c": "air", "m": "AM", "conf": "check", "a": "John F. Kennedy Int'l (KJFK)", "ref": "KJFK" },
+    { "f": 118.700, "n": "LaGuardia Tower", "z": "拉瓜迪亚塔台", "c": "air", "m": "AM", "conf": "check", "a": "LaGuardia (KLGA)", "ref": "KLGA", "d": "Short runways over water with constant sequencing pressure. Astoria Park is a good spot.", "dz": "跨水面的短跑道，排序压力持续不断。Astoria 公园是个好位置。" },
+    { "f": 118.300, "n": "Newark Tower", "z": "纽瓦克塔台", "c": "air", "m": "AM", "conf": "check", "a": "Newark Liberty (KEWR)", "ref": "KEWR" },
+    { "f": 119.500, "n": "Teterboro Tower", "z": "泰特波罗塔台", "c": "air", "m": "AM", "conf": "check", "a": "Teterboro (KTEB)", "ref": "KTEB", "d": "The country's premier business-jet airport. Nonstop Gulfstream and Global traffic.", "dz": "全美首屈一指的公务机机场，湾流和环球快车往来不绝。" },
+    { "f": 123.050, "n": "Hudson River VFR Corridor", "z": "哈德逊河目视飞行走廊", "c": "air", "m": "AM", "conf": "high", "a": "Helicopter & VFR", "d": "Pilots self-announce position and altitude while flying the river past Manhattan, below the Class B airspace. Hearing sightseeing helicopters and light aircraft call \"over the Intrepid, northbound at one thousand\" while you stand on the West Side is one of the great radio experiences anywhere.", "dz": "飞行员沿哈德逊河从曼哈顿旁经过、在 B 类空域下方自主通报位置与高度。站在西区听观光直升机和小飞机报出“过无畏号，北向一千英尺”，是任何地方都难得的无线电体验。" },
+    { "f": 128.200, "n": "New York Approach", "z": "纽约进场管制", "c": "air", "m": "AM", "conf": "check", "a": "New York TRACON", "d": "The most complex terminal airspace in the world, three major airports interleaved. Sweep 125–133 MHz.", "dz": "全球最复杂的终端空域，三大机场交错运行。在 125–133 MHz 扫一遍。" },
+    { "f": 121.500, "n": "Guard", "z": "紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Emergency" },
+
+    { "f": 162.550, "n": "NOAA — New York City (KWO35)", "z": "NOAA 纽约市台 KWO35", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Transmitter on a Manhattan high-rise, so coverage across the metro is strong.", "dz": "发射台设在曼哈顿高层建筑上，全都会区覆盖很好。" },
+    { "f": 162.475, "n": "NOAA — Long Island", "z": "NOAA 长岛", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio" },
+
+    { "f": 156.600, "n": "NY Harbor VTS — Ch 12", "z": "纽约港船舶交通管理 12 频道", "c": "marine", "m": "NFM", "conf": "high", "a": "Vessel Traffic Service", "d": "Coast Guard sector managing traffic through the Narrows and up the Hudson. Excellent from Battery Park, Red Hook or the Staten Island Ferry.", "dz": "海警管理经 Narrows 海峡进入哈德逊河的船舶。在炮台公园、Red Hook 或史泰登岛渡轮上收听效果极佳。" },
+    { "f": 156.700, "n": "NY Harbor VTS — Ch 14", "z": "纽约港交管 14 频道", "c": "marine", "m": "NFM", "conf": "high", "a": "Vessel Traffic Service" },
+    { "f": 156.650, "n": "Bridge-to-Bridge — Ch 13", "z": "船桥互通 13 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Vessel Traffic Service", "d": "Tugs, barges and the Staten Island Ferry coordinating passing arrangements.", "dz": "拖轮、驳船和史泰登岛渡轮协调会让。" },
+    { "f": 156.800, "n": "Marine Ch 16", "z": "海事 16 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Vessel Traffic Service" },
+
+    { "f": 160.920, "n": "Amtrak — Northeast Corridor", "z": "Amtrak 东北走廊", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "Crew and dispatcher traffic in and out of Penn Station and through the Hudson tubes.", "dz": "进出宾州车站以及穿越哈德逊河隧道的车组与调度通话。" },
+    { "f": 160.410, "n": "LIRR / Metro-North (scan)", "z": "长岛铁路 / 大都会北方铁路（扫描）", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "Scan 160.215–161.565 near any commuter line. Grand Central and Jamaica are dense with traffic.", "dz": "在任何通勤线附近扫 160.215–161.565。中央车站和牙买加站通话密集。" },
+    { "f": 476.000, "n": "NYC Subway operations (scan)", "z": "纽约地铁运营（扫描）", "c": "rail", "m": "NFM", "conf": "check", "a": "Transit", "d": "NYCT train and maintenance radio has historically been analog UHF near the T-band. Scan 470–480 MHz on a platform.", "dz": "纽约地铁的列车与维修电台传统上是 T 波段附近的模拟 UHF。在站台上扫 470–480 MHz。" },
+
+    { "f": 91.1, "n": "WFMU — Jersey City", "z": "WFMU 泽西城", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "The most important freeform radio station in the world, independent and listener-supported since 1958. No format at all — each DJ does whatever they want for three hours. If you listen to one station in New York, this is it.", "dz": "全世界最重要的自由形式电台，自 1958 年起独立运营、听众资助。完全没有格式——每位 DJ 三小时内想做什么就做什么。在纽约只听一个台的话，就是它。" },
+    { "f": 89.9, "n": "WKCR — Columbia University", "z": "WKCR 哥伦比亚大学", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Serious jazz scholarship and the annual Bach and birthday broadcasts. Deep archival programming you will not hear anywhere else.", "dz": "严肃的爵士乐研究，以及每年的巴赫马拉松和音乐家诞辰特辑。其他地方听不到的深度档案节目。" },
+    { "f": 88.3, "n": "WBGO — Jazz, Newark", "z": "WBGO 纽瓦克爵士台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Full-time jazz and one of the finest in the world at it.", "dz": "全天候爵士，世界一流水准。" },
+    { "f": 90.7, "n": "WFUV — Fordham University", "z": "WFUV 福特汉姆大学", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Adult alternative and roots music, with a strong live-session tradition.", "dz": "成人另类与根源音乐，现场录音传统深厚。" },
+    { "f": 93.9, "n": "WNYC-FM — NPR New York", "z": "WNYC-FM 纽约公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast" },
+    { "f": 105.9, "n": "WQXR — Classical", "z": "WQXR 古典音乐", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "The last full-time commercial-heritage classical station in the city, now public.", "dz": "全城最后一家全天候古典电台，源自商业台，现为公共电台。" },
+    { "f": 99.5, "n": "WBAI — Pacifica New York", "z": "WBAI 纽约 Pacifica 台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
+    { "f": 88.7, "n": "WRHU / WPKN and other community stations", "z": "WRHU / WPKN 等社区台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "d": "The metro FM band is the most crowded in the country — sweeping it slowly from a rooftop is worth an hour.", "dz": "都会区的 FM 波段是全美最拥挤的——在屋顶上慢慢扫一小时很值得。" },
+
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex" },
+    { "f": 145.250, "n": "Manhattan-area repeater", "z": "曼哈顿地区中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "t": "136.5", "a": "Repeaters", "d": "Several machines sit on Manhattan skyscrapers with excellent metro coverage. Confirm on RepeaterBook for New York County.", "dz": "曼哈顿多座摩天楼上都有中继，都会区覆盖极好。请在 RepeaterBook 查 New York County 确认。" },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex", "d": "UHF works better than VHF in the street canyons of Midtown.", "dz": "在中城的街道峡谷里，UHF 表现比 VHF 好。" },
+
+    { "f": 462.5625, "n": "FRS — construction & events", "z": "FRS · 施工与活动", "c": "misc", "m": "NFM", "conf": "std", "a": "Street Level", "d": "Film shoots, building sites, delivery crews and marathon marshals. NYC is saturated with license-free radio at street level.", "dz": "影视拍摄、工地、配送团队和马拉松志愿者。纽约街头层面的免执照电台使用极为密集。" },
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites", "d": "Difficult in the city — the RF noise floor is brutal. Try from a beach on Long Island instead.", "dz": "在市区很难——射频底噪极高。建议改到长岛海滩尝试。" }
+  ]
+}

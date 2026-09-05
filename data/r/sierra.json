@@ -1,0 +1,39 @@
+{
+  "id": "sierra",
+  "intro": "In the Sierra your radio stops being entertainment and starts being useful. Cell coverage ends at the park boundary, NPS and Forest Service traffic on the federal band tells you about road closures and rescues before any website does, and a hilltop simplex call on 146.520 is a real fallback. Terrain blocks everything, so elevation matters more than power.",
+  "introz": "在内华达山脉，电台不再只是娱乐，而是真的有用。手机信号在公园边界就断了；联邦波段上国家公园局和林务局的通话会比任何网站更早告诉你封路和救援情况；在山头用 146.520 直通呼叫是真正可行的备用手段。地形会挡住一切，所以海拔比功率更重要。",
+  "stations": [
+    { "f": 171.675, "n": "Yosemite NPS — operations", "z": "优胜美地国家公园局作业", "c": "parks", "m": "NFM", "conf": "check", "a": "Yosemite", "d": "Ranger dispatch, road status, medical calls and rescues in the Valley. Repeaters on Sentinel Dome and elsewhere give good Valley-floor coverage. Verify the exact channel locally — NPS reorganises.", "dz": "护林员调度、路况、医疗呼叫和谷内救援。Sentinel Dome 等处的中继让谷底覆盖良好。具体频率请在当地核实——公园局会调整。" },
+    { "f": 166.325, "n": "NPS Common (secondary)", "z": "公园局通用（次要）", "c": "parks", "m": "NFM", "conf": "check", "a": "Yosemite" },
+    { "f": 168.625, "n": "National Interagency Air Guard", "z": "跨部门航空守护频率", "c": "parks", "m": "NFM", "conf": "high", "a": "Wildland Fire", "d": "Helicopter rescue coordination in Yosemite and Sequoia runs through interagency aviation nets. If you see a helicopter working a wall, this band is where it is being managed.", "dz": "优胜美地和红杉的直升机救援通过跨部门航空网协调。看到直升机在岩壁作业时，指挥就在这个波段。" },
+    { "f": 172.575, "n": "Sequoia & Kings Canyon NPS", "z": "红杉与国王峡谷公园局", "c": "parks", "m": "NFM", "conf": "check", "a": "Sequoia / Kings Canyon" },
+    { "f": 151.415, "n": "Inyo / Sierra National Forest", "z": "Inyo / Sierra 国家森林", "c": "parks", "m": "NFM", "conf": "check", "a": "Forest Service", "d": "Trail crews, wilderness permits and fire lookouts. Scan 168–173 MHz broadly.", "dz": "步道队、荒野许可和火情瞭望台。建议在 168–173 MHz 大范围扫描。" },
+
+    { "f": 122.900, "n": "MULTICOM — air operations", "z": "MULTICOM 空中作业", "c": "air", "m": "AM", "conf": "std", "a": "Backcountry Aviation", "d": "Air tankers, smokejumpers and glider ops use this where there is no ground station.", "dz": "无地面站时，灭火机、伞降消防员和滑翔机作业使用此频率。" },
+    { "f": 118.075, "n": "Jackson-area / Mammoth pattern", "z": "猛犸机场航线频率", "c": "air", "m": "AM", "conf": "check", "a": "Mammoth Yosemite (KMMH)", "ref": "KMMH", "d": "Seasonal airline service into Mammoth plus heavy business-jet traffic on ski weekends.", "dz": "猛犸有季节性航班，滑雪周末公务机流量很大。" },
+    { "f": 134.400, "n": "Oakland Center — Sierra high sector", "z": "奥克兰区域管制（山区高空扇区）", "c": "air", "m": "AM", "conf": "check", "a": "Enroute", "d": "From a peak you can hear transcontinental traffic at cruise altitude from a very long way off.", "dz": "在山顶能收到极远处巡航高度的横贯大陆航班。" },
+    { "f": 121.500, "n": "Guard — ELT monitoring", "z": "紧急频率 · 定位信标", "c": "air", "m": "AM", "conf": "std", "a": "Emergency", "d": "Downed-aircraft ELTs sweep on this frequency. In the Sierra that is not purely theoretical.", "dz": "失事飞机的紧急定位发射机在此频率扫频。在内华达山区，这并非纯理论。" },
+
+    { "f": 162.450, "n": "NOAA — Sierra Nevada", "z": "NOAA 内华达山区", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Mountain forecasts, snow levels and winter-storm warnings. Coverage is patchy in the canyons — try from a pass or ridge.", "dz": "山区预报、雪线和冬季风暴警报。峡谷里覆盖不稳定——到山口或山脊上试。" },
+    { "f": 162.550, "n": "NOAA — Lake Tahoe / Reno", "z": "NOAA 太浩湖 / 里诺", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio" },
+
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex", "d": "The most important memory channel in the backcountry. From a summit like Half Dome, Dana or Whitney a 5 W handheld covers a startling distance.", "dz": "荒野中最重要的一个信道。在半圆顶、Dana 峰或惠特尼峰这样的山顶，5 瓦手台的覆盖距离惊人。" },
+    { "f": 146.940, "n": "Tahoe-area repeater", "z": "太浩湖地区中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "t": "100.0", "a": "Repeaters", "d": "The Tahoe basin has good repeater coverage from the surrounding peaks. Confirm on RepeaterBook for Placer, El Dorado and Washoe counties.", "dz": "太浩湖盆地周边山峰的中继覆盖不错。请在 RepeaterBook 查 Placer、El Dorado 和 Washoe 县确认。" },
+    { "f": 145.190, "n": "Central Sierra repeater", "z": "中部山区中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "a": "Repeaters" },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex", "d": "UHF works better than you would expect in granite canyons where signals bounce.", "dz": "在花岗岩峡谷里信号会反射，UHF 表现常常好过预期。" },
+
+    { "f": 151.820, "n": "MURS 1 — ski patrol & guides", "z": "MURS 1 · 巡逻队与向导", "c": "safety", "m": "NFM", "conf": "std", "a": "MURS / FRS", "d": "Guide services, ski patrols and film crews use license-free MURS. Also check FRS channels around ski areas.", "dz": "向导公司、雪场巡逻队和影视组常用免执照 MURS。雪场附近也可查 FRS 频道。" },
+    { "f": 462.5625, "n": "FRS Ch 1 — trailheads & resorts", "z": "FRS 1 频道 · 步道口与雪场", "c": "safety", "m": "NFM", "conf": "std", "a": "MURS / FRS", "d": "Families and groups on consumer walkie-talkies. Ubiquitous at Tahoe resorts and Yosemite trailheads.", "dz": "使用民用对讲机的家庭和团队。太浩湖雪场和优胜美地步道口随处可见。" },
+    { "f": 39.460, "n": "CHP — Sierra divisions (low band)", "z": "加州公路巡警山区分局（低波段）", "c": "safety", "m": "NFM", "conf": "check", "a": "California Highway Patrol", "d": "Low-band VHF is well suited to mountain terrain. Useful for chain controls and pass closures on 80, 50 and 120.", "dz": "低波段 VHF 很适合山区地形。对 80、50、120 号公路的防滑链管制和封路信息很有用。" },
+    { "f": 154.920, "n": "CAL FIRE", "z": "CAL FIRE 加州林业消防", "c": "safety", "m": "NFM", "conf": "check", "a": "CAL FIRE" },
+
+    { "f": 88.7, "n": "KUNR — NPR Reno", "z": "KUNR 里诺公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Reaches over the crest into the Tahoe basin and the eastern Sierra.", "dz": "越过山脊覆盖太浩湖盆地和东坡。" },
+    { "f": 101.5, "n": "Truckee / Tahoe local", "z": "Truckee / 太浩湖本地台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
+    { "f": 89.3, "n": "Yosemite-area translator", "z": "优胜美地地区转播台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "d": "Coverage inside the Valley comes from small translators; expect to hunt across the band rather than trust one number.", "dz": "谷内靠小型转播台覆盖；建议整段搜索，而不要依赖单一频率。" },
+
+    { "f": 1.610, "n": "Yosemite Travelers Info (AM)", "z": "优胜美地旅客信息台（中波）", "c": "misc", "m": "AM", "conf": "check", "a": "AM Broadcast", "d": "Low-power AM loop near park entrances with road and closure information. Signed on the approach roads; frequency varies between 530 and 1710 kHz.", "dz": "公园入口附近的小功率中波循环播报，含路况与封闭信息。进园道路上有指示牌；频率在 530–1710 kHz 之间。" },
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites", "d": "High-altitude alpine terrain with a clean horizon is close to ideal for satellite work.", "dz": "高海拔、地平线干净的高山地形，几乎是接收卫星的理想环境。" },
+    { "f": 436.795, "n": "SO-50 FM Satellite", "z": "SO-50 FM 卫星", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites" },
+    { "f": 10.000, "n": "WWV Time Signal", "z": "WWV 标准时间信号", "c": "misc", "m": "AM", "conf": "std", "a": "Shortwave", "d": "Fort Collins is close enough that HF reception in the Sierra is often excellent.", "dz": "Fort Collins 距离不远，在内华达山区短波接收往往非常好。" }
+  ]
+}

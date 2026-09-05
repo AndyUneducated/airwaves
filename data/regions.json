@@ -1,0 +1,141 @@
+{
+  "version": "2026.09.05",
+  "radio": "Yaesu VX-6R",
+  "categories": [
+    { "id": "air",       "n": "Aviation",      "z": "航空",       "hint": "AM airband 108–137 MHz + military 225–380 MHz", "hintz": "AM 民航 108–137 MHz + 军航 225–380 MHz" },
+    { "id": "wx",        "n": "Weather",       "z": "气象",       "hint": "NOAA Weather Radio, NFM", "hintz": "NOAA 气象广播，窄带 FM" },
+    { "id": "ham",       "n": "Amateur",       "z": "业余无线电", "hint": "2 m / 1.25 m / 70 cm repeaters and simplex", "hintz": "2 m / 1.25 m / 70 cm 中继与直通" },
+    { "id": "parks",     "n": "Parks & Land",  "z": "国家公园",   "hint": "NPS / USFS / BLM, federal 162–174 MHz", "hintz": "国家公园局 / 林务局，联邦 162–174 MHz" },
+    { "id": "marine",    "n": "Marine",        "z": "海事",       "hint": "VHF marine channels, NFM", "hintz": "VHF 海事频道，窄带 FM" },
+    { "id": "rail",      "n": "Rail & Transit","z": "铁路交通",   "hint": "AAR road channels 160–161 MHz", "hintz": "AAR 铁路频道 160–161 MHz" },
+    { "id": "broadcast", "n": "Broadcast",     "z": "广播电台",   "hint": "FM 88–108 MHz (WFM) and AM 530–1710 kHz", "hintz": "FM 88–108 MHz（宽带）与 AM 中波" },
+    { "id": "safety",    "n": "Public Safety", "z": "公共安全",   "hint": "Analog only — digital systems are flagged", "hintz": "仅模拟制式——数字系统已标注" },
+    { "id": "misc",      "n": "Oddities",      "z": "冷门有趣",   "hint": "Satellites, time signals, HF, one-offs", "hintz": "卫星、标准时间、短波、独特信号" }
+  ],
+  "confidence": {
+    "std":   { "n": "Standard",  "z": "法定分配", "d": "Nationally allocated by the FCC/ITU. Will not change.", "dz": "由 FCC/ITU 全国统一分配，不会变动。" },
+    "high":  { "n": "Stable",    "z": "稳定",     "d": "Long-established and rarely changes.", "dz": "长期使用，极少变动。" },
+    "check": { "n": "Verify",    "z": "请核实",   "d": "Believed correct but changes locally — confirm before you rely on it.", "dz": "大致正确但地方性较强——依赖前请先核实。" }
+  },
+  "regions": [
+    {
+      "id": "nationwide", "pin": true,
+      "n": "Nationwide", "z": "全国通用",
+      "sub": "Valid anywhere in the US — program these once",
+      "subz": "全美任何地方都能用 —— 存一次终身受用",
+      "lat": null, "lon": null,
+      "links": []
+    },
+    {
+      "id": "bay-area",
+      "n": "SF Bay Area", "z": "旧金山湾区",
+      "sub": "San Francisco · Peninsula · East Bay",
+      "subz": "旧金山 · 半岛 · 东湾",
+      "lat": 37.77, "lon": -122.42,
+      "links": [
+        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" },
+        { "l": "RadioReference — SF County", "u": "https://www.radioreference.com/db/browse/" }
+      ]
+    },
+    {
+      "id": "south-bay",
+      "n": "San Jose & South Bay", "z": "圣何塞与南湾",
+      "sub": "Santa Clara Valley · Silicon Valley",
+      "subz": "圣塔克拉拉谷 · 硅谷",
+      "lat": 37.34, "lon": -121.89,
+      "links": [
+        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "central-coast",
+      "n": "Central Coast", "z": "中加州海岸",
+      "sub": "Monterey · Big Sur · SLO · Santa Barbara",
+      "subz": "蒙特雷 · 大苏尔 · 圣路易斯奥比斯波 · 圣芭芭拉",
+      "lat": 36.24, "lon": -121.55,
+      "links": [
+        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "sierra",
+      "n": "Sierra Nevada", "z": "内华达山脉",
+      "sub": "Yosemite · Tahoe · Sequoia · Mammoth",
+      "subz": "优胜美地 · 太浩湖 · 红杉 · 猛犸",
+      "lat": 37.75, "lon": -119.59,
+      "links": [
+        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "socal",
+      "n": "Los Angeles & OC", "z": "洛杉矶与橙县",
+      "sub": "LA Basin · San Gabriels · Orange County",
+      "subz": "洛杉矶盆地 · 圣盖博山 · 橙县",
+      "lat": 34.05, "lon": -118.24,
+      "links": [
+        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "san-diego",
+      "n": "San Diego", "z": "圣地亚哥",
+      "sub": "San Diego County · Mexican border",
+      "subz": "圣地亚哥县 · 美墨边境",
+      "lat": 32.72, "lon": -117.16,
+      "links": [
+        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "desert-southwest",
+      "n": "Desert Southwest", "z": "西南沙漠",
+      "sub": "Las Vegas · Death Valley · Joshua Tree · Grand Canyon · Zion",
+      "subz": "拉斯维加斯 · 死谷 · 约书亚树 · 大峡谷 · 锡安",
+      "lat": 36.17, "lon": -115.14,
+      "links": [
+        { "l": "RepeaterBook — Nevada", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "yellowstone",
+      "n": "Yellowstone & Tetons", "z": "黄石与提顿",
+      "sub": "Yellowstone · Grand Teton · Jackson · Bozeman",
+      "subz": "黄石 · 大提顿 · 杰克逊 · 博兹曼",
+      "lat": 44.6, "lon": -110.5,
+      "links": [
+        { "l": "RepeaterBook — Wyoming", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "nyc",
+      "n": "New York Metro", "z": "纽约都会区",
+      "sub": "Five boroughs · Long Island · North Jersey",
+      "subz": "五大区 · 长岛 · 北新泽西",
+      "lat": 40.71, "lon": -73.94,
+      "links": [
+        { "l": "RepeaterBook — New York", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "dc",
+      "n": "Washington DC", "z": "华盛顿特区",
+      "sub": "District · Northern Virginia · Baltimore",
+      "subz": "特区 · 北弗吉尼亚 · 巴尔的摩",
+      "lat": 38.9, "lon": -77.04,
+      "links": [
+        { "l": "RepeaterBook — DC / MD / VA", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    },
+    {
+      "id": "pnw",
+      "n": "Pacific Northwest", "z": "西北太平洋",
+      "sub": "Seattle · Puget Sound · Rainier · Portland",
+      "subz": "西雅图 · 普吉特海湾 · 雷尼尔 · 波特兰",
+      "lat": 47.61, "lon": -122.33,
+      "links": [
+        { "l": "RepeaterBook — Washington", "u": "https://www.repeaterbook.com/repeaters/index.php" }
+      ]
+    }
+  ]
+}
