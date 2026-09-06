@@ -25,9 +25,9 @@
     { "f": 166.325, "n": "Joshua Tree NPS", "z": "约书亚树国家公园局", "c": "parks", "m": "NFM", "conf": "check", "a": "National Parks" },
     { "f": 168.625, "n": "Interagency Air Guard", "z": "跨部门航空守护频率", "c": "parks", "m": "NFM", "conf": "high", "a": "Wildland Fire" },
 
-    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex", "d": "Desert line-of-sight is extraordinary. From Dante's View, Keys View or the South Rim a handheld reaches genuinely absurd distances.", "dz": "沙漠里的视距传播极为惊人。在 Dante's View、Keys View 或大峡谷南缘，手台的覆盖距离荒谬得离谱。" },
-    { "f": 146.940, "n": "Las Vegas-area repeater", "z": "拉斯维加斯地区中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "t": "100.0", "a": "Repeaters", "d": "Machines on Potosi Mountain and Angel Peak cover the valley and a long way out into the desert.", "dz": "Potosi 山和 Angel Peak 上的中继覆盖整个谷地并延伸到沙漠深处。" },
-    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex" },
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "Desert line-of-sight is extraordinary. From Dante's View, Keys View or the South Rim a handheld reaches genuinely absurd distances.", "dz": "沙漠里的视距传播极为惊人。在 Dante's View、Keys View 或大峡谷南缘，手台的覆盖距离荒谬得离谱。" },
+    { "f": 146.940, "n": "Las Vegas-area repeater", "z": "拉斯维加斯地区中继", "c": "ham", "m": "FM", "conf": "check", "o": "−0.600", "t": "100.0", "a": "Repeaters", "d": "Machines on Potosi Mountain and Angel Peak cover the valley and a long way out into the desert.", "dz": "Potosi 山和 Angel Peak 上的中继覆盖整个谷地并延伸到沙漠深处。" },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex" },
 
     { "f": 155.7525, "n": "VCALL10 — interop", "z": "VCALL10 互通呼叫", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "d": "Sparse county sheriff coverage across the desert means mutual-aid channels matter more here.", "dz": "沙漠地区县警覆盖稀疏，互助频道在这里格外重要。" },
     { "f": 154.600, "n": "MURS — resort & tour ops", "z": "MURS · 度假区与旅游作业", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "d": "Jeep tours, canyoneering guides and river outfitters. Also check FRS channels.", "dz": "越野团、峡谷探险向导和漂流公司常用。也可查 FRS 频道。" },

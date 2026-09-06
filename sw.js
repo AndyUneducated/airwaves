@@ -1,6 +1,6 @@
 /* Airwaves service worker — precache everything so the site works with no signal */
 
-const V = 'airwaves-v1';
+const V = 'airwaves-v2';
 
 const SHELL = [
   './',
@@ -12,19 +12,7 @@ const SHELL = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
-  'data/regions.json',
-  'data/r/nationwide.json',
-  'data/r/bay-area.json',
-  'data/r/south-bay.json',
-  'data/r/central-coast.json',
-  'data/r/sierra.json',
-  'data/r/socal.json',
-  'data/r/san-diego.json',
-  'data/r/desert-southwest.json',
-  'data/r/yellowstone.json',
-  'data/r/nyc.json',
-  'data/r/dc.json',
-  'data/r/pnw.json'
+  'data/regions.json'
 ];
 
 self.addEventListener('install', e => {
@@ -32,6 +20,15 @@ self.addEventListener('install', e => {
     const c = await caches.open(V);
     // Add individually so one 404 cannot abort the whole install.
     await Promise.all(SHELL.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => {})));
+
+    // Derive the region list from the index instead of repeating it here, so adding a
+    // region can never leave a gap in the offline cache.
+    try {
+      const meta = await (await c.match('data/regions.json')).json();
+      await Promise.all(meta.regions.map(r =>
+        c.add(new Request(`data/r/${r.id}.json`, { cache: 'reload' })).catch(() => {})));
+    } catch (err) { /* first load online will fill these in anyway */ }
+
     self.skipWaiting();
   })());
 });

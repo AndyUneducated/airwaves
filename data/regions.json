@@ -1,33 +1,39 @@
 {
-  "version": "2026.09.05",
+  "version": "2026.09.06",
   "radio": "Yaesu VX-6R",
+  "scopes": [
+    { "id": "us",   "n": "United States", "z": "美国",     "k": "US" },
+    { "id": "cn",   "n": "China",         "z": "中国",     "k": "CN" },
+    { "id": "link", "n": "Private Link",  "z": "私人联络", "k": "◎" }
+  ],
   "categories": [
+    { "id": "link",      "n": "Private Link",  "z": "私人联络",   "hint": "Frequencies to use for your own group", "hintz": "供你自己团队使用的频率" },
     { "id": "air",       "n": "Aviation",      "z": "航空",       "hint": "AM airband 108–137 MHz + military 225–380 MHz", "hintz": "AM 民航 108–137 MHz + 军航 225–380 MHz" },
-    { "id": "wx",        "n": "Weather",       "z": "气象",       "hint": "NOAA Weather Radio, NFM", "hintz": "NOAA 气象广播，窄带 FM" },
-    { "id": "ham",       "n": "Amateur",       "z": "业余无线电", "hint": "2 m / 1.25 m / 70 cm repeaters and simplex", "hintz": "2 m / 1.25 m / 70 cm 中继与直通" },
-    { "id": "parks",     "n": "Parks & Land",  "z": "国家公园",   "hint": "NPS / USFS / BLM, federal 162–174 MHz", "hintz": "国家公园局 / 林务局，联邦 162–174 MHz" },
+    { "id": "wx",        "n": "Weather",       "z": "气象",       "hint": "Weather broadcasts, NFM", "hintz": "气象广播，窄带 FM" },
+    { "id": "ham",       "n": "Amateur",       "z": "业余无线电", "hint": "2 m / 1.25 m / 70 cm repeaters and simplex", "hintz": "2 米 / 1.25 米 / 70 厘米中继与直通" },
+    { "id": "parks",     "n": "Parks & Land",  "z": "公园与山野",   "hint": "Park and forest services, federal 162–174 MHz in the US", "hintz": "公园与林业部门，美国在联邦 162–174 MHz" },
     { "id": "marine",    "n": "Marine",        "z": "海事",       "hint": "VHF marine channels, NFM", "hintz": "VHF 海事频道，窄带 FM" },
-    { "id": "rail",      "n": "Rail & Transit","z": "铁路交通",   "hint": "AAR road channels 160–161 MHz", "hintz": "AAR 铁路频道 160–161 MHz" },
-    { "id": "broadcast", "n": "Broadcast",     "z": "广播电台",   "hint": "FM 88–108 MHz (WFM) and AM 530–1710 kHz", "hintz": "FM 88–108 MHz（宽带）与 AM 中波" },
+    { "id": "rail",      "n": "Rail & Transit","z": "铁路交通",   "hint": "AAR 160–161 MHz in the US, 450 MHz in China", "hintz": "美国 AAR 160–161 MHz，中国 450 MHz" },
+    { "id": "broadcast", "n": "Broadcast",     "z": "广播电台",   "hint": "FM 76–108 MHz (WFM) and AM medium wave", "hintz": "调频 76–108 MHz（宽带）与中波" },
     { "id": "safety",    "n": "Public Safety", "z": "公共安全",   "hint": "Analog only — digital systems are flagged", "hintz": "仅模拟制式——数字系统已标注" },
     { "id": "misc",      "n": "Oddities",      "z": "冷门有趣",   "hint": "Satellites, time signals, HF, one-offs", "hintz": "卫星、标准时间、短波、独特信号" }
   ],
   "confidence": {
-    "std":   { "n": "Standard",  "z": "法定分配", "d": "Nationally allocated by the FCC/ITU. Will not change.", "dz": "由 FCC/ITU 全国统一分配，不会变动。" },
+    "std":   { "n": "Standard",  "z": "法定分配", "d": "Nationally or internationally allocated. Will not change.", "dz": "国家或国际统一分配，不会变动。" },
     "high":  { "n": "Stable",    "z": "稳定",     "d": "Long-established and rarely changes.", "dz": "长期使用，极少变动。" },
     "check": { "n": "Verify",    "z": "请核实",   "d": "Believed correct but changes locally — confirm before you rely on it.", "dz": "大致正确但地方性较强——依赖前请先核实。" }
   },
   "regions": [
     {
-      "id": "nationwide", "pin": true,
-      "n": "Nationwide", "z": "全国通用",
+      "id": "nationwide", "scope": "us", "pin": true,
+      "n": "Nationwide", "z": "全美通用",
       "sub": "Valid anywhere in the US — program these once",
       "subz": "全美任何地方都能用 —— 存一次终身受用",
       "lat": null, "lon": null,
       "links": []
     },
     {
-      "id": "bay-area",
+      "id": "bay-area", "scope": "us",
       "n": "SF Bay Area", "z": "旧金山湾区",
       "sub": "San Francisco · Peninsula · East Bay",
       "subz": "旧金山 · 半岛 · 东湾",
@@ -38,104 +44,238 @@
       ]
     },
     {
-      "id": "south-bay",
+      "id": "south-bay", "scope": "us",
       "n": "San Jose & South Bay", "z": "圣何塞与南湾",
       "sub": "Santa Clara Valley · Silicon Valley",
       "subz": "圣塔克拉拉谷 · 硅谷",
       "lat": 37.34, "lon": -121.89,
-      "links": [
-        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "central-coast",
+      "id": "central-coast", "scope": "us",
       "n": "Central Coast", "z": "中加州海岸",
       "sub": "Monterey · Big Sur · SLO · Santa Barbara",
       "subz": "蒙特雷 · 大苏尔 · 圣路易斯奥比斯波 · 圣芭芭拉",
       "lat": 36.24, "lon": -121.55,
-      "links": [
-        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "sierra",
+      "id": "sierra", "scope": "us",
       "n": "Sierra Nevada", "z": "内华达山脉",
       "sub": "Yosemite · Tahoe · Sequoia · Mammoth",
       "subz": "优胜美地 · 太浩湖 · 红杉 · 猛犸",
       "lat": 37.75, "lon": -119.59,
-      "links": [
-        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "socal",
+      "id": "socal", "scope": "us",
       "n": "Los Angeles & OC", "z": "洛杉矶与橙县",
       "sub": "LA Basin · San Gabriels · Orange County",
       "subz": "洛杉矶盆地 · 圣盖博山 · 橙县",
       "lat": 34.05, "lon": -118.24,
-      "links": [
-        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "san-diego",
+      "id": "san-diego", "scope": "us",
       "n": "San Diego", "z": "圣地亚哥",
       "sub": "San Diego County · Mexican border",
       "subz": "圣地亚哥县 · 美墨边境",
       "lat": 32.72, "lon": -117.16,
-      "links": [
-        { "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "desert-southwest",
+      "id": "desert-southwest", "scope": "us",
       "n": "Desert Southwest", "z": "西南沙漠",
       "sub": "Las Vegas · Death Valley · Joshua Tree · Grand Canyon · Zion",
       "subz": "拉斯维加斯 · 死谷 · 约书亚树 · 大峡谷 · 锡安",
       "lat": 36.17, "lon": -115.14,
-      "links": [
-        { "l": "RepeaterBook — Nevada", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — Nevada", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "yellowstone",
-      "n": "Yellowstone & Tetons", "z": "黄石与提顿",
-      "sub": "Yellowstone · Grand Teton · Jackson · Bozeman",
-      "subz": "黄石 · 大提顿 · 杰克逊 · 博兹曼",
-      "lat": 44.6, "lon": -110.5,
-      "links": [
-        { "l": "RepeaterBook — Wyoming", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "id": "utah", "scope": "us",
+      "n": "Utah Canyon Country", "z": "犹他峡谷地带",
+      "sub": "Moab · Arches · Canyonlands · Capitol Reef · Salt Lake",
+      "subz": "摩押 · 拱门 · 峡谷地 · 圆顶礁 · 盐湖城",
+      "lat": 38.57, "lon": -109.55,
+      "links": [{ "l": "RepeaterBook — Utah", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "nyc",
+      "id": "colorado", "scope": "us",
+      "n": "Colorado Rockies", "z": "科罗拉多落基山",
+      "sub": "Denver · Rocky Mountain NP · Fort Collins · San Juans",
+      "subz": "丹佛 · 落基山国家公园 · 柯林斯堡 · 圣胡安山",
+      "lat": 39.74, "lon": -104.99,
+      "links": [{ "l": "RepeaterBook — Colorado", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "texas", "scope": "us",
+      "n": "Texas Triangle", "z": "德州三角",
+      "sub": "Houston · Dallas–Fort Worth · Austin · San Antonio",
+      "subz": "休斯顿 · 达拉斯 · 奥斯汀 · 圣安东尼奥",
+      "lat": 30.5, "lon": -96.5,
+      "links": [{ "l": "RepeaterBook — Texas", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "chicago", "scope": "us",
+      "n": "Chicago & Great Lakes", "z": "芝加哥与五大湖",
+      "sub": "O'Hare · Lake Michigan · the national rail hub",
+      "subz": "奥黑尔 · 密歇根湖 · 全美铁路枢纽",
+      "lat": 41.88, "lon": -87.63,
+      "links": [{ "l": "RepeaterBook — Illinois", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "new-england", "scope": "us",
+      "n": "Boston & New England", "z": "波士顿与新英格兰",
+      "sub": "Logan · Cape Cod · White Mountains · Acadia",
+      "subz": "洛根机场 · 科德角 · 白山 · 阿卡迪亚",
+      "lat": 42.36, "lon": -71.06,
+      "links": [{ "l": "RepeaterBook — Massachusetts", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "nyc", "scope": "us",
       "n": "New York Metro", "z": "纽约都会区",
       "sub": "Five boroughs · Long Island · North Jersey",
       "subz": "五大区 · 长岛 · 北新泽西",
       "lat": 40.71, "lon": -73.94,
-      "links": [
-        { "l": "RepeaterBook — New York", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — New York", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "dc",
+      "id": "dc", "scope": "us",
       "n": "Washington DC", "z": "华盛顿特区",
       "sub": "District · Northern Virginia · Baltimore",
       "subz": "特区 · 北弗吉尼亚 · 巴尔的摩",
       "lat": 38.9, "lon": -77.04,
-      "links": [
-        { "l": "RepeaterBook — DC / MD / VA", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — DC / MD / VA", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "pnw",
+      "id": "florida", "scope": "us",
+      "n": "Florida & Space Coast", "z": "佛罗里达与太空海岸",
+      "sub": "Cape Canaveral · Miami · Orlando · the Keys",
+      "subz": "卡纳维拉尔角 · 迈阿密 · 奥兰多 · 群岛礁",
+      "lat": 28.2, "lon": -80.9,
+      "links": [{ "l": "RepeaterBook — Florida", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "yellowstone", "scope": "us",
+      "n": "Yellowstone & Tetons", "z": "黄石与提顿",
+      "sub": "Yellowstone · Grand Teton · Jackson · Bozeman",
+      "subz": "黄石 · 大提顿 · 杰克逊 · 博兹曼",
+      "lat": 44.6, "lon": -110.5,
+      "links": [{ "l": "RepeaterBook — Wyoming", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "pnw", "scope": "us",
       "n": "Pacific Northwest", "z": "西北太平洋",
       "sub": "Seattle · Puget Sound · Rainier · Portland",
       "subz": "西雅图 · 普吉特海湾 · 雷尼尔 · 波特兰",
       "lat": 47.61, "lon": -122.33,
-      "links": [
-        { "l": "RepeaterBook — Washington", "u": "https://www.repeaterbook.com/repeaters/index.php" }
-      ]
+      "links": [{ "l": "RepeaterBook — Washington", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "alaska", "scope": "us",
+      "n": "Alaska", "z": "阿拉斯加",
+      "sub": "Anchorage · bush aviation · Denali · the Inside Passage",
+      "subz": "安克雷奇 · 丛林飞行 · 迪纳利 · 内湾航道",
+      "lat": 61.22, "lon": -149.9,
+      "links": [{ "l": "RepeaterBook — Alaska", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "hawaii", "scope": "us",
+      "n": "Hawai\u02bbi", "z": "夏威夷",
+      "sub": "O\u02bbahu · Big Island volcanoes · inter-island air and sea",
+      "subz": "欧胡岛 · 大岛火山 · 岛际空海交通",
+      "lat": 21.31, "lon": -157.86,
+      "links": [{ "l": "RepeaterBook — Hawaii", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+
+    {
+      "id": "china-nationwide", "scope": "cn", "pin": true,
+      "n": "China Nationwide", "z": "全国通用",
+      "sub": "Valid anywhere in China — the band plan and the license-free channels",
+      "subz": "全国通用 —— 频段规划与免执照频率",
+      "lat": null, "lon": null,
+      "links": [{ "l": "中国无线电协会业余无线电分会 CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "beijing", "scope": "cn",
+      "n": "Beijing & Capital Region", "z": "北京与京津冀",
+      "sub": "Beijing · Tianjin · Hebei",
+      "subz": "北京 · 天津 · 河北",
+      "lat": 39.9, "lon": 116.41,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "shanghai", "scope": "cn",
+      "n": "Shanghai & Yangtze Delta", "z": "上海与长三角",
+      "sub": "Shanghai · Suzhou · Hangzhou · Nanjing · Ningbo",
+      "subz": "上海 · 苏州 · 杭州 · 南京 · 宁波",
+      "lat": 31.23, "lon": 121.47,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "qingdao", "scope": "cn",
+      "n": "Qingdao & Shandong Coast", "z": "青岛与山东半岛",
+      "sub": "Qingdao · Yantai · Weihai · Rizhao",
+      "subz": "青岛 · 烟台 · 威海 · 日照",
+      "lat": 36.07, "lon": 120.38,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "chengdu", "scope": "cn",
+      "n": "Chengdu & Chongqing", "z": "成都与成渝地区",
+      "sub": "Chengdu · Chongqing · the Sichuan Basin",
+      "subz": "成都 · 重庆 · 四川盆地",
+      "lat": 30.57, "lon": 104.07,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "greater-bay", "scope": "cn",
+      "n": "Greater Bay Area", "z": "粤港澳大湾区",
+      "sub": "Guangzhou · Shenzhen · Hong Kong · Macau",
+      "subz": "广州 · 深圳 · 香港 · 澳门",
+      "lat": 22.54, "lon": 114.06,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "west-plateau", "scope": "cn",
+      "n": "Western Plateau", "z": "川藏高原",
+      "sub": "Western Sichuan · Tibet · Yunnan highlands · the G318",
+      "subz": "川西 · 西藏 · 滇西北 · 318 国道",
+      "lat": 30.05, "lon": 100.5,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "northwest", "scope": "cn",
+      "n": "Northwest China", "z": "西北",
+      "sub": "Xinjiang · Gansu · Qinghai · the Hexi Corridor",
+      "subz": "新疆 · 甘肃 · 青海 · 河西走廊",
+      "lat": 43.83, "lon": 87.62,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "harbin", "scope": "cn",
+      "n": "Northeast China", "z": "东北",
+      "sub": "Harbin · Shenyang · Dalian · Changbaishan",
+      "subz": "哈尔滨 · 沈阳 · 大连 · 长白山",
+      "lat": 43.5, "lon": 125.5,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+
+    {
+      "id": "link-us", "scope": "link", "pin": true,
+      "n": "Private Link — United States", "z": "私人联络 · 美国",
+      "sub": "Clean, quiet channels for your own group",
+      "subz": "供你自己团队使用的干净安静频率",
+      "lat": null, "lon": null,
+      "links": [{ "l": "FCC Technician licence", "u": "https://www.arrl.org/getting-licensed" }]
+    },
+    {
+      "id": "link-cn", "scope": "link",
+      "n": "Private Link — China", "z": "私人联络 · 中国",
+      "sub": "What is actually legal, and what is actually quiet",
+      "subz": "什么是合法的，什么才是真正安静的",
+      "lat": null, "lon": null,
+      "links": [{ "l": "CRAC 业余电台操作证书", "u": "https://www.crac.org.cn/" }]
     }
   ]
 }

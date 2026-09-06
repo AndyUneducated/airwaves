@@ -1,0 +1,35 @@
+{
+  "id": "beijing",
+  "intro": "Beijing has two enormous airports and the most tightly controlled airspace in the country, which makes the airband the main event. Everything on the ground is either digital or sensitive, so calibrate your expectations: listen to aviation, listen to the licence-free band, sweep the broadcast dial, and leave the rest alone. The hills to the north and west are excellent radio locations and are where the local amateur repeaters live.",
+  "introz": "北京有两座巨型机场和全国管制最严的空域，所以航空波段是主角。地面上的东西要么已数字化、要么较为敏感，请调整预期：听航空、听免执照频段、扫一遍广播，其余不必碰。北面和西面的山是很好的收听位置，本地业余中继台也架在那里。",
+  "warn": "Airspace and radio use around Beijing are more closely regulated than elsewhere in China. Receiving is fine; do not transmit without a Chinese licence and compliant equipment, and stay well away from military and government frequencies.",
+  "warnz": "北京周边的空域和无线电使用比国内其他地方管理更严。收听没有问题；但在没有中国执照和合规设备的情况下不要发射，并且请远离军事和政府频率。",
+  "stations": [
+    { "f": 118.000, "n": "Capital tower band — scan 118.000–121.400", "z": "首都机场塔台频段", "c": "air", "m": "AM", "conf": "std", "a": "Beijing Capital (ZBAA / PEK)", "d": "Three runways and constant widebody traffic. Set the VX-6 to AM and sweep the tower range. Domestic traffic in Mandarin, international in English.", "dz": "三条跑道，宽体机流量持续。把 VX-6 设为 AM 扫塔台频段。国内航班中文，国际航班英文。" },
+    { "f": 118.000, "n": "Daxing tower band", "z": "大兴机场塔台频段", "c": "air", "m": "AM", "conf": "std", "a": "Beijing Daxing (ZBAD / PKX)", "d": "The starfish-shaped airport south of the city, with four runways in a radial layout that generates unusual taxi instructions.", "dz": "城市南面那座海星形机场，四条跑道呈放射布局，滑行指令因此相当特别。" },
+    { "f": 125.000, "n": "Beijing Approach — scan 119.000–128.000", "z": "北京进场管制 · 扫 119.000–128.000", "c": "air", "m": "AM", "conf": "std", "a": "Terminal Airspace", "d": "Two of the world's busiest airports sharing one terminal area, inside restricted airspace. Complex and rewarding listening.", "dz": "两座全球最繁忙的机场共用一个终端区，且位于限制空域内。内容复杂，值得细听。" },
+    { "f": 132.000, "n": "Beijing Area Control — scan 128.000–136.000", "z": "北京区域管制 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Enroute", "d": "From Badaling or the Fragrant Hills you will hear cruising traffic a very long way out.", "dz": "在八达岭或香山，能收到很远处巡航中的航班。" },
+    { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Enroute" },
+
+    { "f": 409.7500, "n": "公众对讲机 — sweep all 20 channels", "z": "公众对讲机 · 20 个信道全扫", "c": "safety", "m": "NFM", "conf": "std", "a": "Licence-free band", "d": "Hutong construction, mall security, tour groups at the Summer Palace and the Great Wall, delivery dispatch. Sweeping the band is the fastest way to hear a neighbourhood working.", "dz": "胡同施工、商场保安、颐和园和长城的旅游团、外卖调度。整段扫一遍是听懂一个街区最快的方式。" },
+    { "f": 409.9750, "n": "公众对讲机 Ch 19", "z": "公众对讲机 19 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Licence-free band" },
+    { "f": 0, "n": "Public security and government — not receivable", "z": "公安与政府部门 · 收不到", "c": "safety", "m": "PDT / Encrypted", "dig": true, "conf": "high", "a": "Not receivable", "d": "Encrypted digital PDT on 350 MHz. No consumer receiver can decode it and monitoring is not advisable here in particular.", "dz": "350 MHz 上的加密数字 PDT。任何民用接收机都无法解码，在北京尤其不建议尝试监听。" },
+
+    { "f": 103.9, "n": "北京交通广播 — traffic radio", "z": "北京交通广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "The most practically useful station in the city. Ring-road conditions in real time, which in Beijing is not a small thing.", "dz": "全市最实用的电台：实时环路路况——在北京这可不是小事。" },
+    { "f": 97.4, "n": "北京音乐广播", "z": "北京音乐广播", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
+    { "f": 90.0, "n": "音乐之声 MusicRadio", "z": "中央人民广播电台 音乐之声", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "d": "The national music network's Beijing frequency.", "dz": "中央台音乐之声在北京的频率。" },
+    { "f": 106.1, "n": "中国之声 — Beijing frequency", "z": "中国之声 · 北京频率", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
+    { "f": 0.531, "n": "Medium wave — scan 531–1602 kHz", "z": "中波 · 扫 531–1602 kHz", "c": "broadcast", "m": "AM", "conf": "std", "a": "Medium Wave", "d": "High-power domestic transmitters at night, plus Mongolian, Korean and Russian signals arriving from the north. 9 kHz spacing.", "dz": "夜间有国内大功率台，还能收到从北面来的蒙古、韩国和俄罗斯信号。间隔 9 kHz。" },
+
+    { "f": 145.500, "n": "2 m FM Calling", "z": "2 米 FM 呼叫频率", "c": "ham", "m": "FM", "conf": "high", "a": "Amateur", "d": "The Beijing amateur community is one of the largest in China. From Xiangshan or the Badaling ridges a handheld covers a lot of the plain.", "dz": "北京的业余无线电群体是国内最大的之一。在香山或八达岭山脊，手台能覆盖大片平原。" },
+    { "f": 439.500, "n": "Repeater outputs — scan 439.000–440.000", "z": "中继台下行 · 扫 439.000–440.000", "c": "ham", "m": "FM", "conf": "check", "o": "−5.000", "a": "Amateur", "d": "Machines on the western and northern hills give broad city coverage. Confirm tones with the operating club.", "dz": "西山和北部山区的中继台覆盖全城。亚音频请向运营俱乐部确认。" },
+    { "f": 144.800, "n": "APRS — Region 3", "z": "APRS 数据 · 三区", "c": "ham", "m": "FM", "conf": "std", "a": "Amateur" },
+
+    { "f": 450.025, "n": "无线列调 — conventional lines", "z": "无线列调 · 普速线路", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway", "d": "Freight and conventional passenger operation around the capital's yards still uses analog 450 MHz dispatch. The Beijing–Zhangjiakou corridor is worth a listen where old and new lines run near each other.", "dz": "首都各货场的货运和普速客运仍使用 450 MHz 模拟调度。京张走廊上新旧线并行的地段值得一听。" },
+    { "f": 0, "n": "Subway and high-speed rail — digital", "z": "地铁与高铁 · 数字制式", "c": "rail", "m": "TETRA / GSM-R", "dig": true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 5.000, "n": "BPM — shortwave time signal", "z": "BPM 短波授时", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "d": "Pucheng in Shaanxi, on 2.5, 5, 10 and 15 MHz.", "dz": "陕西蒲城发播，频率 2.5、5、10、15 MHz。" },
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "FM", "conf": "std", "a": "Satellites", "d": "The urban noise floor is high. Head for the hills for a proper pass.", "dz": "市区底噪很高，想认真接收一次过顶请上山。" },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites" }
+  ]
+}

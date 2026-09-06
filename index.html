@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0b0d">
 <title>Airwaves — radio frequencies worth listening to</title>
-<meta name="description" content="Curated radio frequencies by region for the Yaesu VX-6 and other analog scanners. Aviation, weather, marine, national parks, amateur, rail and broadcast. Works offline.">
+<meta name="description" content="Curated radio frequencies by region across the United States and China, for the Yaesu VX-6 and other analog scanners. Aviation, weather, marine, parks, amateur, rail and broadcast, plus clean channels for your own group. Works offline.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -40,6 +40,7 @@
     <button class="s-clear" id="q-clear" type="button" aria-label="Clear search" hidden>&times;</button>
   </div>
 
+  <div class="scopes" id="scopes"></div>
   <nav class="regions" id="regions" aria-label="Regions"></nav>
   <div class="carrier"></div>
 </header>
@@ -68,7 +69,7 @@
     </div>
     <div>
       <h4 data-i18n="ft.legal">Listening and transmitting</h4>
-      <p data-i18n="ft.legal.b">Receiving these transmissions is legal in most of the United States, though a few states restrict scanner use in a vehicle. Transmitting is different: only operate within the privileges of your licence, and never on public safety, aviation or marine channels except in a genuine emergency.</p>
+      <p data-i18n="ft.legal.b">Receiving is legal in most of the United States, though a few states restrict scanner use in a vehicle, and it is not generally restricted in China either. Transmitting is a separate question in each country: in the US you need an FCC licence and must stay inside its privileges, and in China you need a Chinese licence and type-approved equipment. Never transmit on public safety, aviation or marine channels except in a genuine emergency.</p>
     </div>
   </div>
   <div class="ft-end">

@@ -1,0 +1,44 @@
+{
+  "id": "new-england",
+  "intro": "Boston has the best college radio dial in the United States — a dozen genuinely independent student stations packed into the low end of the FM band. Beyond the city, this region gives you the working fishing fleets of Gloucester and New Bedford on the marine band, the Cape Cod Canal control channels, and Mount Washington, which is both the worst weather in America and one of the great VHF sites on the continent.",
+  "introz": "波士顿拥有全美最好的大学电台频段——十几家真正独立的学生电台密集挤在调频波段低端。出了城，这一带还有格洛斯特和新贝德福德在海事波段上作业的渔船队、科德角运河的管制频道，以及华盛顿山——那里既是全美天气最恶劣的地方，也是北美最好的 VHF 高点之一。",
+  "stations": [
+    { "f": 128.800, "n": "Logan Tower", "z": "洛根机场塔台", "c": "air", "m": "AM", "conf": "check", "a": "Boston Logan (KBOS)", "ref": "KBOS", "d": "Runways pointing in every direction on a peninsula in the harbour, so the configuration changes constantly with the wind. Castle Island and Winthrop are excellent listening spots.", "dz": "机场位于港内半岛上，跑道朝各个方向，构型随风向不断变化。Castle Island 和 Winthrop 是很好的收听点。" },
+    { "f": 135.000, "n": "Logan ATIS", "z": "洛根自动通播", "c": "air", "m": "AM", "conf": "check", "a": "Boston Logan (KBOS)", "ref": "KBOS" },
+    { "f": 121.900, "n": "Logan Ground", "z": "洛根地面管制", "c": "air", "m": "AM", "conf": "check", "a": "Boston Logan (KBOS)", "ref": "KBOS" },
+    { "f": 127.200, "n": "Boston Approach", "z": "波士顿进场管制", "c": "air", "m": "AM", "conf": "check", "a": "Boston TRACON", "d": "Sweep 118–133 MHz. Approach also handles Hanscom and a ring of general-aviation fields.", "dz": "扫 118–133 MHz。进场管制还负责 Hanscom 及周边一圈通航机场。" },
+    { "f": 122.800, "n": "Regional CTAF", "z": "无塔机场公共频率", "c": "air", "m": "AM", "conf": "std", "a": "Outlying Fields", "d": "New England is full of small fields, including some spectacular ones on the Cape and the islands.", "dz": "新英格兰有大量小机场，其中科德角和岛上的几个风景极佳。" },
+    { "f": 121.500, "n": "Guard", "z": "紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Outlying Fields" },
+
+    { "f": 156.800, "n": "Marine Ch 16 — the working fleets", "z": "海事 16 频道 · 作业渔船队", "c": "marine", "m": "NFM", "conf": "std", "a": "Gloucester, New Bedford & the Cape", "d": "New Bedford is the highest-value fishing port in the United States and Gloucester is the oldest. These are working boats, not recreational, and the radio traffic reflects that. Listening from the Gloucester waterfront at dawn is one of the more atmospheric things on this site.", "dz": "新贝德福德是美国产值最高的渔港，格洛斯特是最古老的。这些是作业渔船，不是游艇，通话内容也完全不同。清晨在格洛斯特码头收听，是本站氛围最好的体验之一。" },
+    { "f": 156.300, "n": "Marine Ch 06 — fishing fleet ship-to-ship", "z": "海事 06 频道 · 渔船互通", "c": "marine", "m": "NFM", "conf": "std", "a": "Gloucester, New Bedford & the Cape", "d": "Where captains actually talk to each other. Busiest before sunrise.", "dz": "船长之间真正交谈的频道，日出前最忙。" },
+    { "f": 156.650, "n": "Cape Cod Canal Control — Ch 13", "z": "科德角运河管制 13 频道", "c": "marine", "m": "NFM", "conf": "check", "a": "Gloucester, New Bedford & the Cape", "d": "The Army Corps of Engineers controls one-way traffic through the canal, and vessels must get clearance. A tidy, self-contained operation to follow from the Bourne or Sagamore bridges.", "dz": "陆军工程兵团管制运河内的单向通航，船舶必须取得许可。在 Bourne 或 Sagamore 桥上收听，是一段完整而清晰的作业流程。" },
+    { "f": 157.100, "n": "USCG Sector Southeastern NE — Ch 22A", "z": "海警东南新英格兰分区 22A", "c": "marine", "m": "NFM", "conf": "std", "a": "Gloucester, New Bedford & the Cape" },
+    { "f": 156.625, "n": "Marine Ch 72 — whale watch and charter", "z": "海事 72 频道 · 观鲸与包船", "c": "marine", "m": "NFM", "conf": "std", "a": "Gloucester, New Bedford & the Cape", "d": "Stellwagen Bank whale-watch skippers telling each other where the humpbacks are.", "dz": "Stellwagen Bank 的观鲸船长互相通报座头鲸的位置。" },
+
+    { "f": 162.475, "n": "NOAA — Boston (KHB35)", "z": "NOAA 波士顿 KHB35", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "The coastal waters and Georges Bank forecasts are the useful part. Also nor'easter and blizzard warnings in winter.", "dz": "近岸海域和 Georges Bank 的预报最有用，冬季还有东北风暴和暴雪警报。" },
+    { "f": 162.400, "n": "NOAA — Cape Cod / islands", "z": "NOAA 科德角 / 岛区", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio" },
+    { "f": 162.550, "n": "NOAA — White Mountains", "z": "NOAA 白山地区", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Mount Washington has recorded some of the most extreme surface weather on earth. Before going above treeline in the Presidentials, the higher-summits forecast is not optional.", "dz": "华盛顿山曾记录到地球上最极端的地面天气之一。在总统山脉上到林线以上之前，高峰区预报不是可选项。" },
+
+    { "f": 146.520, "n": "2 m Simplex Calling — from Mount Washington", "z": "2 米直通呼叫 · 在华盛顿山", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "At 1,917 metres with clear lines in every direction, Mount Washington is one of the finest VHF locations east of the Rockies. A 5 W handheld from the summit reaches an enormous area across six states and into Canada.", "dz": "海拔 1917 米、四面通视，华盛顿山是落基山以东最好的 VHF 位置之一。在山顶用 5 瓦手台，覆盖范围可达六个州并延伸到加拿大。" },
+    { "f": 146.655, "n": "New England repeater network", "z": "新英格兰中继网络", "c": "ham", "m": "FM", "conf": "check", "o": "−0.600", "t": "103.5", "a": "Repeaters", "d": "The region has several linked repeater systems giving coverage across multiple states. Confirm current details on RepeaterBook for Massachusetts and New Hampshire.", "dz": "本区有若干链接中继系统，覆盖多个州。请在 RepeaterBook 查 Massachusetts 和 New Hampshire 确认当前参数。" },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex" },
+
+    { "f": 88.1, "n": "WMBR — MIT", "z": "WMBR 麻省理工", "c": "broadcast", "m": "WFM", "conf": "high", "a": "The college radio dial", "d": "Boston's low FM band is the best in the country and this is its centre of gravity. Freeform, deeply knowledgeable, and running since the sixties. Start here and work upward: WERS at 88.9 (Emerson), WZBC at 90.3 (Boston College), WHRB at 95.3 (Harvard), WMFO at 91.5 (Tufts), WTBU, WRBB. An hour spent slowly tuning 88–92 MHz in Boston is genuinely one of the best radio experiences in America.", "dz": "波士顿调频低端是全美最好的一段，而这里是它的重心：自由形式、内容深厚，从六十年代播到今天。从这里往上找：88.9 的 WERS（爱默生）、90.3 的 WZBC（波士顿学院）、95.3 的 WHRB（哈佛）、91.5 的 WMFO（塔夫茨），还有 WTBU、WRBB。在波士顿花一小时慢慢扫 88–92 MHz，是全美最好的收听体验之一。" },
+    { "f": 88.9, "n": "WERS — Emerson College", "z": "WERS 爱默生学院", "c": "broadcast", "m": "WFM", "conf": "high", "a": "The college radio dial" },
+    { "f": 95.3, "n": "WHRB — Harvard", "z": "WHRB 哈佛", "c": "broadcast", "m": "WFM", "conf": "high", "a": "The college radio dial", "d": "Famous for its exam-period Orgies — multi-day complete-works marathons of a single composer or artist.", "dz": "以考试周的“Orgy”节目闻名——连续数日播完某位作曲家或艺术家的全部作品。" },
+    { "f": 90.9, "n": "WBUR — NPR Boston", "z": "WBUR 波士顿公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "Public radio" },
+    { "f": 89.7, "n": "GBH — NPR / classical", "z": "GBH 公共广播与古典", "c": "broadcast", "m": "WFM", "conf": "high", "a": "Public radio" },
+    { "f": 91.9, "n": "WUMB — folk, UMass Boston", "z": "WUMB 民谣 · 麻州大学波士顿", "c": "broadcast", "m": "WFM", "conf": "check", "a": "Public radio" },
+
+    { "f": 160.920, "n": "MBTA commuter rail and Amtrak", "z": "MBTA 通勤铁路与 Amtrak", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "Scan 160.215–161.565 near North or South Station. The Downeaster to Maine and the Northeast Corridor south both start here.", "dz": "在北站或南站附近扫 160.215–161.565。往缅因的 Downeaster 和往南的东北走廊都从这里出发。" },
+    { "f": 160.650, "n": "CSX / freight", "z": "CSX 与货运", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail" },
+
+    { "f": 166.325, "n": "Acadia and White Mountain NF", "z": "阿卡迪亚与白山国家森林", "c": "parks", "m": "NFM", "conf": "check", "a": "Parks & Mountains", "d": "Acadia rangers and White Mountain National Forest operations. Scan 162–174 MHz. Mount Washington also hosts a great deal of commercial and broadcast infrastructure worth sweeping for.", "dz": "阿卡迪亚的护林员和白山国家森林的作业。扫 162–174 MHz。华盛顿山上还有大量商用和广播设施，值得扫一遍。" },
+    { "f": 155.7525, "n": "VCALL10 — search and rescue", "z": "VCALL10 · 搜救", "c": "safety", "m": "NFM", "conf": "std", "a": "Parks & Mountains", "d": "New Hampshire Fish and Game runs a lot of mountain rescues, and mutual-aid channels stay analog.", "dz": "新罕布什尔渔猎部门承担大量山地救援，互助频道仍是模拟制式。" },
+    { "f": 0, "n": "Boston PD & Fire — digital", "z": "波士顿警消 · 数字制式", "c": "safety", "m": "P25", "dig": true, "conf": "check", "a": "Not receivable" },
+
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "FM", "conf": "std", "a": "Satellites" },
+    { "f": 4.724, "n": "HFGCS — Skyking", "z": "美空军高频指挥网", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "d": "The Atlantic coast at night is good for HF, including transatlantic aeronautical traffic.", "dz": "夜间的大西洋沿岸短波条件不错，包括跨大西洋的航空通信。" }
+  ]
+}

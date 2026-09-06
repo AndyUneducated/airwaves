@@ -206,6 +206,96 @@ body::before {
 }
 .s-clear:hover { color: var(--tx); background: var(--bg-3); }
 
+/* ---------- country switch ---------- */
+
+.scopes { padding: 0 clamp(14px, 4vw, 34px) 11px; }
+
+.seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 3), 1fr);
+  gap: 2px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 3px;
+  max-width: 520px;
+}
+
+/* One sliding block behind the active segment, rather than three changing backgrounds. */
+.seg-ind {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--n, 3));
+  border-radius: 8px;
+  background: var(--bg-3);
+  border: 1px solid var(--line-2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform .26s cubic-bezier(.32, .82, .28, 1);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) { .seg-ind { transition: none; } }
+
+.seg-b {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  color: var(--tx-3);
+  font: inherit;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: color .16s;
+}
+.seg-b:hover { color: var(--tx-2); }
+.seg-b[aria-selected="true"] { color: var(--tx); }
+
+.seg-k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  color: var(--tx-3);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  padding: 0 4px;
+  flex: 0 0 auto;
+  transition: color .16s, border-color .16s;
+}
+.seg-b[aria-selected="true"] .seg-k { color: var(--ac); border-color: rgba(94, 242, 168, .45); }
+
+.seg-n {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.seg-b[aria-selected="true"] .seg-n { font-weight: 550; }
+
+.seg-c {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tx-3);
+  flex: 0 0 auto;
+}
+
+@media (max-width: 560px) {
+  .seg { max-width: none; }
+  .seg-b { gap: 5px; padding: 7px 6px; }
+  .seg-n { font-size: 12.2px; }
+  .seg-c { display: none; }
+}
+@media (max-width: 390px) {
+  .seg-k { display: none; }
+}
+
 /* ---------- region tabs ---------- */
 
 .regions {
@@ -471,6 +561,13 @@ main {
 .tag-high { color: var(--tx-2); }
 .tag-check { color: var(--warn); border-color: rgba(245, 182, 86, .28); }
 .tag-dig { color: var(--warn); border-color: rgba(245, 182, 86, .28); background: var(--warn-dim); }
+.tag-avd { color: var(--warn); border-color: rgba(245, 182, 86, .35); background: var(--warn-dim); font-weight: 600; }
+
+/* Avoid: a real frequency you should not work on. Dimmed, but not struck through like a
+   digital system, because you may still want it in the radio to monitor. */
+.row.avd { opacity: .72; }
+.row.avd .f { color: var(--warn); }
+.row.avd:hover { opacity: 1; }
 
 @media (max-width: 700px) {
   .row {
@@ -500,6 +597,12 @@ main {
   max-width: 78ch;
 }
 .notice b { color: var(--tx); font-weight: 550; }
+.notice + .notice { margin-top: 10px; }
+.notice-hi {
+  border-left-color: var(--ac);
+  background: linear-gradient(90deg, var(--ac-dim), transparent 60%), var(--bg-1);
+  color: var(--tx);
+}
 
 .empty {
   text-align: center;

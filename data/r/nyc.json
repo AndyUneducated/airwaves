@@ -39,9 +39,9 @@
     { "f": 99.5, "n": "WBAI — Pacifica New York", "z": "WBAI 纽约 Pacifica 台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
     { "f": 88.7, "n": "WRHU / WPKN and other community stations", "z": "WRHU / WPKN 等社区台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "d": "The metro FM band is the most crowded in the country — sweeping it slowly from a rooftop is worth an hour.", "dz": "都会区的 FM 波段是全美最拥挤的——在屋顶上慢慢扫一小时很值得。" },
 
-    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex" },
-    { "f": 145.250, "n": "Manhattan-area repeater", "z": "曼哈顿地区中继", "c": "ham", "m": "NFM", "conf": "check", "o": "−0.600", "t": "136.5", "a": "Repeaters", "d": "Several machines sit on Manhattan skyscrapers with excellent metro coverage. Confirm on RepeaterBook for New York County.", "dz": "曼哈顿多座摩天楼上都有中继，都会区覆盖极好。请在 RepeaterBook 查 New York County 确认。" },
-    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "NFM", "conf": "std", "a": "Simplex", "d": "UHF works better than VHF in the street canyons of Midtown.", "dz": "在中城的街道峡谷里，UHF 表现比 VHF 好。" },
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex" },
+    { "f": 145.250, "n": "Manhattan-area repeater", "z": "曼哈顿地区中继", "c": "ham", "m": "FM", "conf": "check", "o": "−0.600", "t": "136.5", "a": "Repeaters", "d": "Several machines sit on Manhattan skyscrapers with excellent metro coverage. Confirm on RepeaterBook for New York County.", "dz": "曼哈顿多座摩天楼上都有中继，都会区覆盖极好。请在 RepeaterBook 查 New York County 确认。" },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "UHF works better than VHF in the street canyons of Midtown.", "dz": "在中城的街道峡谷里，UHF 表现比 VHF 好。" },
 
     { "f": 462.5625, "n": "FRS — construction & events", "z": "FRS · 施工与活动", "c": "misc", "m": "NFM", "conf": "std", "a": "Street Level", "d": "Film shoots, building sites, delivery crews and marathon marshals. NYC is saturated with license-free radio at street level.", "dz": "影视拍摄、工地、配送团队和马拉松志愿者。纽约街头层面的免执照电台使用极为密集。" },
     { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites", "d": "Difficult in the city — the RF noise floor is brutal. Try from a beach on Long Island instead.", "dz": "在市区很难——射频底噪极高。建议改到长岛海滩尝试。" }

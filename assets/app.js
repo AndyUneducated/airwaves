@@ -18,9 +18,11 @@
       online: 'online',
       offline: 'offline · cached',
       langBtn: '中文',
-      digNote: 'Digital and encrypted systems are listed so you know not to hunt for them. A VX-6 is an analog receiver and cannot decode P25, DMR or NXDN.',
+      digNote: 'Struck-through rows are things a VX-6 cannot give you: digital and encrypted systems it has no way to decode, signals outside its tuning range, and a few services that simply do not exist here. They are listed so you know not to spend an evening hunting for them.',
       copyHint: 'Tap any row to copy its frequency',
       verify: 'Verify locally',
+      avoid: 'Avoid',
+      avoidNote: 'Rows marked Avoid are calling channels, data segments or bands reserved for other uses. Keep them in your radio to monitor, but do not use them as your own working channel. They are left out of the CHIRP export.',
       'ft.radio': 'Your radio',
       'ft.trust': 'How much to trust this',
       'ft.legal': 'Listening and transmitting',
@@ -41,9 +43,11 @@
       online: '在线',
       offline: '离线 · 已缓存',
       langBtn: 'EN',
-      digNote: '数字和加密系统也列了出来，是为了让你知道不必白费功夫去找。VX-6 是模拟接收机，无法解码 P25、DMR 或 NXDN。',
+      digNote: '带删除线的条目是 VX-6 无法提供的内容：它无法解码的数字与加密系统、超出其调谐范围的信号，以及在当地根本不存在的业务。列出来是为了让你知道不必白费一晚上去找。',
       copyHint: '点击任意一行即可复制频率',
       verify: '请在当地核实',
+      avoid: '避免',
+      avoidNote: '标注“避免”的条目是呼叫频率、数据频段或保留给其他用途的频段。可以存进电台守听，但不要当作自己的工作频率使用。导出 CHIRP 时会自动排除它们。',
       'ft.radio': '你的电台',
       'ft.trust': '可信度说明',
       'ft.legal': '收听与发射',
@@ -61,8 +65,8 @@
       zh: '每一条都带有可信度标签。“法定分配”指 FCC 或 ITU 的全国统一分配，不会变动。“稳定”指长期使用。“请核实”指大致正确但地方性较强，依赖之前值得先确认。'
     },
     'ft.legal.b': {
-      en: 'Receiving these transmissions is legal in most of the United States, though a few states restrict scanner use in a vehicle. Transmitting is different: only operate within the privileges of your licence, and never on public safety, aviation or marine channels except in a genuine emergency.',
-      zh: '在美国大部分地区收听这些信号是合法的，但少数州限制在车内使用扫描机。发射则是另一回事：只能在自己执照的权限内操作，除真正紧急情况外，绝不要在公共安全、航空或海事频道上发射。'
+      en: 'Receiving is legal in most of the United States, though a few states restrict scanner use in a vehicle, and it is not generally restricted in China either. Transmitting is a separate question in each country: in the US you need an FCC licence and must stay inside its privileges, and in China you need a Chinese licence and type-approved equipment. Never transmit on public safety, aviation or marine channels except in a genuine emergency.',
+      zh: '在美国大部分地区收听是合法的（少数州限制在车内使用扫描机），在中国收听通常也不受限制。发射在两国则是各自独立的问题：在美国需要 FCC 执照并只能在权限内操作；在中国需要中国执照和经过型号核准的设备。除真正紧急情况外，绝不要在公共安全、航空或海事频道上发射。'
     }
   };
 
@@ -70,7 +74,7 @@
   const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
 
   let META = null, REGION = null, LANG = localStorage.getItem('aw.lang') === 'zh' ? 'zh' : 'en';
-  let CAT = 'all', Q = '';
+  let SCOPE = null, CAT = 'all', Q = '';
   const CACHE = new Map();
 
   const t = k => { const v = T[LANG][k]; return v === undefined ? T.en[k] : v; };
@@ -97,14 +101,33 @@
     }
     $('#ver').textContent = 'v' + META.version;
     applyStatic();
-    buildRegionTabs();
     buildCatTabs();
     wire();
     netState();
 
-    const want = location.hash.replace(/^#\/?/, '');
-    const found = META.regions.find(r => r.id === want);
-    await select(found ? found.id : (localStorage.getItem('aw.region') || META.regions[0].id), false);
+    const hashed = fromHash();
+    SCOPE = (hashed && hashed.scope) || localStorage.getItem('aw.scope') || META.scopes[0].id;
+    if (!META.scopes.some(s => s.id === SCOPE)) SCOPE = META.scopes[0].id;
+    buildScopeTabs();
+    buildRegionTabs();
+    await select((hashed || firstIn(SCOPE)).id, false);
+  }
+
+  // Regions live under a country: #/us/bay-area. A bare #/bay-area still resolves.
+  function fromHash() {
+    const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    const id = parts.length > 1 ? parts[1] : parts[0];
+    return id ? META.regions.find(r => r.id === id) : null;
+  }
+
+  function inScope(scope) {
+    return META.regions.filter(r => r.scope === scope);
+  }
+
+  function firstIn(scope) {
+    const pool = inScope(scope);
+    const last = localStorage.getItem('aw.region.' + scope);
+    return pool.find(r => r.id === last) || pool.find(r => r.pin) || pool[0];
   }
 
   function applyStatic() {
@@ -120,23 +143,60 @@
 
   /* ---------- tabs ---------- */
 
+  function buildScopeTabs() {
+    const box = $('#scopes');
+    box.textContent = '';
+    const seg = el('div', 'seg');
+    seg.setAttribute('role', 'tablist');
+    seg.style.setProperty('--n', META.scopes.length);
+    seg.append(el('span', 'seg-ind'));
+
+    META.scopes.forEach(s => {
+      const b = el('button', 'seg-b');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.dataset.scope = s.id;
+      b.append(el('span', 'seg-k', s.k));
+      b.append(el('span', 'seg-n', L(s, { n: 'n', z: 'z' })));
+      b.append(el('span', 'seg-c', String(inScope(s.id).length)));
+      b.addEventListener('click', () => {
+        if (s.id === SCOPE) return;
+        select(firstIn(s.id).id, true);
+      });
+      seg.append(b);
+    });
+    box.append(seg);
+    syncScopes();
+  }
+
+  function syncScopes() {
+    const seg = $('#scopes .seg');
+    if (!seg) return;
+    seg.style.setProperty('--i', Math.max(0, META.scopes.findIndex(s => s.id === SCOPE)));
+    seg.querySelectorAll('.seg-b').forEach(b =>
+      b.setAttribute('aria-selected', String(b.dataset.scope === SCOPE)));
+  }
+
   function buildRegionTabs() {
     const nav = $('#regions');
     nav.textContent = '';
+    const pool = inScope(SCOPE);
 
-    const geo = el('button', 'chip chip-geo');
-    geo.type = 'button';
-    geo.id = 'btn-geo';
-    geo.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="8"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6"/></svg>';
-    geo.append(el('span', null, t('near')));
-    geo.addEventListener('click', locate);
-    nav.append(geo);
+    if (pool.some(r => r.lat != null)) {
+      const geo = el('button', 'chip chip-geo');
+      geo.type = 'button';
+      geo.id = 'btn-geo';
+      geo.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="8"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6"/></svg>';
+      geo.append(el('span', null, t('near')));
+      geo.addEventListener('click', locate);
+      nav.append(geo);
+    }
 
-    META.regions.forEach(r => {
+    pool.forEach(r => {
       const b = el('button', 'chip', L(r, { n: 'n', z: 'z' }));
       b.type = 'button';
       b.dataset.id = r.id;
-      b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-pressed', String(REGION ? r.id === REGION.meta.id : false));
       b.addEventListener('click', () => select(r.id, true));
       nav.append(b);
     });
@@ -181,10 +241,17 @@
   async function select(id, push) {
     const meta = META.regions.find(r => r.id === id);
     if (!meta) return;
+
+    if (meta.scope !== SCOPE) {
+      SCOPE = meta.scope;
+      localStorage.setItem('aw.scope', SCOPE);
+      syncScopes();
+      buildRegionTabs();
+    }
     document.querySelectorAll('#regions .chip[data-id]').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.id === id)));
-    localStorage.setItem('aw.region', id);
-    if (push) history.replaceState(null, '', '#/' + id);
+    localStorage.setItem('aw.region.' + SCOPE, id);
+    if (push) history.replaceState(null, '', '#/' + SCOPE + '/' + id);
 
     if (!CACHE.has(id)) {
       try {
@@ -236,6 +303,17 @@
     });
     box.append(acts);
 
+    const warn = LANG === 'zh' ? (data.warnz || data.warn) : data.warn;
+    if (warn) {
+      const n = el('div', 'notice notice-hi');
+      n.append(el('span', null, warn));
+      box.append(n);
+    }
+    if (data.stations.some(s => s.avoid)) {
+      const n = el('div', 'notice');
+      n.append(el('span', null, t('avoidNote')));
+      box.append(n);
+    }
     if (data.stations.some(s => s.dig)) {
       const n = el('div', 'notice');
       n.append(el('span', null, t('digNote')));
@@ -291,7 +369,7 @@
   }
 
   function row(s) {
-    const b = el('button', 'row' + (s.dig ? ' dig' : ''));
+    const b = el('button', 'row' + (s.dig ? ' dig' : '') + (s.avoid ? ' avd' : ''));
     b.type = 'button';
 
     const f = el('div', 'f');
@@ -312,6 +390,7 @@
     b.append(nm);
 
     const m = el('div', 'meta');
+    if (s.avoid) m.append(el('span', 'tag tag-avd', t('avoid')));
     if (s.m) m.append(el('span', 'tag ' + (s.dig ? 'tag-dig' : 'tag-m'), s.m));
     if (s.o) m.append(el('span', 'tag tag-o', s.o));
     if (s.t) m.append(el('span', 'tag tag-t', 'PL ' + s.t));
@@ -370,7 +449,7 @@
       'URCALL', 'RPT1CALL', 'RPT2CALL', 'DVCODE'];
 
     const rows = REGION.data.stations
-      .filter(s => s.f > 0 && !s.dig && s.f >= 0.5 && s.f <= 999)
+      .filter(s => s.f > 0 && !s.dig && !s.avoid && s.f >= 0.5 && s.f <= 999)
       .map((s, i) => {
         const dup = s.o ? (/^[-−]/.test(s.o) ? '-' : '+') : '';
         const off = s.o ? Math.abs(parseFloat(s.o.replace(/[−–]/g, '-'))).toFixed(6) : '0.000000';
@@ -448,6 +527,7 @@
       localStorage.setItem('aw.lang', LANG);
       document.documentElement.dataset.lang = LANG;
       applyStatic();
+      buildScopeTabs();
       buildRegionTabs();
       buildCatTabs();
       document.querySelectorAll('#regions .chip[data-id]').forEach(b =>
@@ -459,8 +539,8 @@
     addEventListener('online', netState);
     addEventListener('offline', netState);
     addEventListener('hashchange', () => {
-      const id = location.hash.replace(/^#\/?/, '');
-      if (id && REGION && id !== REGION.meta.id) select(id, false);
+      const r = fromHash();
+      if (r && REGION && r.id !== REGION.meta.id) select(r.id, false);
     });
   }
 

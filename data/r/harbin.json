@@ -1,0 +1,36 @@
+{
+  "id": "harbin",
+  "intro": "The northeast has two things you will not find elsewhere in China. The first is heavy conventional railway: this was the country's industrial heartland and the freight lines out of Harbin and Shenyang still run analog dispatch radio around the clock. The second is Russia. From Heihe, Suifenhe or Manzhouli you receive Russian broadcast stations directly across the border, and in winter, with dry air and almost no noise, the whole spectrum opens up.",
+  "introz": "东北有两样中国其他地方找不到的东西。第一是繁重的普速铁路：这里曾是国家的工业心脏，哈尔滨和沈阳出发的货运干线至今全天候使用模拟调度电台。第二是俄罗斯。在黑河、绥芬河或满洲里，可以直接收到边境对面的俄罗斯广播；而在冬季，空气干燥、几乎没有噪声，整个频谱都会打开。",
+  "stations": [
+    { "f": 450.025, "n": "无线列调 — Harbin freight corridors", "z": "无线列调 · 哈尔滨货运干线", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway — the main attraction", "d": "The Binzhou and Harbin–Dalian conventional lines carry very heavy freight, and analog train dispatch in the 450–460 MHz band is active continuously. Scan near any yard or level crossing and you will find driver and dispatcher traffic within a minute. This is the best conventional railway listening in China.", "dz": "滨洲线和哈大普速线货运极重，450–460 MHz 的模拟无线列调全天活跃。在任何货场或道口附近扫一下，一分钟内就能找到司机与调度的通话。这是中国最好的普速铁路收听环境。" },
+    { "f": 457.700, "n": "无线列调 — paired range", "z": "无线列调 · 配对频段", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway — the main attraction" },
+    { "f": 452.900, "n": "Yard and shunting operations", "z": "调车与编组作业", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway — the main attraction", "d": "Marshalling yards use separate low-power channels. Sweep 450–465 MHz at a large yard to find them.", "dz": "编组场使用独立的小功率频道。在大型编组场扫 450–465 MHz 可以找到。" },
+
+    { "f": 87.5, "n": "Russian stations across the border", "z": "边境对面的俄罗斯电台", "c": "broadcast", "m": "WFM", "conf": "std", "a": "Broadcast — the border effect", "d": "From Heihe you are looking straight at Blagoveshchensk across the Amur; from Manzhouli and Suifenhe the situation is similar. Russian FM stations come in as strongly as domestic ones. Note that Russia uses the OIRT band at 65.8–74 MHz for some legacy services as well as the standard 87.5–108 MHz — the VX-6 covers both, so sweep low too.", "dz": "在黑河，正对面就是阿穆尔河对岸的布拉戈维申斯克；满洲里和绥芬河情况类似。俄罗斯的调频电台信号和国内台一样强。注意俄罗斯除标准 87.5–108 MHz 外，部分老频段仍在 65.8–74 MHz 的 OIRT 波段——VX-6 两段都能覆盖，所以低频段也扫一下。" },
+    { "f": 0.531, "n": "Medium wave in winter — scan 531–1602 kHz", "z": "冬季中波 · 扫 531–1602 kHz", "c": "broadcast", "m": "AM", "conf": "std", "a": "Broadcast — the border effect", "d": "Cold dry winter nights at this latitude produce outstanding medium wave conditions. Russian, Korean, Japanese and Mongolian stations arrive alongside high-power domestic transmitters.", "dz": "这个纬度上寒冷干燥的冬夜会产生极好的中波条件。俄罗斯、韩国、日本和蒙古的电台会与国内大功率台一同出现。" },
+    { "f": 0, "n": "Provincial traffic radio", "z": "各省交通广播", "c": "broadcast", "m": "WFM", "conf": "check", "a": "Broadcast — the border effect", "d": "Genuinely important in winter, when ice and blowing snow close roads across Heilongjiang and Jilin. Sweep 87–108 MHz for the local frequency.", "dz": "冬季确实重要——冰雪和风吹雪会封闭黑龙江和吉林的道路。扫 87–108 MHz 找当地频率。" },
+
+    { "f": 118.000, "n": "Harbin Taiping tower band", "z": "哈尔滨太平塔台频段", "c": "air", "m": "AM", "conf": "std", "a": "Aviation", "d": "Set the VX-6 to AM and sweep 118.000–121.400. Winter operations here involve constant de-icing coordination, which makes the ground frequencies unusually busy.", "dz": "把 VX-6 设为 AM，扫 118.000–121.400。这里冬季运行涉及大量除冰协调，地面频率因此格外繁忙。" },
+    { "f": 118.000, "n": "Shenyang and Dalian tower bands", "z": "沈阳与大连塔台频段", "c": "air", "m": "AM", "conf": "std", "a": "Aviation" },
+    { "f": 132.000, "n": "Shenyang Area Control — scan 128.000–136.000", "z": "沈阳区域管制 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation", "d": "Traffic between China, Korea, Japan and Russian Far East routes crosses here.", "dz": "中国、韩国、日本以及俄罗斯远东航线之间的流量都经过这里。" },
+    { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Aviation" },
+
+    { "f": 156.800, "n": "Marine Ch 16 — Dalian and the Bohai Gulf", "z": "海事 16 频道 · 大连与渤海湾", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine — Dalian", "d": "Dalian is a major port and naval area. Ferry traffic across the Bohai Gulf to Yantai keeps the band busy. Listen freely, but do not transmit near naval facilities.", "dz": "大连是重要港口，也是海军区域。跨渤海湾往烟台的轮渡让频段一直很忙。可以自由收听，但不要在海军设施附近发射。" },
+    { "f": 156.650, "n": "Bridge-to-Bridge — Ch 13", "z": "船桥互通 13 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine — Dalian" },
+    { "f": 156.600, "n": "VTS — Ch 12", "z": "船舶交通管理 12 频道", "c": "marine", "m": "NFM", "conf": "check", "a": "Marine — Dalian" },
+
+    { "f": 409.7500, "n": "公众对讲机 — sweep all 20 channels", "z": "公众对讲机 · 20 个信道全扫", "c": "safety", "m": "NFM", "conf": "std", "a": "Licence-free band", "d": "Ice festival construction in Harbin, ski resort operations at Yabuli and Changbaishan, port work in Dalian. Winter puts a lot of people on this band.", "dz": "哈尔滨冰雪大世界的搭建、亚布力和长白山雪场的运营、大连的港区作业。冬季这个频段上人很多。" },
+    { "f": 409.9750, "n": "公众对讲机 Ch 19", "z": "公众对讲机 19 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Licence-free band" },
+    { "f": 0, "n": "Public security — encrypted PDT", "z": "公安 · 加密 PDT", "c": "safety", "m": "PDT", "dig": true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 145.500, "n": "2 m FM Calling", "z": "2 米 FM 呼叫频率", "c": "ham", "m": "FM", "conf": "high", "a": "Amateur", "d": "Winter conditions in the northeast are excellent for VHF. Very low noise and stable propagation across the plain.", "dz": "东北的冬季条件对 VHF 非常有利：底噪极低，平原上传播稳定。" },
+    { "f": 439.500, "n": "Repeater outputs — scan 439.000–440.000", "z": "中继台下行 · 扫 439.000–440.000", "c": "ham", "m": "FM", "conf": "check", "o": "−5.000", "a": "Amateur" },
+
+    { "f": 151.415, "n": "Changbaishan reserve operations", "z": "长白山保护区作业", "c": "parks", "m": "NFM", "conf": "check", "a": "Changbaishan", "d": "Patrols, fire watch and shuttle operations at the volcano. Sweep 150–170 MHz inside the reserve.", "dz": "火山区的巡护、防火和摆渡车调度。在保护区内扫 150–170 MHz。" },
+    { "f": 462.5625, "n": "Ski patrol and resort radios", "z": "雪场巡逻与度假区电台", "c": "parks", "m": "NFM", "conf": "check", "a": "Changbaishan", "d": "Resorts use a mix of 409 MHz sets and imported consumer radios.", "dz": "雪场混用 409 MHz 设备和进口民用对讲机。" },
+
+    { "f": 10.000, "n": "BPM — shortwave time signal", "z": "BPM 短波授时", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave" },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "d": "High latitude means more passes per day than in southern China.", "dz": "纬度较高，每天的过顶次数比华南多。" }
+  ]
+}
