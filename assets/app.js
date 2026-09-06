@@ -393,7 +393,8 @@
     if (s.avoid) m.append(el('span', 'tag tag-avd', t('avoid')));
     if (s.m) m.append(el('span', 'tag ' + (s.dig ? 'tag-dig' : 'tag-m'), s.m));
     if (s.o) m.append(el('span', 'tag tag-o', s.o));
-    if (s.t) m.append(el('span', 'tag tag-t', 'PL ' + s.t));
+    if (s.t) m.append(el('span', 'tag tag-t',
+      isDcs(s.t) ? 'DCS ' + (s.t.match(/\d+/) || [''])[0] : 'PL ' + s.t));
     if (s.conf && META.confidence[s.conf]) {
       const c = META.confidence[s.conf];
       const tag = el('span', 'tag tag-' + s.conf, LANG === 'zh' ? c.z : c.n);
@@ -436,12 +437,17 @@
 
   /* ---------- CHIRP export ---------- */
 
-  function shortTag(name) {
-    const clean = name.toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').trim();
+  // The VX-6 shows six characters. Derived tags are fine for names like "NOAA Weather — WX1"
+  // but useless for prose, so an entry can supply its own.
+  function shortTag(s) {
+    if (s.tag) return s.tag.slice(0, 6);
+    const clean = s.n.toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').trim();
     const words = clean.split(/\s+/);
-    let tag = words.length > 1 ? words.map(w => w.slice(0, 3)).join('') : words[0];
+    const tag = words.length > 1 ? words.map(w => w.slice(0, 3)).join('') : words[0];
     return tag.slice(0, 6) || 'MEM';
   }
+
+  const isDcs = t => !!t && /d(?:t)?cs/i.test(t);
 
   function exportCsv() {
     const head = ['Location', 'Name', 'Frequency', 'Duplex', 'Offset', 'Tone', 'rToneFreq',
@@ -453,13 +459,16 @@
       .map((s, i) => {
         const dup = s.o ? (/^[-−]/.test(s.o) ? '-' : '+') : '';
         const off = s.o ? Math.abs(parseFloat(s.o.replace(/[−–]/g, '-'))).toFixed(6) : '0.000000';
-        const tone = s.t ? 'Tone' : '';
-        const pl = s.t || '88.5';
+        // DCS is a digital squelch code, not a CTCSS frequency — it belongs in DtcsCode.
+        const dcs = isDcs(s.t);
+        const tone = s.t ? (dcs ? 'DTCS' : 'Tone') : '';
+        const pl = (s.t && !dcs) ? s.t : '88.5';
+        const code = dcs ? (s.t.match(/\d+/) || ['23'])[0].padStart(3, '0') : '023';
         const mode = s.m === 'NFM' ? 'NFM' : s.m === 'WFM' ? 'WFM' : s.m === 'AM' ? 'AM' : 'FM';
         // Channels such as FRS and the weather satellites sit on a 12.5 kHz grid, not 5 kHz.
         const step = Math.round(s.f * 1e6) % 5000 === 0 ? '5.00' : '12.50';
         const comment = [s.n, s.a].filter(Boolean).join(' — ').replace(/[",\r\n]/g, ' ');
-        return [i, shortTag(s.n), s.f.toFixed(6), dup, off, tone, pl, pl, '023', 'NN',
+        return [i, shortTag(s), s.f.toFixed(6), dup, off, tone, pl, pl, code, 'NN',
           mode, step, '', comment, '', '', '', ''].join(',');
       });
 
