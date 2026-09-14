@@ -94,6 +94,14 @@ body::before {
   stroke-linecap: round;
 }
 .brand-mark circle { fill: var(--ac); stroke: none; }
+/* The arcs pulse outward like a beacon, one wave behind the other. */
+.brand-mark path { animation: radiate 3.4s ease-in-out infinite; }
+.brand-mark path:nth-of-type(2) { animation-delay: .42s; }
+@keyframes radiate {
+  0%, 100% { opacity: .3; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .brand-mark path { animation: none; } }
 
 .brand-name {
   font-family: var(--mono);
@@ -115,6 +123,14 @@ body::before {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* A clipped half-tagline says nothing; drop it and give the row to the controls. */
+@media (max-width: 640px) {
+  .brand-sep, .brand-sub { display: none; }
+}
+/* On a phone the country control earns the space more than the tagline does. */
+@media (max-width: 700px) {
+  .brand-sep, .brand-sub { display: none; }
 }
 
 .hd-tools {
@@ -206,94 +222,105 @@ body::before {
 }
 .s-clear:hover { color: var(--tx); background: var(--bg-3); }
 
-/* ---------- country switch ---------- */
+/* ---------- country (a setting, not a tab strip) ---------- */
 
-.scopes { padding: 0 clamp(14px, 4vw, 34px) 11px; }
+.cty { position: relative; flex: 0 0 auto; }
 
-.seg {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(var(--n, 3), 1fr);
-  gap: 2px;
+.cty-b {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 3px;
-  max-width: 520px;
+  border-radius: 999px;
+  color: var(--tx-2);
+  font: inherit;
+  font-size: 12.5px;
+  padding: 4px 9px 4px 6px;
+  cursor: pointer;
+  transition: color .14s, border-color .14s, background .14s;
+}
+.cty-b:hover { color: var(--tx); border-color: var(--line-2); }
+.cty.open .cty-b { color: var(--tx); border-color: var(--line-2); background: var(--bg-3); }
+
+.cty-k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--ac);
+  background: var(--ac-dim);
+  border-radius: 999px;
+  padding: 2px 6px;
 }
 
-/* One sliding block behind the active segment, rather than three changing backgrounds. */
-.seg-ind {
+.cty-n { white-space: nowrap; }
+
+.cty-cv {
+  width: 12px; height: 12px;
+  fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round;
+  opacity: .65;
+  transition: transform .18s;
+}
+.cty.open .cty-cv { transform: rotate(180deg); }
+
+.cty-menu {
   position: absolute;
-  top: 3px;
-  bottom: 3px;
-  left: 3px;
-  width: calc((100% - 6px) / var(--n, 3));
-  border-radius: 8px;
-  background: var(--bg-3);
+  top: calc(100% + 7px);
+  right: 0;
+  z-index: 30;
+  min-width: 208px;
+  background: var(--bg-2);
   border: 1px solid var(--line-2);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
-  transform: translateX(calc(var(--i, 0) * 100%));
-  transition: transform .26s cubic-bezier(.32, .82, .28, 1);
-  pointer-events: none;
+  border-radius: 12px;
+  padding: 5px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .55);
+  animation: pop .15s cubic-bezier(.2, .8, .2, 1);
 }
-@media (prefers-reduced-motion: reduce) { .seg-ind { transition: none; } }
+@keyframes pop {
+  from { opacity: 0; transform: translateY(-5px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cty-menu { animation: none; } }
 
-.seg-b {
-  position: relative;
+.cty-o {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
-  min-width: 0;
+  gap: 9px;
+  width: 100%;
   background: none;
   border: 0;
   border-radius: 8px;
-  color: var(--tx-3);
+  color: var(--tx-2);
   font: inherit;
-  padding: 7px 10px;
+  font-size: 13.5px;
+  padding: 8px 9px;
   cursor: pointer;
-  transition: color .16s;
+  text-align: left;
 }
-.seg-b:hover { color: var(--tx-2); }
-.seg-b[aria-selected="true"] { color: var(--tx); }
+.cty-o:hover { background: var(--bg-3); color: var(--tx); }
+.cty-o[aria-selected="true"] { color: var(--tx); }
 
-.seg-k {
+.cty-ok {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 10px;
   letter-spacing: .08em;
   color: var(--tx-3);
   border: 1px solid var(--line-2);
   border-radius: 4px;
-  padding: 0 4px;
-  flex: 0 0 auto;
-  transition: color .16s, border-color .16s;
-}
-.seg-b[aria-selected="true"] .seg-k { color: var(--ac); border-color: rgba(94, 242, 168, .45); }
-
-.seg-n {
-  font-size: 13px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.seg-b[aria-selected="true"] .seg-n { font-weight: 550; }
-
-.seg-c {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--tx-3);
+  padding: 1px 5px;
   flex: 0 0 auto;
 }
+.cty-o[aria-selected="true"] .cty-ok { color: var(--ac); border-color: rgba(94, 242, 168, .45); }
+.cty-on { flex: 1 1 auto; }
+.cty-oc { font-family: var(--mono); font-size: 10px; color: var(--tx-3); }
 
-@media (max-width: 560px) {
-  .seg { max-width: none; }
-  .seg-b { gap: 5px; padding: 7px 6px; }
-  .seg-n { font-size: 12.2px; }
-  .seg-c { display: none; }
-}
-@media (max-width: 390px) {
-  .seg-k { display: none; }
+/* The two-letter code carries it on a narrow screen — except in Chinese, where the country
+   name is two characters and clearer than a latin abbreviation. */
+@media (max-width: 480px) {
+  .cty-n { display: none; }
+  html[data-lang="zh"] .cty-n { display: inline; }
 }
 
 /* ---------- region tabs ---------- */
@@ -348,6 +375,18 @@ body::before {
 
 .chip-geo { display: inline-flex; align-items: center; gap: 6px; }
 .chip-geo svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.9; }
+
+/* Private Link is a set of channels, not a place, so it sits past a divider. */
+.r-sep {
+  flex: 0 0 auto;
+  align-self: center;
+  width: 1px;
+  height: 17px;
+  margin: 0 3px;
+  background: var(--line-2);
+}
+.chip-link { display: inline-flex; align-items: center; gap: 6px; }
+.chip-link svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.7; }
 
 .carrier {
   height: 1px;
@@ -433,8 +472,154 @@ main {
   padding: 24px 0 4px;
   border-top: 1px solid var(--line);
   margin-top: 26px;
+  min-height: 59px;
 }
 .cats::-webkit-scrollbar { display: none; }
+
+/* ---------- spectrum ruler ---------- */
+
+.ruler { padding: 16px 0 2px; }
+
+.ru-cap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.ru-t { color: var(--tx-3); }
+.ru-h { color: var(--tx-3); opacity: .62; text-transform: none; letter-spacing: 0; font-family: var(--sans); font-size: 12px; }
+@media (max-width: 560px) { .ru-h { display: none; } }
+
+.ru-rail {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 0;
+  background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: crosshair;
+  appearance: none;
+  touch-action: manipulation;
+}
+.ru-rail:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+.ru-band {
+  position: absolute;
+  top: 0; bottom: 0;
+  border-left: 1px solid var(--line);
+  pointer-events: none;
+}
+.ru-band:first-of-type { border-left: 0; }
+.ru-band em {
+  position: absolute;
+  top: 3px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: var(--tx-3);
+  opacity: .5;
+}
+
+/* One tick per listed frequency. Dense clusters are the point: they show where the band is busy. */
+.ru-k {
+  position: absolute;
+  bottom: 4px;
+  width: 2px;
+  height: 18px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--ac);
+  opacity: .8;
+  box-shadow: 0 0 6px rgba(94, 242, 168, .35);
+  pointer-events: none;
+}
+.ru-k.k-dig { background: var(--dead); height: 10px; opacity: .55; box-shadow: none; }
+.ru-k.k-avd { background: var(--warn); height: 13px; box-shadow: 0 0 6px rgba(245, 182, 86, .3); }
+
+.ru-cur {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  margin-left: -.5px;
+  background: var(--ac);
+  opacity: 0;
+  transition: opacity .12s, left .08s linear;
+  pointer-events: none;
+}
+.ru-out {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--bg);
+  background: var(--ac);
+  border-radius: 4px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .12s, left .08s linear;
+  pointer-events: none;
+}
+.ru-rail.live .ru-cur, .ru-rail.live .ru-out { opacity: 1; }
+
+.ru-ax {
+  position: relative;
+  height: 13px;
+  margin-top: 4px;
+}
+.ru-ax span {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--tx-3);
+  white-space: nowrap;
+}
+.ru-ax span:last-child { transform: translateX(-100%); }
+
+/* ---------- loading skeleton ---------- */
+
+.sk {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 0 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.sk span, .sk-x {
+  height: 11px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--bg-2) 0%, var(--bg-3) 50%, var(--bg-2) 100%);
+  background-size: 240% 100%;
+  animation: shimmer 1.25s linear infinite;
+}
+
+/* Stand-ins sized like the real intro and ruler, so nothing jumps when they arrive. */
+.sk-sub { width: 210px; height: 12px; margin: 30px 0 14px; }
+.sk-h1 { width: min(62%, 330px); height: 31px; margin: 0 0 13px; border-radius: 7px; }
+.sk-b { width: min(94%, 640px); margin: 0 0 8px; }
+.sk-b2 { width: min(70%, 480px); margin: 0 0 22px; }
+.sk-btn { width: 164px; height: 33px; border-radius: 8px; margin-bottom: 4px; }
+.sk-ru-c { width: 86px; height: 10px; margin-bottom: 7px; }
+.sk-ru-r { height: 34px; border-radius: 8px; margin-bottom: 17px; }
+.sk-f { width: 78px; }
+.sk-n { width: min(62%, 360px); }
+.sk:nth-child(even) .sk-n { width: min(44%, 280px); }
+@keyframes shimmer {
+  from { background-position: 120% 0; }
+  to   { background-position: -120% 0; }
+}
+@media (prefers-reduced-motion: reduce) { .sk span { animation: none; } }
 
 /* ---------- station list ---------- */
 
@@ -490,7 +675,7 @@ main {
   border-radius: 9px;
   border-bottom: 1px solid var(--line);
   cursor: pointer;
-  transition: background .13s;
+  transition: background .13s, transform .1s;
   text-align: left;
   background: none;
   color: inherit;
@@ -501,6 +686,18 @@ main {
 }
 .row:hover { background: var(--bg-1); }
 .row:focus-visible { outline: 2px solid var(--ac); outline-offset: -2px; }
+.row:active { background: var(--bg-2); transform: scale(.994); }
+
+/* Confirms a copy, and marks the row the spectrum ruler jumped to. */
+.row.hit { animation: hit .95s ease-out; }
+@keyframes hit {
+  0%   { background: rgba(94, 242, 168, .17); box-shadow: inset 0 0 0 1px rgba(94, 242, 168, .45); }
+  100% { background: transparent; box-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .row:active { transform: none; }
+  .row.hit { animation: none; }
+}
 
 .f {
   font-family: var(--mono);
@@ -683,6 +880,13 @@ main {
   text-align: center;
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- region and language swaps ---------- */
+
+::view-transition-old(root) { animation: vt-out .16s linear both; }
+::view-transition-new(root) { animation: vt-in .24s ease-out both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; } }
 
 /* ---------- chinese mode ---------- */
 

@@ -28,6 +28,14 @@
       <span class="brand-sub" data-i18n="tagline">frequencies worth listening to</span>
     </div>
     <div class="hd-tools">
+      <div class="cty" id="cty">
+        <button class="cty-b" id="btn-cty" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="cty-k" id="cty-k">US</span>
+          <span class="cty-n" id="cty-n">United States</span>
+          <svg class="cty-cv" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+        </button>
+        <div class="cty-menu" id="cty-menu" role="listbox" aria-labelledby="btn-cty" hidden></div>
+      </div>
       <button class="chip chip-sm" id="btn-lang" type="button" title="Switch language / 切换语言">中文</button>
       <span class="net" id="net" title=""><i></i><em id="net-t">offline ready</em></span>
     </div>
@@ -40,7 +48,6 @@
     <button class="s-clear" id="q-clear" type="button" aria-label="Clear search" hidden>&times;</button>
   </div>
 
-  <div class="scopes" id="scopes"></div>
   <nav class="regions" id="regions" aria-label="Regions"></nav>
   <div class="carrier"></div>
 </header>
@@ -49,6 +56,8 @@
   <section class="intro" id="intro"></section>
 
   <div class="cats" id="cats" role="group" aria-label="Filter by category"></div>
+
+  <div class="ruler" id="ruler" hidden></div>
 
   <div id="list" class="list"></div>
 

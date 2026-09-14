@@ -2,9 +2,8 @@
   "version": "2026.09.06",
   "radio": "Yaesu VX-6R",
   "scopes": [
-    { "id": "us",   "n": "United States", "z": "美国",     "k": "US" },
-    { "id": "cn",   "n": "China",         "z": "中国",     "k": "CN" },
-    { "id": "link", "n": "Private Link",  "z": "私人联络", "k": "◎" }
+    { "id": "us", "n": "United States", "z": "美国", "k": "US" },
+    { "id": "cn", "n": "China",         "z": "中国", "k": "CN" }
   ],
   "categories": [
     { "id": "link",      "n": "Private Link",  "z": "私人联络",   "hint": "Frequencies to use for your own group", "hintz": "供你自己团队使用的频率" },
@@ -262,16 +261,16 @@
     },
 
     {
-      "id": "link-us", "scope": "link", "pin": true,
-      "n": "Private Link — United States", "z": "私人联络 · 美国",
+      "id": "link-us", "scope": "us", "kind": "link",
+      "n": "Private Link", "z": "私人联络",
       "sub": "Clean, quiet channels for your own group",
       "subz": "供你自己团队使用的干净安静频率",
       "lat": null, "lon": null,
       "links": [{ "l": "FCC Technician licence", "u": "https://www.arrl.org/getting-licensed" }]
     },
     {
-      "id": "link-cn", "scope": "link",
-      "n": "Private Link — China", "z": "私人联络 · 中国",
+      "id": "link-cn", "scope": "cn", "kind": "link",
+      "n": "Private Link", "z": "私人联络",
       "sub": "What is actually legal, and what is actually quiet",
       "subz": "什么是合法的，什么才是真正安静的",
       "lat": null, "lon": null,

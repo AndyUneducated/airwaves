@@ -18,6 +18,9 @@
       online: 'online',
       offline: 'offline · cached',
       langBtn: '中文',
+      country: 'Country',
+      spectrum: 'Spectrum',
+      rulerHint: 'Tap the spectrum to jump to the nearest entry',
       digNote: 'Struck-through rows are things a VX-6 cannot give you: digital and encrypted systems it has no way to decode, signals outside its tuning range, and a few services that simply do not exist here. They are listed so you know not to spend an evening hunting for them.',
       copyHint: 'Tap any row to copy its frequency',
       verify: 'Verify locally',
@@ -43,6 +46,9 @@
       online: '在线',
       offline: '离线 · 已缓存',
       langBtn: 'EN',
+      country: '国家',
+      spectrum: '频谱',
+      rulerHint: '点击频谱可跳到最接近的条目',
       digNote: '带删除线的条目是 VX-6 无法提供的内容：它无法解码的数字与加密系统、超出其调谐范围的信号，以及在当地根本不存在的业务。列出来是为了让你知道不必白费一晚上去找。',
       copyHint: '点击任意一行即可复制频率',
       verify: '请在当地核实',
@@ -101,14 +107,13 @@
     }
     $('#ver').textContent = 'v' + META.version;
     applyStatic();
-    buildCatTabs();
     wire();
     netState();
 
     const hashed = fromHash();
     SCOPE = (hashed && hashed.scope) || localStorage.getItem('aw.scope') || META.scopes[0].id;
     if (!META.scopes.some(s => s.id === SCOPE)) SCOPE = META.scopes[0].id;
-    buildScopeTabs();
+    buildCountry();
     buildRegionTabs();
     await select((hashed || firstIn(SCOPE)).id, false);
   }
@@ -141,48 +146,52 @@
     document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
   }
 
-  /* ---------- tabs ---------- */
+  /* ---------- country ---------- */
 
-  function buildScopeTabs() {
-    const box = $('#scopes');
-    box.textContent = '';
-    const seg = el('div', 'seg');
-    seg.setAttribute('role', 'tablist');
-    seg.style.setProperty('--n', META.scopes.length);
-    seg.append(el('span', 'seg-ind'));
+  // The country is picked once and rarely touched, so it belongs in the header as a setting.
+  // That leaves the pill strip below as the only place picker, instead of two strips that
+  // look alike and appear to do the same job.
+  function buildCountry() {
+    const c = META.scopes.find(s => s.id === SCOPE) || META.scopes[0];
+    const name = L(c, { n: 'n', z: 'z' });
+    $('#cty-k').textContent = c.k;
+    $('#cty-n').textContent = name;
+    $('#btn-cty').setAttribute('aria-label', t('country') + ': ' + name);
 
+    const menu = $('#cty-menu');
+    menu.textContent = '';
     META.scopes.forEach(s => {
-      const b = el('button', 'seg-b');
-      b.type = 'button';
-      b.setAttribute('role', 'tab');
-      b.dataset.scope = s.id;
-      b.append(el('span', 'seg-k', s.k));
-      b.append(el('span', 'seg-n', L(s, { n: 'n', z: 'z' })));
-      b.append(el('span', 'seg-c', String(inScope(s.id).length)));
-      b.addEventListener('click', () => {
-        if (s.id === SCOPE) return;
-        select(firstIn(s.id).id, true);
+      const o = el('button', 'cty-o');
+      o.type = 'button';
+      o.setAttribute('role', 'option');
+      o.setAttribute('aria-selected', String(s.id === SCOPE));
+      o.append(el('span', 'cty-ok', s.k));
+      o.append(el('span', 'cty-on', L(s, { n: 'n', z: 'z' })));
+      o.append(el('span', 'cty-oc', String(inScope(s.id).length)));
+      o.addEventListener('click', () => {
+        countryMenu(false);
+        if (s.id !== SCOPE) select(firstIn(s.id).id, true);
       });
-      seg.append(b);
+      menu.append(o);
     });
-    box.append(seg);
-    syncScopes();
   }
 
-  function syncScopes() {
-    const seg = $('#scopes .seg');
-    if (!seg) return;
-    seg.style.setProperty('--i', Math.max(0, META.scopes.findIndex(s => s.id === SCOPE)));
-    seg.querySelectorAll('.seg-b').forEach(b =>
-      b.setAttribute('aria-selected', String(b.dataset.scope === SCOPE)));
+  function countryMenu(open) {
+    $('#cty').classList.toggle('open', open);
+    $('#cty-menu').hidden = !open;
+    $('#btn-cty').setAttribute('aria-expanded', String(open));
   }
+
+  /* ---------- tabs ---------- */
 
   function buildRegionTabs() {
     const nav = $('#regions');
     nav.textContent = '';
     const pool = inScope(SCOPE);
+    const places = pool.filter(r => r.kind !== 'link');
+    const links = pool.filter(r => r.kind === 'link');
 
-    if (pool.some(r => r.lat != null)) {
+    if (places.some(r => r.lat != null)) {
       const geo = el('button', 'chip chip-geo');
       geo.type = 'button';
       geo.id = 'btn-geo';
@@ -192,17 +201,33 @@
       nav.append(geo);
     }
 
-    pool.forEach(r => {
-      const b = el('button', 'chip', L(r, { n: 'n', z: 'z' }));
-      b.type = 'button';
-      b.dataset.id = r.id;
-      b.setAttribute('aria-pressed', String(REGION ? r.id === REGION.meta.id : false));
-      b.addEventListener('click', () => select(r.id, true));
-      nav.append(b);
-    });
+    places.forEach(r => nav.append(regionChip(r)));
+
+    // Private Link is a set of channels rather than a place, so it sits past a divider at
+    // the end of the strip instead of masquerading as a third country.
+    if (links.length) {
+      nav.append(el('span', 'r-sep'));
+      links.forEach(r => {
+        const b = regionChip(r);
+        b.classList.add('chip-link');
+        b.insertAdjacentHTML('afterbegin',
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3"/></svg>');
+        nav.append(b);
+      });
+    }
     edgeFades(nav);
   }
 
+  function regionChip(r) {
+    const b = el('button', 'chip', L(r, { n: 'n', z: 'z' }));
+    b.type = 'button';
+    b.dataset.id = r.id;
+    b.setAttribute('aria-pressed', String(REGION ? r.id === REGION.meta.id : false));
+    b.addEventListener('click', () => select(r.id, true));
+    return b;
+  }
+
+  // Only offer categories this region actually has, so no filter can lead to an empty list.
   function buildCatTabs() {
     const box = $('#cats');
     box.textContent = '';
@@ -214,8 +239,9 @@
       b.addEventListener('click', () => { CAT = id; syncCats(); render(); });
       return b;
     };
+    const present = new Set((REGION ? REGION.data.stations : []).map(s => s.c));
     box.append(mk('all', t('all')));
-    META.categories.forEach(c => box.append(mk(c.id, L(c, { n: 'n', z: 'z' }))));
+    META.categories.filter(c => present.has(c.id)).forEach(c => box.append(mk(c.id, L(c, { n: 'n', z: 'z' }))));
     edgeFades(box);
   }
 
@@ -245,7 +271,7 @@
     if (meta.scope !== SCOPE) {
       SCOPE = meta.scope;
       localStorage.setItem('aw.scope', SCOPE);
-      syncScopes();
+      buildCountry();
       buildRegionTabs();
     }
     document.querySelectorAll('#regions .chip[data-id]').forEach(b =>
@@ -254,19 +280,59 @@
     if (push) history.replaceState(null, '', '#/' + SCOPE + '/' + id);
 
     if (!CACHE.has(id)) {
+      skeleton();
       try {
         CACHE.set(id, await (await fetch(`data/r/${id}.json`, { cache: 'no-cache' })).json());
       } catch (e) {
         CACHE.set(id, { id, stations: [] });
       }
+      // A stable key per station lets the spectrum ruler find the row it belongs to.
+      CACHE.get(id).stations.forEach((s, i) => { s.k = i; });
     }
     REGION = { meta, data: CACHE.get(id) };
     CAT = 'all';
-    syncCats();
-    renderIntro();
-    render();
+    paint(() => { renderIntro(); buildCatTabs(); render(); });
     const tab = document.querySelector(`#regions .chip[data-id="${id}"]`);
     if (tab && push) tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+
+  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+
+  // Cross-fade the region swap where the browser has view transitions; repaint plainly otherwise.
+  // Switching regions quickly skips the transition in flight, which rejects — that is expected.
+  function paint(fn) {
+    if (!document.startViewTransition || reduced()) { fn(); return; }
+    const vt = document.startViewTransition(fn);
+    vt.ready.catch(() => {});
+    vt.finished.catch(() => {});
+  }
+
+  function skeleton() {
+    const box = $('#list');
+    box.textContent = '';
+    $('#empty').hidden = true;
+
+    // On the very first load nothing above the list exists yet, so hold that space too.
+    // Otherwise the intro and the ruler arrive together and shove the whole page down.
+    const first = !REGION;
+    if (first) {
+      const intro = $('#intro');
+      intro.textContent = '';
+      ['sk-sub', 'sk-h1', 'sk-b', 'sk-b2', 'sk-btn'].forEach(c => intro.append(el('div', 'sk-x ' + c)));
+      const ru = $('#ruler');
+      ru.textContent = '';
+      ru.append(el('div', 'sk-x sk-ru-c'), el('div', 'sk-x sk-ru-r'));
+      ru.hidden = false;
+    } else {
+      $('#ruler').hidden = true;
+    }
+
+    for (let i = 0; i < (first ? 9 : 7); i++) {
+      const r = el('div', 'sk');
+      r.append(el('span', 'sk-f'), el('span', 'sk-n'));
+      box.append(r);
+    }
   }
 
   /* ---------- render ---------- */
@@ -336,6 +402,7 @@
     box.textContent = '';
     const rows = REGION.data.stations.filter(matches);
     $('#empty').hidden = rows.length > 0;
+    renderRuler(rows);
     if (!rows.length) return;
 
     const order = META.categories.map(c => c.id);
@@ -368,9 +435,104 @@
     });
   }
 
+  /* ---------- spectrum ruler ---------- */
+
+  // Where the listed frequencies actually sit across the radio's tuning range. Log scale,
+  // because 0.5–999 MHz is three decades and a linear rail would bunch everything at the end.
+  const LO = 0.5, HI = 999;
+  const SPAN = Math.log10(HI / LO);
+  const pos = f => (Math.log10(f) - Math.log10(LO)) / SPAN;
+  const BANDS = [{ n: 'HF', a: LO, b: 30 }, { n: 'VHF', a: 30, b: 300 }, { n: 'UHF', a: 300, b: HI }];
+
+  function renderRuler(rows) {
+    const box = $('#ruler');
+    box.textContent = '';
+    const pts = rows.filter(s => s.f >= LO && s.f <= HI);
+    box.hidden = pts.length < 2;
+    if (box.hidden) return;
+
+    const cap = el('div', 'ru-cap');
+    cap.append(el('span', 'ru-t', t('spectrum')));
+    cap.append(el('span', 'ru-h', t('rulerHint')));
+    box.append(cap);
+
+    const rail = el('button', 'ru-rail');
+    rail.type = 'button';
+    rail.setAttribute('aria-label', t('rulerHint'));
+
+    BANDS.forEach(b => {
+      const seg = el('span', 'ru-band');
+      seg.style.left = pct(pos(b.a));
+      seg.style.width = pct(pos(b.b) - pos(b.a));
+      seg.append(el('em', null, b.n));
+      rail.append(seg);
+    });
+
+    pts.forEach(s => {
+      const k = el('span', 'ru-k' + (s.dig ? ' k-dig' : s.avoid ? ' k-avd' : ''));
+      k.style.left = pct(pos(s.f));
+      rail.append(k);
+    });
+
+    const cur = el('span', 'ru-cur'), out = el('span', 'ru-out');
+    rail.append(cur, out);
+
+    // Snap to the nearest listed entry rather than a raw frequency, so a rough tap with a
+    // thumb still lands on something real.
+    const nearest = e => {
+      const r = rail.getBoundingClientRect();
+      const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      const f = LO * Math.pow(HI / LO, x);
+      return pts.reduce((best, s) =>
+        Math.abs(Math.log10(s.f / f)) < Math.abs(Math.log10(best.f / f)) ? s : best, pts[0]);
+    };
+
+    rail.addEventListener('pointermove', e => {
+      const s = nearest(e);
+      cur.style.left = pct(pos(s.f));
+      // Keep the readout clear of the rounded ends so it is never half clipped.
+      out.style.left = pct(Math.min(.92, Math.max(.08, pos(s.f))));
+      out.textContent = fmtFreq(s.f) + ' ' + unit(s.f);
+      rail.classList.add('live');
+    });
+    rail.addEventListener('pointerleave', () => rail.classList.remove('live'));
+    // A finger never leaves the rail the way a cursor does, so clear the readout on lift.
+    rail.addEventListener('pointerup', e => {
+      if (e.pointerType !== 'mouse') setTimeout(() => rail.classList.remove('live'), 700);
+    });
+    rail.addEventListener('pointercancel', () => rail.classList.remove('live'));
+    rail.addEventListener('click', e => jumpTo(nearest(e)));
+    box.append(rail);
+
+    const ax = el('div', 'ru-ax');
+    [1, 10, 100, 999].forEach((f, i) => {
+      const l = el('span', null, i === 3 ? f + ' MHz' : String(f));
+      l.style.left = pct(pos(f));
+      ax.append(l);
+    });
+    box.append(ax);
+  }
+
+  const pct = v => (v * 100).toFixed(3) + '%';
+
+  function jumpTo(s) {
+    const node = document.querySelector(`.row[data-k="${s.k}"]`);
+    if (!node) return;
+    node.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
+    flash(node);
+    buzz(8);
+  }
+
+  function flash(node) {
+    node.classList.remove('hit');
+    requestAnimationFrame(() => node.classList.add('hit'));
+    setTimeout(() => node.classList.remove('hit'), 1100);
+  }
+
   function row(s) {
     const b = el('button', 'row' + (s.dig ? ' dig' : '') + (s.avoid ? ' avd' : ''));
     b.type = 'button';
+    b.dataset.k = s.k;
 
     const f = el('div', 'f');
     if (s.f > 0) {
@@ -407,6 +569,8 @@
       if (s.f <= 0) { toast(t('verify')); return; }
       const txt = fmtFreq(s.f) + ' ' + unit(s.f);
       copy(txt);
+      flash(b);
+      buzz(14);
       toast(t('copied') + ' · ' + txt);
     });
     return b;
@@ -535,14 +699,23 @@
       LANG = LANG === 'zh' ? 'en' : 'zh';
       localStorage.setItem('aw.lang', LANG);
       document.documentElement.dataset.lang = LANG;
-      applyStatic();
-      buildScopeTabs();
-      buildRegionTabs();
-      buildCatTabs();
-      document.querySelectorAll('#regions .chip[data-id]').forEach(b =>
-        b.setAttribute('aria-pressed', String(b.dataset.id === REGION.meta.id)));
-      renderIntro();
-      render();
+      paint(() => {
+        applyStatic();
+        buildCountry();
+        buildRegionTabs();
+        buildCatTabs();
+        renderIntro();
+        render();
+      });
+    });
+
+    const cty = $('#cty'), ctyBtn = $('#btn-cty');
+    ctyBtn.addEventListener('click', () => countryMenu(!cty.classList.contains('open')));
+    document.addEventListener('pointerdown', e => {
+      if (cty.classList.contains('open') && !cty.contains(e.target)) countryMenu(false);
+    });
+    cty.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { countryMenu(false); ctyBtn.focus(); }
     });
 
     addEventListener('online', netState);

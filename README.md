@@ -6,13 +6,13 @@ The point is narrow: you arrive somewhere, you open the site, you find frequenci
 
 ## What's covered
 
-Navigation is split into three tabs.
+You pick a country once in the header; everything below it is a region of that country.
 
 **United States** — twenty regions: a nationwide set plus SF Bay Area, San Jose & South Bay, Central Coast, Sierra Nevada, Los Angeles & Orange County, San Diego, Desert Southwest, Utah Canyon Country, Colorado Rockies, Texas Triangle, Chicago & Great Lakes, Boston & New England, New York Metro, Washington DC, Florida & Space Coast, Yellowstone & Tetons, Pacific Northwest, Alaska and Hawai‘i.
 
 **China** — nine regions: a nationwide set covering the band plan and the licence-free channels, plus Beijing & the capital region, Shanghai & the Yangtze Delta, Qingdao & the Shandong coast, Chengdu & Chongqing, the Greater Bay Area, the Western Plateau, the Northwest, and the Northeast. The divisions follow how radio actually behaves rather than provincial boundaries — the plateau and the northwest are grouped by terrain and road corridor because that is what determines what you can hear.
 
-**Private Link** — recommended clean, quiet channels for talking to your own group, with a separate page per country because the answer is genuinely different in each.
+**Private Link** — recommended clean, quiet channels for talking to your own group. It is the last entry in each country's region strip, set apart by a divider because it is a channel set rather than a place, and the answer is genuinely different in each country.
 
 Ten categories: private link, aviation, weather, amateur, parks and public lands, marine, rail and transit, broadcast, public safety, and oddities such as satellites, HF time signals and travellers' information stations.
 
@@ -44,13 +44,14 @@ Amateur repeaters change tone and offset more often than anything else here, so 
 ## Features
 
 - **Bilingual** — English and 中文, toggled in the header, remembered between visits.
-- **Country tabs** — a segmented control switches between the United States, China and the private-link pages; region chips below it filter to the selected country.
-- **Near me** — browser geolocation picks the closest region across both countries and switches tab automatically.
+- **Country as a setting** — a compact control in the header switches between the United States and China. It is chosen once and remembered, which leaves the chip strip below as the only place picker rather than two strips that look alike.
+- **Spectrum ruler** — a log-scale rail above the list shows where the visible entries sit across 0.5–999 MHz, split into HF, VHF and UHF. Tap it to jump to the nearest entry; the ticks also show at a glance how busy each band is.
+- **Near me** — browser geolocation picks the closest region across both countries and switches country automatically.
 - **CHIRP export** — download a region as a CHIRP-compatible CSV and program the radio in one shot. Digital entries, "avoid" entries and anything outside 0.5–999 MHz are filtered out automatically, and the tuning step is set to 5 or 12.5 kHz per channel as appropriate.
 - **Offline** — a service worker precaches every region on first load, so the site works in airplane mode. Installable as a PWA.
-- **Tap to copy** — any row copies its frequency.
-- Keyboard: `/` focuses search, `Esc` clears it.
-- URLs are shareable: `#/us/bay-area`, `#/cn/shanghai`, `#/link/link-us`. A bare `#/bay-area` still resolves.
+- **Tap to copy** — any row copies its frequency, with a flash and a short vibration to confirm it without you having to read the screen.
+- Keyboard: `/` focuses search, `Esc` clears it or closes the country menu.
+- URLs are shareable: `#/us/bay-area`, `#/cn/shanghai`, `#/us/link-us`. A bare `#/bay-area` still resolves.
 
 ## Development
 
@@ -67,7 +68,7 @@ One gotcha when developing: because the service worker is cache-first, reusing a
 
 ### Adding a region
 
-1. Add an entry to `data/regions.json` with an `id`, a `scope` (`us`, `cn` or `link`), bilingual names, and a `lat`/`lon` centroid for the "near me" search.
+1. Add an entry to `data/regions.json` with an `id`, a `scope` (the country, `us` or `cn`), bilingual names, and a `lat`/`lon` centroid for the "near me" search. Add `"kind": "link"` for a private-link page, which moves it past a divider at the end of the strip. A region with a null `lat` is skipped by "near me".
 2. Create `data/r/<id>.json` with an `intro`, `introz` and a `stations` array.
 3. Bump `V` in `sw.js` so clients pick up the change. The region file list is derived from `regions.json` at install time, so there is nothing to add by hand.
 
