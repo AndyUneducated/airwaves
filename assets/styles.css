@@ -124,13 +124,13 @@ body::before {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* A clipped half-tagline says nothing; drop it and give the row to the controls. */
-@media (max-width: 640px) {
-  .brand-sep, .brand-sub { display: none; }
-}
-/* On a phone the country control earns the space more than the tagline does. */
+/* On a phone the controls earn the space more than the tagline does, and below that the
+   wordmark goes too: the mark still identifies the site, and a clipped "AIRWAVE" does not. */
 @media (max-width: 700px) {
   .brand-sep, .brand-sub { display: none; }
+}
+@media (max-width: 380px) {
+  .brand-name { display: none; }
 }
 
 .hd-tools {
@@ -139,6 +139,11 @@ body::before {
   gap: 9px;
   flex: 0 0 auto;
 }
+
+/* These controls are deliberately small, but a thumb needs 44px. Grow the hit area without
+   growing the pill — the inset stays inside the 9px gap so neighbours never steal a tap. */
+.hd-tools .chip-sm, .cty-b { position: relative; }
+.hd-tools .chip-sm::after, .cty-b::after { content: ""; position: absolute; inset: -8px -4px; }
 
 .net {
   display: inline-flex;
@@ -358,6 +363,15 @@ body::before {
 }
 
 .chip-sm { font-size: 11.5px; padding: 4px 10px; font-family: var(--mono); letter-spacing: .04em; }
+
+/* The one switch that changes what kind of tool this is, so it looks like a fader. */
+.chip-mode { display: inline-flex; align-items: center; gap: 5px; padding-left: 8px; }
+.chip-mode svg {
+  width: 12px; height: 12px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round;
+}
+.chip-mode svg circle { fill: currentColor; stroke: none; }
 
 /* Fade the edges of the horizontal strips so it reads as scrollable rather than clipped. */
 .fade-r {
@@ -730,6 +744,19 @@ main {
   margin-top: 6px;
   max-width: 74ch;
 }
+
+/* Pro detail: the numbers you would otherwise be working out on the back of your hand. */
+.px {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 9px;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--tx-3);
+}
+.px-i:not(:first-child)::before { content: "·"; margin-right: 9px; opacity: .45; }
 
 .meta {
   display: flex;

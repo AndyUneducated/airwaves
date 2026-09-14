@@ -19,6 +19,11 @@
       offline: 'offline · cached',
       langBtn: '中文',
       country: 'Country',
+      pro: 'Pro',
+      proLabel: 'Pro mode',
+      proOn: 'Pro mode — the technical detail behind every entry',
+      proOff: 'Simple mode',
+      rptIn: 'in',
       spectrum: 'Spectrum',
       rulerHint: 'Tap the spectrum to jump to the nearest entry',
       digNote: 'Struck-through rows are things a VX-6 cannot give you: digital and encrypted systems it has no way to decode, signals outside its tuning range, and a few services that simply do not exist here. They are listed so you know not to spend an evening hunting for them.',
@@ -45,6 +50,11 @@
       offline: '离线 · 已缓存',
       langBtn: 'EN',
       country: '国家',
+      pro: '专业',
+      proLabel: '专业模式',
+      proOn: '专业模式 —— 每条频率背后的技术细节',
+      proOff: '简洁模式',
+      rptIn: '上行',
       spectrum: '频谱',
       rulerHint: '点击频谱可跳到最接近的条目',
       digNote: '带删除线的条目是 VX-6 无法提供的内容：它无法解码的数字与加密系统、超出其调谐范围的信号，以及在当地根本不存在的业务。列出来是为了让你知道不必白费一晚上去找。',
@@ -75,6 +85,22 @@
   let SCOPE = null, CAT = 'all', Q = '';
   const CACHE = new Map();
 
+  // Two modes, one site. Simple is the whole point of the thing: a frequency, a name, go.
+  // Pro layers the instruments on top for someone standing there with the radio in hand.
+  let MODE = startMode();
+  const isPro = () => MODE === 'pro';
+
+  // ?pro=1 makes a pro-mode view shareable and testable without touching the hash router.
+  function startMode() {
+    const q = new URLSearchParams(location.search).get('pro');
+    if (q === '1' || q === '0') {
+      const m = q === '1' ? 'pro' : 'simple';
+      localStorage.setItem('aw.mode', m);
+      return m;
+    }
+    return localStorage.getItem('aw.mode') === 'pro' ? 'pro' : 'simple';
+  }
+
   const t = k => { const v = T[LANG][k]; return v === undefined ? T.en[k] : v; };
   const L = (o, key) => (LANG === 'zh' && o[key.z]) ? o[key.z] : o[key.n];
 
@@ -91,6 +117,7 @@
 
   async function boot() {
     document.documentElement.dataset.lang = LANG;
+    applyMode();
     try {
       META = await (await fetch('data/regions.json', { cache: 'no-cache' })).json();
     } catch (e) {
@@ -135,7 +162,26 @@
     });
     $('#q').placeholder = t('search');
     $('#btn-lang').textContent = t('langBtn');
+    $('#mode-t').textContent = t('pro');
+    $('#btn-mode').title = t('proLabel') + ' (P)';
+    $('#btn-mode').setAttribute('aria-label', t('proLabel'));
     document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : 'en';
+  }
+
+  /* ---------- mode ---------- */
+
+  function applyMode() {
+    document.documentElement.dataset.mode = MODE;
+    $('#btn-mode').setAttribute('aria-pressed', String(isPro()));
+  }
+
+  function toggleMode() {
+    MODE = isPro() ? 'simple' : 'pro';
+    localStorage.setItem('aw.mode', MODE);
+    applyMode();
+    buzz(isPro() ? 14 : 8);
+    toast(isPro() ? t('proOn') : t('proOff'));
+    if (REGION) paint(() => { renderIntro(); render(); });
   }
 
   /* ---------- country ---------- */
@@ -424,6 +470,7 @@
   const SPAN = Math.log10(HI / LO);
   const pos = f => (Math.log10(f) - Math.log10(LO)) / SPAN;
   const BANDS = [{ n: 'HF', a: LO, b: 30 }, { n: 'VHF', a: 30, b: 300 }, { n: 'UHF', a: 300, b: HI }];
+  const inBand = (f, b) => f >= b.a && (b.b === HI ? f <= b.b : f < b.b);
 
   function renderRuler(rows) {
     const box = $('#ruler');
@@ -445,7 +492,8 @@
       const seg = el('span', 'ru-band');
       seg.style.left = pct(pos(b.a));
       seg.style.width = pct(pos(b.b) - pos(b.a));
-      seg.append(el('em', null, b.n));
+      const n = pts.filter(s => inBand(s.f, b)).length;
+      seg.append(el('em', null, isPro() ? `${b.n} ${n}` : b.n));
       rail.append(seg);
     });
 
@@ -510,6 +558,44 @@
     setTimeout(() => node.classList.remove('hit'), 1100);
   }
 
+  /* ---------- pro detail ---------- */
+
+  // Amateur allocations by wavelength, the union of the US and Chinese band plans. Only the
+  // name is shown, because a ham reads "2 m" faster than "144–148 MHz".
+  const HAM = [
+    [1.8, 2.0, '160 m'], [3.5, 4.0, '80 m'], [5.3, 5.45, '60 m'], [7.0, 7.3, '40 m'],
+    [10.1, 10.15, '30 m'], [14.0, 14.35, '20 m'], [18.068, 18.168, '17 m'],
+    [21.0, 21.45, '15 m'], [24.89, 24.99, '12 m'], [28.0, 29.7, '10 m'], [50, 54, '6 m'],
+    [144, 148, '2 m'], [219, 225, '1.25 m'], [420, 450, '70 cm'], [902, 928, '33 cm']
+  ];
+  const hamBand = f => (HAM.find(b => f >= b[0] && f <= b[1]) || [])[2];
+
+  // A quarter wave in free space. Standing on a ridge wondering whether the stock rubber
+  // duck is hopeless, this is the number that answers it.
+  function quarterWave(f) {
+    const m = 74.9481 / f;
+    return m >= 1 ? `${m < 10 ? m.toFixed(2) : Math.round(m)} m` : `${Math.round(m * 100)} cm`;
+  }
+
+  const offsetMHz = o => parseFloat(String(o).replace(/[−–]/g, '-'));
+
+  function proLine(s) {
+    const bits = [];
+    const band = hamBand(s.f);
+    if (band) bits.push(band);
+    // The listed frequency is what the repeater sends out. This is the one you transmit on,
+    // and no radio or listing shows it to you.
+    if (s.o) {
+      const input = s.f + offsetMHz(s.o);
+      if (isFinite(input) && input > 0) bits.push(`${t('rptIn')} ${fmtFreq(input)}`);
+    }
+    bits.push('λ/4 ' + quarterWave(s.f));
+
+    const box = el('div', 'px');
+    bits.forEach(x => box.append(el('span', 'px-i', x)));
+    return box;
+  }
+
   function row(s) {
     const b = el('button', 'row' + (s.dig ? ' dig' : '') + (s.avoid ? ' avd' : ''));
     b.type = 'button';
@@ -530,6 +616,7 @@
     if (alt && alt !== (LANG === 'zh' ? s.z : s.n)) nm.append(el('div', 'alt', alt));
     const d = LANG === 'zh' ? (s.dz || s.d) : s.d;
     if (d) nm.append(el('div', 'd', d));
+    if (isPro() && s.f > 0) nm.append(proLine(s));
     b.append(nm);
 
     const m = el('div', 'meta');
@@ -672,9 +759,16 @@
     clear.addEventListener('click', () => { q.value = ''; Q = ''; clear.hidden = true; render(); q.focus(); });
 
     document.addEventListener('keydown', e => {
-      if (e.key === '/' && document.activeElement !== q) { e.preventDefault(); q.focus(); q.select(); }
-      else if (e.key === 'Escape' && document.activeElement === q) { q.value = ''; Q = ''; clear.hidden = true; render(); q.blur(); }
+      const typing = document.activeElement === q;
+      if (e.key === '/' && !typing) { e.preventDefault(); q.focus(); q.select(); }
+      else if (e.key === 'Escape' && typing) { q.value = ''; Q = ''; clear.hidden = true; render(); q.blur(); }
+      else if ((e.key === 'p' || e.key === 'P') && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        toggleMode();
+      }
     });
+
+    $('#btn-mode').addEventListener('click', toggleMode);
 
     $('#btn-lang').addEventListener('click', () => {
       LANG = LANG === 'zh' ? 'en' : 'zh';

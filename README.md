@@ -41,6 +41,14 @@ Chinese entries lean much harder on **Verify** than American ones, and deliberat
 
 Amateur repeaters change tone and offset more often than anything else here, so each region links out to RepeaterBook or CRAC.
 
+## Two modes
+
+The site opens in **Simple** mode: a frequency, a name, a short description, and nothing else in the way. That is the mode the whole thing is designed around — standing outside, one hand, bright sun, no signal.
+
+**Pro** mode is the switch in the header, or the `P` key. It layers instruments on top for someone who is actually holding the radio. Under every entry it adds the amateur band the frequency falls in, the frequency you would transmit on to reach a repeater, and the quarter-wave antenna length; the spectrum rail also gains a count per band. All of it is computed in the browser, so Pro works offline exactly like the rest of the site.
+
+The choice is remembered. `?pro=1` and `?pro=0` force a mode, which makes a Pro view shareable.
+
 ## Features
 
 - **Bilingual** — English and 中文, toggled in the header, remembered between visits.
@@ -50,8 +58,8 @@ Amateur repeaters change tone and offset more often than anything else here, so 
 - **CHIRP export** — download a region as a CHIRP-compatible CSV and program the radio in one shot. Digital entries, "avoid" entries and anything outside 0.5–999 MHz are filtered out automatically, and the tuning step is set to 5 or 12.5 kHz per channel as appropriate.
 - **Offline** — a service worker precaches every region on first load, so the site works in airplane mode. Installable as a PWA.
 - **Tap to copy** — any row copies its frequency, with a flash and a short vibration to confirm it without you having to read the screen.
-- Keyboard: `/` focuses search, `Esc` clears it or closes the country menu.
-- URLs are shareable: `#/us/bay-area`, `#/cn/shanghai`, `#/us/link-us`. A bare `#/bay-area` still resolves.
+- Keyboard: `/` focuses search, `Esc` clears it or closes the country menu, `P` switches mode.
+- URLs are shareable: `#/us/bay-area`, `#/cn/shanghai`, `#/us/link-us`. A bare `#/bay-area` still resolves, and `?pro=1` opens in Pro mode.
 
 ## Development
 
