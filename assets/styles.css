@@ -498,15 +498,56 @@ main {
   display: flex;
   align-items: baseline;
   gap: 10px;
+  min-height: 17px;
   font-family: var(--mono);
   font-size: 10.5px;
   letter-spacing: .09em;
   text-transform: uppercase;
   margin-bottom: 7px;
 }
-.ru-t { color: var(--tx-3); }
-.ru-h { color: var(--tx-3); opacity: .62; text-transform: none; letter-spacing: 0; font-family: var(--sans); font-size: 12px; }
+.ru-t { color: var(--tx-3); flex: 0 0 auto; }
+.ru-h {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--tx-3);
+  opacity: .62;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--sans);
+  font-size: 12px;
+}
 @media (max-width: 560px) { .ru-h { display: none; } }
+
+/* In pro mode this slot is the tuning readout, so it has to survive a narrow screen. */
+html[data-mode="pro"] .ru-h { display: block; }
+html[data-mode="pro"] .ru-h.ru-live {
+  opacity: 1;
+  color: var(--ac);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ru-mute {
+  flex: 0 0 auto;
+  align-self: center;
+  background: none;
+  border: 0;
+  padding: 3px;
+  margin: -3px -3px -3px 0;
+  cursor: pointer;
+  color: var(--tx-3);
+  line-height: 0;
+}
+.ru-mute svg {
+  width: 14px; height: 14px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+.ru-mute[aria-pressed="true"] { color: var(--ac); }
+.ru-mute:hover { color: var(--tx); }
 
 .ru-rail {
   position: relative;
@@ -558,6 +599,37 @@ main {
 }
 .ru-k.k-dig { background: var(--dead); height: 10px; opacity: .55; box-shadow: none; }
 .ru-k.k-avd { background: var(--warn); height: 13px; box-shadow: 0 0 6px rgba(245, 182, 86, .3); }
+
+/* ---------- pro: the rail becomes a tuning knob ---------- */
+
+/* Taller, because now you drag it with a thumb; pan-y so the page still scrolls under it. */
+html[data-mode="pro"] .ru-rail {
+  height: 46px;
+  touch-action: pan-y;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* A sweep must not turn into a text selection dragging the page along with it. */
+html.tuning, html.tuning body { user-select: none; -webkit-user-select: none; }
+html[data-mode="pro"] .ru-k { height: 22px; }
+html[data-mode="pro"] .ru-k.k-dig { height: 12px; }
+html[data-mode="pro"] .ru-rail.lock { box-shadow: inset 0 0 26px rgba(94, 242, 168, .11); }
+
+/* Sweeping is continuous, so the cursor must not lag behind the finger. */
+html[data-mode="pro"] .ru-cur, html[data-mode="pro"] .ru-out { transition: opacity .12s; }
+html[data-mode="pro"] .ru-cur { width: 2px; margin-left: -1px; box-shadow: 0 0 10px rgba(94, 242, 168, .55); }
+
+/* Off a detent the readout is a plain number; on one it lights up. */
+html[data-mode="pro"] .ru-rail:not(.lock) .ru-out { background: var(--tx-3); color: var(--bg-1); }
+
+.ru-k.k-on {
+  width: 3px;
+  height: 30px;
+  opacity: 1;
+  background: var(--ac);
+  box-shadow: 0 0 14px rgba(94, 242, 168, .85);
+}
 
 .ru-cur {
   position: absolute;
@@ -626,6 +698,7 @@ main {
 .sk-btn { width: 164px; height: 33px; border-radius: 8px; margin-bottom: 4px; }
 .sk-ru-c { width: 86px; height: 10px; margin-bottom: 7px; }
 .sk-ru-r { height: 34px; border-radius: 8px; margin-bottom: 17px; }
+html[data-mode="pro"] .sk-ru-r { height: 46px; }
 .sk-f { width: 78px; }
 .sk-n { width: min(62%, 360px); }
 .sk:nth-child(even) .sk-n { width: min(44%, 280px); }

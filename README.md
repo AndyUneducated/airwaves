@@ -45,7 +45,13 @@ Amateur repeaters change tone and offset more often than anything else here, so 
 
 The site opens in **Simple** mode: a frequency, a name, a short description, and nothing else in the way. That is the mode the whole thing is designed around — standing outside, one hand, bright sun, no signal.
 
-**Pro** mode is the switch in the header, or the `P` key. It layers instruments on top for someone who is actually holding the radio. Under every entry it adds the amateur band the frequency falls in, the frequency you would transmit on to reach a repeater, and the quarter-wave antenna length; the spectrum rail also gains a count per band. All of it is computed in the browser, so Pro works offline exactly like the rest of the site.
+**Pro** mode is the switch in the header, or the `P` key. It layers instruments on top for someone who is actually holding the radio:
+
+- Under every entry, the amateur band the frequency falls in, the frequency you would transmit on to reach a repeater, and the quarter-wave antenna length.
+- The spectrum rail becomes a **tuning knob**. Drag it and the frequency sweeps continuously; listed entries are detents you can feel and hear, band edges give a heavier click, and the receiver hiss drops away as you settle onto something — so you can find an entry without looking at the screen. Release to jump to it. Arrow keys, `Home` and `End` step entry by entry, and the speaker icon mutes the sound for good.
+- Each band on the rail is labelled with how many entries it holds.
+
+All of it is computed in the browser, so Pro works offline exactly like the rest of the site. Nothing plays audio until you actually touch the rail.
 
 The choice is remembered. `?pro=1` and `?pro=0` force a mode, which makes a Pro view shareable.
 

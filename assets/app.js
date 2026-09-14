@@ -26,6 +26,8 @@
       rptIn: 'in',
       spectrum: 'Spectrum',
       rulerHint: 'Tap the spectrum to jump to the nearest entry',
+      wheelHint: 'Drag to tune · release to jump',
+      sound: 'Tuning sound',
       digNote: 'Struck-through rows are things a VX-6 cannot give you: digital and encrypted systems it has no way to decode, signals outside its tuning range, and a few services that simply do not exist here. They are listed so you know not to spend an evening hunting for them.',
       copyHint: 'Tap any row to copy its frequency',
       verify: 'Verify locally',
@@ -57,6 +59,8 @@
       rptIn: '上行',
       spectrum: '频谱',
       rulerHint: '点击频谱可跳到最接近的条目',
+      wheelHint: '拖动调谐 · 松手跳转',
+      sound: '调谐声',
       digNote: '带删除线的条目是 VX-6 无法提供的内容：它无法解码的数字与加密系统、超出其调谐范围的信号，以及在当地根本不存在的业务。列出来是为了让你知道不必白费一晚上去找。',
       copyHint: '点击任意一行即可复制频率',
       verify: '请在当地核实',
@@ -462,6 +466,66 @@
     });
   }
 
+  /* ---------- tuning sound ---------- */
+
+  // Receiver hiss that quiets as you tune onto something, plus a detent click. It only ever
+  // runs while a finger or cursor is on the rail, and nothing is built until the first
+  // gesture, so nobody gets a noise they did not ask for.
+  const AUDIO = { ctx: null, gain: null, on: localStorage.getItem('aw.audio') !== '0' };
+
+  function audio() {
+    if (!AUDIO.on) return null;
+    if (AUDIO.ctx) return AUDIO.ctx;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    try {
+      const ctx = new Ctx();
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      // Band-limited so it sounds like a squelch tail rather than a burst of static.
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 1500;
+      bp.Q.value = 0.7;
+      const g = ctx.createGain();
+      g.gain.value = 0;
+      src.connect(bp).connect(g).connect(ctx.destination);
+      src.start();
+      AUDIO.ctx = ctx;
+      AUDIO.gain = g;
+      return ctx;
+    } catch (e) { return null; }
+  }
+
+  function hiss(level) {
+    const ctx = audio();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    AUDIO.gain.gain.setTargetAtTime(level * 0.05, ctx.currentTime, 0.04);
+  }
+
+  function silence() {
+    if (AUDIO.ctx && AUDIO.gain) AUDIO.gain.gain.setTargetAtTime(0, AUDIO.ctx.currentTime, 0.05);
+  }
+
+  function tick(strong) {
+    const ctx = audio();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'square';
+    o.frequency.value = strong ? 880 : 1720;
+    g.gain.setValueAtTime(strong ? 0.045 : 0.028, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (strong ? 0.05 : 0.022));
+    o.connect(g).connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.07);
+  }
+
   /* ---------- spectrum ruler ---------- */
 
   // Where the listed frequencies actually sit across the radio's tuning range. Log scale,
@@ -475,62 +539,55 @@
   function renderRuler(rows) {
     const box = $('#ruler');
     box.textContent = '';
-    const pts = rows.filter(s => s.f >= LO && s.f <= HI);
+    silence();
+    const pts = rows.filter(s => s.f >= LO && s.f <= HI).sort((a, b) => a.f - b.f);
     box.hidden = pts.length < 2;
     if (box.hidden) return;
+    const pro = isPro();
 
     const cap = el('div', 'ru-cap');
     cap.append(el('span', 'ru-t', t('spectrum')));
-    cap.append(el('span', 'ru-h', t('rulerHint')));
+    const hint = el('span', 'ru-h', pro ? t('wheelHint') : t('rulerHint'));
+    cap.append(hint);
+    if (pro) cap.append(soundBtn());
     box.append(cap);
 
     const rail = el('button', 'ru-rail');
     rail.type = 'button';
-    rail.setAttribute('aria-label', t('rulerHint'));
+    rail.setAttribute('aria-label', pro ? t('wheelHint') : t('rulerHint'));
 
     BANDS.forEach(b => {
       const seg = el('span', 'ru-band');
       seg.style.left = pct(pos(b.a));
       seg.style.width = pct(pos(b.b) - pos(b.a));
       const n = pts.filter(s => inBand(s.f, b)).length;
-      seg.append(el('em', null, isPro() ? `${b.n} ${n}` : b.n));
+      seg.append(el('em', null, pro ? `${b.n} ${n}` : b.n));
       rail.append(seg);
     });
 
+    const ticks = new Map();
     pts.forEach(s => {
       const k = el('span', 'ru-k' + (s.dig ? ' k-dig' : s.avoid ? ' k-avd' : ''));
       k.style.left = pct(pos(s.f));
+      ticks.set(s.k, k);
       rail.append(k);
     });
 
     const cur = el('span', 'ru-cur'), out = el('span', 'ru-out');
     rail.append(cur, out);
 
-    // Snap to the nearest listed entry rather than a raw frequency, so a rough tap with a
-    // thumb still lands on something real.
-    const nearest = e => {
+    const freqAt = clientX => {
       const r = rail.getBoundingClientRect();
-      const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-      const f = LO * Math.pow(HI / LO, x);
-      return pts.reduce((best, s) =>
-        Math.abs(Math.log10(s.f / f)) < Math.abs(Math.log10(best.f / f)) ? s : best, pts[0]);
+      const x = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+      return LO * Math.pow(HI / LO, x);
     };
+    // Nearest by position on the rail, not by ratio, so "nearest" means what your eye means.
+    const nearest = f => pts.reduce((best, s) =>
+      Math.abs(pos(s.f) - pos(f)) < Math.abs(pos(best.f) - pos(f)) ? s : best, pts[0]);
 
-    rail.addEventListener('pointermove', e => {
-      const s = nearest(e);
-      cur.style.left = pct(pos(s.f));
-      // Keep the readout clear of the rounded ends so it is never half clipped.
-      out.style.left = pct(Math.min(.92, Math.max(.08, pos(s.f))));
-      out.textContent = fmtFreq(s.f) + ' ' + unit(s.f);
-      rail.classList.add('live');
-    });
-    rail.addEventListener('pointerleave', () => rail.classList.remove('live'));
-    // A finger never leaves the rail the way a cursor does, so clear the readout on lift.
-    rail.addEventListener('pointerup', e => {
-      if (e.pointerType !== 'mouse') setTimeout(() => rail.classList.remove('live'), 700);
-    });
-    rail.addEventListener('pointercancel', () => rail.classList.remove('live'));
-    rail.addEventListener('click', e => jumpTo(nearest(e)));
+    if (pro) tuneWheel(rail, pts, cur, out, hint, ticks, freqAt, nearest);
+    else tapRail(rail, cur, out, freqAt, nearest);
+
     box.append(rail);
 
     const ax = el('div', 'ru-ax');
@@ -540,6 +597,153 @@
       ax.append(l);
     });
     box.append(ax);
+  }
+
+  // Simple mode: the rail reads out the nearest entry and a tap jumps to it.
+  function tapRail(rail, cur, out, freqAt, nearest) {
+    const show = e => {
+      const s = nearest(freqAt(e.clientX));
+      cur.style.left = pct(pos(s.f));
+      // Keep the readout clear of the rounded ends so it is never half clipped.
+      out.style.left = pct(Math.min(.92, Math.max(.08, pos(s.f))));
+      out.textContent = fmtFreq(s.f) + ' ' + unit(s.f);
+      rail.classList.add('live');
+    };
+    rail.addEventListener('pointermove', show);
+    rail.addEventListener('pointerleave', () => rail.classList.remove('live'));
+    // A finger never leaves the rail the way a cursor does, so clear the readout on lift.
+    rail.addEventListener('pointerup', e => {
+      if (e.pointerType !== 'mouse') setTimeout(() => rail.classList.remove('live'), 700);
+    });
+    rail.addEventListener('pointercancel', () => rail.classList.remove('live'));
+    rail.addEventListener('click', e => jumpTo(nearest(freqAt(e.clientX))));
+  }
+
+  // Pro mode: the same rail becomes a tuning knob. Sweeping it is continuous, entries are
+  // detents you can feel and hear, and the hiss drops away as you settle onto one — which is
+  // what tuning a real receiver is like, and means you can find something without looking.
+  function tuneWheel(rail, pts, cur, out, hint, ticks, freqAt, nearest) {
+    const idle = t('wheelHint');
+    const band = f => (BANDS.find(b => inBand(f, b)) || BANDS[0]).n;
+    let held = null, lockedK = null, lastBand = null, kIdx = 0, lastTick = 0;
+
+    function show(f, quiet) {
+      const near = nearest(f);
+      // A detent is a distance on screen, not a ratio: 15px is about a thumb's precision.
+      const away = Math.abs(pos(f) - pos(near.f)) * rail.clientWidth;
+      const lock = Math.max(0, 1 - away / 15);
+      const on = lock > .5 ? near : null;
+      // Inside a detent the knob snaps, the way a real one does. The log scale is steep
+      // enough that 15px can span a third of an octave, so a raw readout would disagree
+      // with the entry the rail says it is locked to.
+      const at = on ? on.f : f;
+
+      cur.style.left = pct(pos(at));
+      out.style.left = pct(Math.min(.92, Math.max(.08, pos(at))));
+      out.textContent = fmtFreq(at) + ' ' + unit(at);
+      rail.classList.add('live');
+      rail.classList.toggle('lock', !!on);
+
+      if (on && on.k !== lockedK) {
+        lockedK = on.k;
+        ticks.forEach((n, k) => n.classList.toggle('k-on', k === on.k));
+        // Dense clusters would otherwise fire dozens of clicks a second.
+        const now = performance.now();
+        if (!quiet && now - lastTick > 45) { tick(false); buzz(6); lastTick = now; }
+      } else if (!on && lockedK !== null) {
+        lockedK = null;
+        ticks.forEach(n => n.classList.remove('k-on'));
+      }
+
+      const b = band(f);
+      if (lastBand && b !== lastBand && !quiet) { tick(true); buzz(17); }
+      lastBand = b;
+
+      hint.textContent = on
+        ? `${fmtFreq(on.f)} ${unit(on.f)} · ${LANG === 'zh' ? (on.z || on.n) : on.n}`
+        : `${b} · ${fmtFreq(f)} ${unit(f)}`;
+      hint.classList.add('ru-live');
+
+      if (!quiet) hiss(1 - lock);
+      return near;
+    }
+
+    function rest(delay) {
+      silence();
+      setTimeout(() => {
+        rail.classList.remove('live', 'lock');
+        ticks.forEach(n => n.classList.remove('k-on'));
+        hint.textContent = idle;
+        hint.classList.remove('ru-live');
+        lockedK = null;
+        lastBand = null;
+      }, delay);
+    }
+
+    rail.addEventListener('pointerdown', e => {
+      // Without this a drag turns into a text selection, which also auto-scrolls the page.
+      // It also suppresses the focus ring, which is right: pointer users do not need it and
+      // keyboard users still reach the rail with Tab.
+      e.preventDefault();
+      held = e.pointerId;
+      try { rail.setPointerCapture(e.pointerId); } catch (err) {}
+      document.documentElement.classList.add('tuning');
+      lastBand = null;
+      show(freqAt(e.clientX));
+    });
+    rail.addEventListener('pointermove', e => {
+      if (held === null) { if (e.pointerType === 'mouse') show(freqAt(e.clientX), true); return; }
+      show(freqAt(e.clientX));
+    });
+
+    const lift = e => {
+      if (held === null) return;
+      held = null;
+      try { rail.releasePointerCapture(e.pointerId); } catch (err) {}
+      document.documentElement.classList.remove('tuning');
+      jumpTo(nearest(freqAt(e.clientX)));
+      rest(e.pointerType === 'mouse' ? 0 : 900);
+    };
+    rail.addEventListener('pointerup', lift);
+    rail.addEventListener('pointercancel', lift);
+    rail.addEventListener('pointerleave', () => { if (held === null) rest(0); });
+
+    // The knob works from the keyboard too: step entry by entry along the band.
+    rail.addEventListener('keydown', e => {
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (step === undefined && e.key !== 'Home' && e.key !== 'End') return;
+      e.preventDefault();
+      kIdx = e.key === 'Home' ? 0
+        : e.key === 'End' ? pts.length - 1
+        : Math.min(pts.length - 1, Math.max(0, kIdx + step));
+      const s = pts[kIdx];
+      show(s.f, true);
+      tick(false);
+      jumpTo(s);
+    });
+  }
+
+  function soundBtn() {
+    const b = el('button', 'ru-mute');
+    b.type = 'button';
+    const draw = () => {
+      b.setAttribute('aria-pressed', String(AUDIO.on));
+      b.setAttribute('aria-label', t('sound'));
+      b.title = t('sound');
+      b.innerHTML = AUDIO.on
+        ? '<svg viewBox="0 0 24 24"><path d="M4 9.4h3.4L12 5.2v13.6L7.4 14.6H4z"/><path d="M15.6 9.4a4 4 0 0 1 0 5.2"/><path d="M18.4 6.9a7.6 7.6 0 0 1 0 10.2"/></svg>'
+        : '<svg viewBox="0 0 24 24"><path d="M4 9.4h3.4L12 5.2v13.6L7.4 14.6H4z"/><path d="M16 9.8l4.6 4.4M20.6 9.8L16 14.2"/></svg>';
+    };
+    draw();
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      AUDIO.on = !AUDIO.on;
+      localStorage.setItem('aw.audio', AUDIO.on ? '1' : '0');
+      if (!AUDIO.on) silence();
+      draw();
+      buzz(8);
+    });
+    return b;
   }
 
   const pct = v => (v * 100).toFixed(3) + '%';
