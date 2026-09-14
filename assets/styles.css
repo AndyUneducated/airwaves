@@ -795,11 +795,6 @@ main {
 }
 .notice b { color: var(--tx); font-weight: 550; }
 .notice + .notice { margin-top: 10px; }
-.notice-hi {
-  border-left-color: var(--ac);
-  background: linear-gradient(90deg, var(--ac-dim), transparent 60%), var(--bg-1);
-  color: var(--tx);
-}
 
 .empty {
   text-align: center;

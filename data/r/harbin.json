@@ -20,8 +20,8 @@
     { "f": 156.650, "n": "Bridge-to-Bridge — Ch 13", "z": "船桥互通 13 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine — Dalian" },
     { "f": 156.600, "n": "VTS — Ch 12", "z": "船舶交通管理 12 频道", "c": "marine", "m": "NFM", "conf": "check", "a": "Marine — Dalian" },
 
-    { "f": 409.7500, "n": "公众对讲机 — sweep all 20 channels", "z": "公众对讲机 · 20 个信道全扫", "c": "safety", "m": "NFM", "conf": "std", "a": "Licence-free band", "d": "Ice festival construction in Harbin, ski resort operations at Yabuli and Changbaishan, port work in Dalian. Winter puts a lot of people on this band.", "dz": "哈尔滨冰雪大世界的搭建、亚布力和长白山雪场的运营、大连的港区作业。冬季这个频段上人很多。" },
-    { "f": 409.9750, "n": "公众对讲机 Ch 19", "z": "公众对讲机 19 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Licence-free band" },
+    { "f": 409.7500, "n": "公众对讲机 — sweep all 20 channels", "z": "公众对讲机 · 20 个信道全扫", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "d": "Ice festival construction in Harbin, ski resort operations at Yabuli and Changbaishan, port work in Dalian. Winter puts a lot of people on this band.", "dz": "哈尔滨冰雪大世界的搭建、亚布力和长白山雪场的运营、大连的港区作业。冬季这个频段上人很多。" },
+    { "f": 409.9750, "n": "公众对讲机 Ch 19", "z": "公众对讲机 19 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band" },
     { "f": 0, "n": "Public security — encrypted PDT", "z": "公安 · 加密 PDT", "c": "safety", "m": "PDT", "dig": true, "conf": "high", "a": "Not receivable" },
 
     { "f": 145.500, "n": "2 m FM Calling", "z": "2 米 FM 呼叫频率", "c": "ham", "m": "FM", "conf": "high", "a": "Amateur", "d": "Winter conditions in the northeast are excellent for VHF. Very low noise and stable propagation across the plain.", "dz": "东北的冬季条件对 VHF 非常有利：底噪极低，平原上传播稳定。" },

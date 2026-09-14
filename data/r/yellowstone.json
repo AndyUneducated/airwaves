@@ -30,7 +30,7 @@
     { "f": 91.9, "n": "Wyoming Public Radio (KUWR network)", "z": "怀俄明公共广播 KUWR", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast" },
     { "f": 89.5, "n": "Jackson-area translator", "z": "杰克逊地区转播台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
 
-    { "f": 151.880, "n": "MURS — Xanterra / concessioner ops", "z": "MURS · 园内特许经营方作业", "c": "safety", "m": "NFM", "conf": "check", "a": "Commercial", "d": "Lodges, snowcoach operators, guide services and construction crews use license-free MURS and FRS heavily inside the park.", "dz": "园内旅馆、雪地车运营方、向导公司和施工队大量使用免执照 MURS 与 FRS。" },
+    { "f": 151.880, "n": "MURS — Xanterra / concessioner ops", "z": "MURS · 园内特许经营方作业", "c": "safety", "m": "NFM", "conf": "check", "a": "Commercial", "d": "Lodges, snowcoach operators, guide services and construction crews use MURS and FRS heavily inside the park.", "dz": "园内旅馆、雪地车运营方、向导公司和施工队大量使用 MURS 与 FRS。" },
     { "f": 462.5625, "n": "FRS Ch 1 — visitors & guides", "z": "FRS 1 频道 · 游客与向导", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial" },
     { "f": 155.7525, "n": "VCALL10 — interop", "z": "VCALL10 互通呼叫", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "d": "County sheriff and mutual aid across Park, Teton and Gallatin counties.", "dz": "Park、Teton 和 Gallatin 三县的县警与互助通信。" },
 

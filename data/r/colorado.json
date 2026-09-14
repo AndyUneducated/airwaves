@@ -36,7 +36,7 @@
     { "f": 88.9, "n": "KRFC — Fort Collins", "z": "KRFC 柯林斯堡", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
 
     { "f": 155.7525, "n": "VCALL10 — mountain search and rescue", "z": "VCALL10 · 山地搜救", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "d": "Colorado runs more mountain rescue missions than any other state, and mutual-aid channels stay analog.", "dz": "科罗拉多的山地救援任务数量全美第一，互助频道仍是模拟制式。" },
-    { "f": 151.940, "n": "MURS — ski patrol and guides", "z": "MURS · 雪场巡逻与向导", "c": "safety", "m": "NFM", "conf": "std", "a": "Ski Areas", "d": "Resorts, backcountry guides and avalanche control teams use licence-free VHF and FRS. Very active at Vail, Aspen and Loveland Pass.", "dz": "度假区、野雪向导和雪崩控制队使用免执照 VHF 与 FRS。在 Vail、阿斯彭和 Loveland 山口非常活跃。" },
+    { "f": 151.940, "n": "MURS — ski patrol and guides", "z": "MURS · 雪场巡逻与向导", "c": "safety", "m": "NFM", "conf": "std", "a": "Ski Areas", "d": "Resorts, backcountry guides and avalanche control teams use MURS VHF and FRS. Very active at Vail, Aspen and Loveland Pass.", "dz": "度假区、野雪向导和雪崩控制队使用 MURS VHF 与 FRS。在 Vail、阿斯彭和 Loveland 山口非常活跃。" },
     { "f": 0, "n": "Denver PD & Fire — digital trunked", "z": "丹佛警消 · 数字集群", "c": "safety", "m": "P25", "dig": true, "conf": "check", "a": "Not receivable" },
 
     { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "FM", "conf": "std", "a": "Satellites", "d": "High altitude and thin dry air. Excellent from any summit.", "dz": "高海拔、干燥稀薄的空气。在任何山顶效果都极好。" }

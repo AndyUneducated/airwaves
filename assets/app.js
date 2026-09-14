@@ -25,10 +25,8 @@
       copyHint: 'Tap any row to copy its frequency',
       verify: 'Verify locally',
       avoid: 'Avoid',
-      avoidNote: 'Rows marked Avoid are calling channels, data segments or bands reserved for other uses. Keep them in your radio to monitor, but do not use them as your own working channel. They are left out of the CHIRP export.',
       'ft.radio': 'Your radio',
       'ft.trust': 'How much to trust this',
-      'ft.legal': 'Listening and transmitting',
       'ft.offline': 'Cached for offline use'
     },
     zh: {
@@ -53,10 +51,8 @@
       copyHint: '点击任意一行即可复制频率',
       verify: '请在当地核实',
       avoid: '避免',
-      avoidNote: '标注“避免”的条目是呼叫频率、数据频段或保留给其他用途的频段。可以存进电台守听，但不要当作自己的工作频率使用。导出 CHIRP 时会自动排除它们。',
       'ft.radio': '你的电台',
       'ft.trust': '可信度说明',
-      'ft.legal': '收听与发射',
       'ft.offline': '已缓存，可离线使用'
     }
   };
@@ -67,12 +63,8 @@
       zh: '以八重洲 VX-6R 为基准：0.5 至 999 MHz 连续接收，支持 AM、窄带 FM 和宽带 FM。它是模拟接收机——无法解码 P25、DMR 或 NXDN，因此数字系统被标注为“收不到”，而不是直接删掉。'
     },
     'ft.trust.b': {
-      en: 'Every entry carries a confidence tag. Standard means a national FCC or ITU allocation that will not change. Stable means long-established. Verify means it is believed correct but is local and worth confirming before you rely on it.',
-      zh: '每一条都带有可信度标签。“法定分配”指 FCC 或 ITU 的全国统一分配，不会变动。“稳定”指长期使用。“请核实”指大致正确但地方性较强，依赖之前值得先确认。'
-    },
-    'ft.legal.b': {
-      en: 'Receiving is legal in most of the United States, though a few states restrict scanner use in a vehicle, and it is not generally restricted in China either. Transmitting is a separate question in each country: in the US you need an FCC licence and must stay inside its privileges, and in China you need a Chinese licence and type-approved equipment. Never transmit on public safety, aviation or marine channels except in a genuine emergency.',
-      zh: '在美国大部分地区收听是合法的（少数州限制在车内使用扫描机），在中国收听通常也不受限制。发射在两国则是各自独立的问题：在美国需要 FCC 执照并只能在权限内操作；在中国需要中国执照和经过型号核准的设备。除真正紧急情况外，绝不要在公共安全、航空或海事频道上发射。'
+      en: 'Every entry carries a confidence tag. Standard means a national or international allocation that will not change. Stable means long-established. Verify means it is believed correct but is local and worth confirming before you rely on it.',
+      zh: '每一条都带有可信度标签。“统一分配”指全国或国际范围内统一的频率划分，不会变动。“稳定”指长期使用。“请核实”指大致正确但地方性较强，依赖之前值得先确认。'
     }
   };
 
@@ -369,17 +361,6 @@
     });
     box.append(acts);
 
-    const warn = LANG === 'zh' ? (data.warnz || data.warn) : data.warn;
-    if (warn) {
-      const n = el('div', 'notice notice-hi');
-      n.append(el('span', null, warn));
-      box.append(n);
-    }
-    if (data.stations.some(s => s.avoid)) {
-      const n = el('div', 'notice');
-      n.append(el('span', null, t('avoidNote')));
-      box.append(n);
-    }
     if (data.stations.some(s => s.dig)) {
       const n = el('div', 'notice');
       n.append(el('span', null, t('digNote')));

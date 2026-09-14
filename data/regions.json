@@ -18,7 +18,7 @@
     { "id": "misc",      "n": "Oddities",      "z": "冷门有趣",   "hint": "Satellites, time signals, HF, one-offs", "hintz": "卫星、标准时间、短波、独特信号" }
   ],
   "confidence": {
-    "std":   { "n": "Standard",  "z": "法定分配", "d": "Nationally or internationally allocated. Will not change.", "dz": "国家或国际统一分配，不会变动。" },
+    "std":   { "n": "Standard",  "z": "统一分配", "d": "Nationally or internationally allocated. Will not change.", "dz": "国家或国际统一分配，不会变动。" },
     "high":  { "n": "Stable",    "z": "稳定",     "d": "Long-established and rarely changes.", "dz": "长期使用，极少变动。" },
     "check": { "n": "Verify",    "z": "请核实",   "d": "Believed correct but changes locally — confirm before you rely on it.", "dz": "大致正确但地方性较强——依赖前请先核实。" }
   },
@@ -190,8 +190,8 @@
     {
       "id": "china-nationwide", "scope": "cn", "pin": true,
       "n": "China Nationwide", "z": "全国通用",
-      "sub": "Valid anywhere in China — the band plan and the license-free channels",
-      "subz": "全国通用 —— 频段规划与免执照频率",
+      "sub": "Valid anywhere in China — the band plan and the walkie-talkie channels",
+      "subz": "全国通用 —— 频段规划与公众对讲机频率",
       "lat": null, "lon": null,
       "links": [{ "l": "中国无线电协会业余无线电分会 CRAC", "u": "https://www.crac.org.cn/" }]
     },
@@ -266,15 +266,15 @@
       "sub": "Clean, quiet channels for your own group",
       "subz": "供你自己团队使用的干净安静频率",
       "lat": null, "lon": null,
-      "links": [{ "l": "FCC Technician licence", "u": "https://www.arrl.org/getting-licensed" }]
+      "links": []
     },
     {
       "id": "link-cn", "scope": "cn", "kind": "link",
       "n": "Private Link", "z": "私人联络",
-      "sub": "What is actually legal, and what is actually quiet",
-      "subz": "什么是合法的，什么才是真正安静的",
+      "sub": "Which channels are actually quiet, and which are worth using",
+      "subz": "哪些频率真正安静，哪些值得用",
       "lat": null, "lon": null,
-      "links": [{ "l": "CRAC 业余电台操作证书", "u": "https://www.crac.org.cn/" }]
+      "links": []
     }
   ]
 }

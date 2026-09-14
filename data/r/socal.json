@@ -45,7 +45,7 @@
     { "f": 106.7, "n": "KROQ — Alternative", "z": "KROQ 另类摇滚", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "A commercial station, but historically important enough to be worth a listen.", "dz": "虽是商业台，但历史地位足够重要，值得一听。" },
     { "f": 88.7, "n": "KSPC — Pomona College", "z": "KSPC 波莫纳学院", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast" },
 
-    { "f": 154.570, "n": "MURS — theme park & event ops", "z": "MURS · 主题公园与活动作业", "c": "misc", "m": "NFM", "conf": "std", "a": "Events", "d": "Film shoots, theme parks, marathons and festivals lean heavily on license-free MURS and FRS. Scan those channels near any production.", "dz": "影视拍摄、主题公园、马拉松和音乐节大量使用免执照 MURS 与 FRS。在任何拍摄现场附近扫这些频道。" },
+    { "f": 154.570, "n": "MURS — theme park & event ops", "z": "MURS · 主题公园与活动作业", "c": "misc", "m": "NFM", "conf": "std", "a": "Events", "d": "Film shoots, theme parks, marathons and festivals lean heavily on MURS and FRS. Scan those channels near any production.", "dz": "影视拍摄、主题公园、马拉松和音乐节大量使用 MURS 与 FRS。在任何拍摄现场附近扫这些频道。" },
     { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites" },
     { "f": 4.724, "n": "HFGCS — Skyking", "z": "美空军高频指挥网", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave" }
   ]

@@ -10,7 +10,7 @@ You pick a country once in the header; everything below it is a region of that c
 
 **United States** — twenty regions: a nationwide set plus SF Bay Area, San Jose & South Bay, Central Coast, Sierra Nevada, Los Angeles & Orange County, San Diego, Desert Southwest, Utah Canyon Country, Colorado Rockies, Texas Triangle, Chicago & Great Lakes, Boston & New England, New York Metro, Washington DC, Florida & Space Coast, Yellowstone & Tetons, Pacific Northwest, Alaska and Hawai‘i.
 
-**China** — nine regions: a nationwide set covering the band plan and the licence-free channels, plus Beijing & the capital region, Shanghai & the Yangtze Delta, Qingdao & the Shandong coast, Chengdu & Chongqing, the Greater Bay Area, the Western Plateau, the Northwest, and the Northeast. The divisions follow how radio actually behaves rather than provincial boundaries — the plateau and the northwest are grouped by terrain and road corridor because that is what determines what you can hear.
+**China** — nine regions: a nationwide set covering the band plan and the 409 MHz walkie-talkie channels, plus Beijing & the capital region, Shanghai & the Yangtze Delta, Qingdao & the Shandong coast, Chengdu & Chongqing, the Greater Bay Area, the Western Plateau, the Northwest, and the Northeast. The divisions follow how radio actually behaves rather than provincial boundaries — the plateau and the northwest are grouped by terrain and road corridor because that is what determines what you can hear.
 
 **Private Link** — recommended clean, quiet channels for talking to your own group. It is the last entry in each country's region strip, set apart by a divider because it is a channel set rather than a place, and the answer is genuinely different in each country.
 
@@ -88,7 +88,7 @@ One gotcha when developing: because the service worker is cache-first, reusing a
 | `a` | Sub-heading that groups nearby rows. |
 | `d` / `dz` | Description in English / Chinese. |
 
-A region file may also carry `warn` / `warnz`, shown as a highlighted notice above the list. This is where the licensing and equipment-approval caveats live for the Chinese regions.
+A region file may also carry `intro` / `introz`, shown above the list as the region's opening paragraph.
 
 ### Icons
 
