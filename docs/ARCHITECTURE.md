@@ -77,9 +77,17 @@ Two consequences follow:
   live reading. CSS sizes the placeholders off the resulting attributes. This repeats a few
   lines that `app.js` owns, so a test asserts the two agree.
 
-Anything whose height depends on data we have not fetched cannot be reserved honestly, and
-the remaining shift is that: a per-region note that only some regions carry. Reserving space
-for it unconditionally would leave a permanent gap on the regions without one.
+What cannot be reserved honestly is anything whose height depends on data not yet fetched.
+The intro is prose from the region file and runs from 208 to 493 pixels across the regions
+and both languages, so the placeholder holds the median for its width: the typical region
+does not move at all and the outliers move about half as far. A per-region note is left
+unreserved entirely, because holding space for it would leave a permanent gap on the regions
+that do not carry one.
+
+Measure this over a throttled connection. On localhost the data arrives before the first
+paint, every shift is attributed to the initial render and the number reads zero no matter
+what the placeholders do — the phone pages that measured 0 locally measured 0.15 over the
+real network.
 
 ## Data model
 
@@ -241,7 +249,7 @@ what changes in a redesign:
 | `wheel` | Sweeping tunes continuously, does not select text, does not scroll the page |
 | `now` | The live panel works online, falls back offline, and is honest about which |
 | `geo` | Distances appear only where a real transmitter site is known |
-| `perf` | The page does not jump on load — on a phone, on a desktop, on a deep link, and on a remembered mode |
+| `perf` | The page does not jump on load — phone and desktop, landing and deep link, remembered mode, and over a throttled connection |
 | `layout` | The header survives a 280 px screen in both languages |
 
 Three of these exist because of bugs that measurement found and inspection did not: the hiss

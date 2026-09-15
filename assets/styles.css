@@ -503,6 +503,15 @@ main {
 html:not([data-mode="pro"]) #now { display: none; }
 html[data-scope="cn"] #now > .nw-g > .sk-nw:nth-child(3) { display: none; }
 
+/* The intro is prose from the region file, so its height is unknowable at first paint -
+   across regions and both languages it runs from 208px to 493px on a phone. The bars
+   themselves are far shorter than the text they stand in for, so hold the median height
+   per width instead: the typical region then does not move at all, and the outliers move
+   half as far as they used to. The rule lapses the moment the bars are replaced. */
+#intro:has(.sk-x) { min-height: 284px; }
+@media (max-width: 600px) { #intro:has(.sk-x) { min-height: 316px; } }
+@media (max-width: 400px) { #intro:has(.sk-x) { min-height: 360px; } }
+
 /* A fixed height, not a minimum. The detail line wraps to two lines on a narrow phone and
    one on a wide screen, and a card that grows to fit shoves the spectrum rail down the page
    after load — which is how you end up reaching for the rail and having it move. */
