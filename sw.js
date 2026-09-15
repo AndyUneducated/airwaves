@@ -1,6 +1,6 @@
 /* Airwaves service worker — precache everything so the site works with no signal */
 
-const V = 'airwaves-v6';
+const V = 'airwaves-v7';
 
 const SHELL = [
   './',
@@ -12,7 +12,8 @@ const SHELL = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
-  'data/regions.json'
+  'data/regions.json',
+  'data/places.json'
 ];
 
 self.addEventListener('install', e => {

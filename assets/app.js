@@ -15,6 +15,9 @@
       entries: n => `${n} ${n === 1 ? 'entry' : 'entries'}`,
       nogeo: 'Location unavailable',
       geoOk: r => `Closest region: ${r}`,
+      here: 'Here',
+      compass: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
+      km: 'km',
       online: 'online',
       offline: 'offline · cached',
       langBtn: '中文',
@@ -48,6 +51,9 @@
       entries: n => `${n} 条`,
       nogeo: '无法获取位置',
       geoOk: r => `最近地区：${r}`,
+      here: '当前位置',
+      compass: ['北', '东北', '东', '东南', '南', '西南', '西', '西北'],
+      km: '公里',
       online: '在线',
       offline: '离线 · 已缓存',
       langBtn: 'EN',
@@ -87,7 +93,20 @@
 
   let META = null, REGION = null, LANG = localStorage.getItem('aw.lang') === 'zh' ? 'zh' : 'en';
   let SCOPE = null, CAT = 'all', Q = '';
+  let PLACES = null;
   const CACHE = new Map();
+
+  // Where you were, if you have ever said. Kept for a few hours so distances are there the
+  // moment you open the site rather than after another permission prompt.
+  const POS = { lat: null, lon: null };
+  const POS_TTL = 6 * 3600e3;
+
+  (function restorePos() {
+    try {
+      const p = JSON.parse(localStorage.getItem('aw.pos') || 'null');
+      if (p && Date.now() - p.at < POS_TTL) { POS.lat = p.lat; POS.lon = p.lon; }
+    } catch (e) {}
+  })();
 
   // Two modes, one site. Simple is the whole point of the thing: a frequency, a name, go.
   // Pro layers the instruments on top for someone standing there with the radio in hand.
@@ -129,6 +148,11 @@
       return;
     }
     $('#ver').textContent = 'v' + META.version;
+    // Coordinates are a nicety, not a dependency: if this fails the site is unchanged.
+    fetch('data/places.json', { cache: 'no-cache' })
+      .then(r => r.json())
+      .then(p => { PLACES = p; if (POS.lat != null && REGION) render(); })
+      .catch(() => {});
     applyStatic();
     wire();
     netState();
@@ -238,7 +262,8 @@
       geo.type = 'button';
       geo.id = 'btn-geo';
       geo.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="8"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6"/></svg>';
-      geo.append(el('span', null, t('near')));
+      geo.append(el('span', null, POS.lat == null ? t('near') : t('here')));
+      geo.classList.toggle('on-geo', POS.lat != null);
       geo.addEventListener('click', locate);
       nav.append(geo);
     }
@@ -783,8 +808,35 @@
 
   const offsetMHz = o => parseFloat(String(o).replace(/[−–]/g, '-'));
 
+  // Only entries tied to a real transmitter site can honestly claim a distance. That is the
+  // airports for now — an approach sector or an FM dial position has no single place, and a
+  // made-up number would be worse than none.
+  function siteOf(s) {
+    return (PLACES && s.ref && PLACES.air[s.ref]) || null;
+  }
+
+  function bearing(a1, o1, a2, o2) {
+    const r = Math.PI / 180;
+    const dL = (o2 - o1) * r;
+    const y = Math.sin(dL) * Math.cos(a2 * r);
+    const x = Math.cos(a1 * r) * Math.sin(a2 * r) - Math.sin(a1 * r) * Math.cos(a2 * r) * Math.cos(dL);
+    return (Math.atan2(y, x) / r + 360) % 360;
+  }
+
+  const compass = deg => t('compass')[Math.round(deg / 45) % 8];
+  const fmtDist = km => (km < 10 ? km.toFixed(1) : String(Math.round(km))) + ' ' + t('km');
+
+  function distBit(s) {
+    const site = siteOf(s);
+    if (!site || POS.lat == null) return null;
+    const km = haversine(POS.lat, POS.lon, site[0], site[1]);
+    return fmtDist(km) + ' ' + compass(bearing(POS.lat, POS.lon, site[0], site[1]));
+  }
+
   function proLine(s) {
     const bits = [];
+    const near = distBit(s);
+    if (near) bits.push(near);
     const band = hamBand(s.f);
     if (band) bits.push(band);
     // The listed frequency is what the repeater sends out. This is the one you transmit on,
@@ -927,16 +979,24 @@
     if (!navigator.geolocation) { toast(t('nogeo')); return; }
     label.textContent = t('locating');
     navigator.geolocation.getCurrentPosition(pos => {
-      label.textContent = t('near');
       const { latitude: la, longitude: lo } = pos.coords;
+      POS.lat = la;
+      POS.lon = lo;
+      try {
+        localStorage.setItem('aw.pos', JSON.stringify({ lat: la, lon: lo, at: Date.now() }));
+      } catch (e) {}
+
       let best = null, bd = Infinity;
       META.regions.filter(r => r.lat != null).forEach(r => {
         const d = haversine(la, lo, r.lat, r.lon);
         if (d < bd) { bd = d; best = r; }
       });
-      if (!best) { toast(t('nogeo')); return; }
+      if (!best) { label.textContent = t('near'); toast(t('nogeo')); return; }
+      // Rebuilding the strip relabels the chip, and selecting repaints the rows so the
+      // distances appear without a second tap.
+      buildRegionTabs();
       select(best.id, true);
-      toast(t('geoOk')(L(best, { n: 'n', z: 'z' })) + ` · ${Math.round(bd)} km`);
+      toast(t('geoOk')(L(best, { n: 'n', z: 'z' })) + ` · ${fmtDist(bd)}`);
     }, () => {
       label.textContent = t('near');
       toast(t('nogeo'));

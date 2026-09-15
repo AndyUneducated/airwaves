@@ -48,6 +48,7 @@ The site opens in **Simple** mode: a frequency, a name, a short description, and
 **Pro** mode is the switch in the header, or the `P` key. It layers instruments on top for someone who is actually holding the radio:
 
 - Under every entry, the amateur band the frequency falls in, the frequency you would transmit on to reach a repeater, and the quarter-wave antenna length.
+- **How far away it is.** Once you have tapped "Near me", entries tied to a known transmitter site show the distance and compass bearing from you — the difference between "there is a tower frequency" and "that tower is 7.7 km northwest, so of course you can hear it". Only entries with a real site say anything: an approach sector covering half a state, or a dial position shared by three transmitters, has no single place, and an invented number would be worse than silence. The position is kept on your device for six hours so the distances are simply there next time, and never leaves it.
 - The spectrum rail becomes a **tuning knob**. Drag it and the frequency sweeps continuously; listed entries are detents you can feel and hear, band edges give a heavier click, and the receiver hiss drops away as you settle onto something — so you can find an entry without looking at the screen. Release to jump to it. Arrow keys, `Home` and `End` step entry by entry, and the speaker icon mutes the sound for good.
 - Each band on the rail is labelled with how many entries it holds.
 
@@ -100,9 +101,20 @@ One gotcha when developing: because the service worker is cache-first, reusing a
 | `avoid` | `true` marks a real frequency you should not work on — a calling channel, data segment or reserved band. Kept visible for monitoring, excluded from CSV export. |
 | `conf` | `std`, `high` or `check`. |
 | `a` | Sub-heading that groups nearby rows. |
+| `ref` | ICAO code of the airport this entry transmits from, e.g. `KSFO`. It is what lets Pro mode give a distance and bearing, so add it wherever an entry really does come from one field. |
 | `d` / `dz` | Description in English / Chinese. |
 
 A region file may also carry `intro` / `introz`, shown above the list as the region's opening paragraph.
+
+### Generated data
+
+`data/places.json` holds the coordinates and elevation of every airport the station data refers to by `ref`. Regenerate it after adding a new `ref`:
+
+```sh
+node scripts/make-places.mjs
+```
+
+It reads the codes out of `data/r/*.json`, fetches the public-domain ourairports.com database, and keeps only what is referenced — a few kilobytes, committed to the repo. The site is static, so this is a build-time step, not a runtime lookup, and it works offline like everything else.
 
 ### Icons
 

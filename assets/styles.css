@@ -389,6 +389,8 @@ body::before {
 
 .chip-geo { display: inline-flex; align-items: center; gap: 6px; }
 .chip-geo svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.9; }
+/* Once it knows where you are it says so, without pretending to be the selected region. */
+.chip-geo.on-geo { color: var(--ac); border-color: rgba(94, 242, 168, .35); }
 
 /* Private Link is a set of channels, not a place, so it sits past a divider. */
 .r-sep {
