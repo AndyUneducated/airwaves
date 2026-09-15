@@ -493,12 +493,16 @@ main {
 
 .nw-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr)); gap: 8px; }
 
+/* A fixed height, not a minimum. The detail line wraps to two lines on a narrow phone and
+   one on a wide screen, and a card that grows to fit shoves the spectrum rail down the page
+   after load — which is how you end up reaching for the rail and having it move. */
 .nw-c {
-  min-height: 80px;
+  height: 97px;
   padding: 11px 13px 12px;
   border: 1px solid var(--line);
   border-radius: 11px;
   background: var(--bg-1);
+  overflow: hidden;
 }
 .nw-k {
   font: 500 9.5px/1 var(--mono);
@@ -508,7 +512,10 @@ main {
   margin-bottom: 7px;
 }
 .nw-v { font-size: 14px; line-height: 1.35; color: var(--tx); margin-bottom: 4px; }
-.nw-d { font-size: 11.5px; line-height: 1.45; color: var(--tx-3); }
+/* Clamped so a long alert name cannot push the card past the height reserved for it. */
+.nw-v, .nw-d { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+.nw-v { -webkit-line-clamp: 1; }
+.nw-d { font-size: 11.5px; line-height: 1.45; color: var(--tx-3); -webkit-line-clamp: 2; }
 
 /* A magnetic storm or a severe alert is the whole reason to glance at this panel, so those
    two readings are the only ones allowed to raise their voice. */
@@ -743,7 +750,7 @@ html[data-mode="pro"] .ru-rail:not(.lock) .ru-out { background: var(--tx-3); col
 .sk-ru-r { height: 34px; border-radius: 8px; margin-bottom: 17px; }
 html[data-mode="pro"] .sk-ru-r { height: 46px; }
 .sk-nw-c { width: 74px; height: 10px; margin: 22px 0 9px; }
-.sk-nw { height: 80px; border-radius: 11px; }
+.sk-nw { height: 97px; border-radius: 11px; }
 .sk-f { width: 78px; }
 .sk-n { width: min(62%, 360px); }
 .sk:nth-child(even) .sk-n { width: min(44%, 280px); }

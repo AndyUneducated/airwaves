@@ -788,15 +788,21 @@
     } catch (e) { return null; }
   }
 
+  // Loud enough to hear on a phone speaker outdoors, which is where this gets used. The
+  // earlier value was about 26 dB down and inaudible anywhere but a quiet room.
+  const HISS_PEAK = 0.15;
+
   function hiss(level) {
     const ctx = audio();
     if (!ctx) return;
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
-    AUDIO.gain.gain.setTargetAtTime(level * 0.05, ctx.currentTime, 0.04);
+    AUDIO.gain.gain.setTargetAtTime(level * HISS_PEAK, ctx.currentTime, 0.04);
   }
 
-  function silence() {
-    if (AUDIO.ctx && AUDIO.gain) AUDIO.gain.gain.setTargetAtTime(0, AUDIO.ctx.currentTime, 0.05);
+  // A squelch tail rather than a cut, so even a quick tap on the rail is something you hear.
+  // Cutting instantly meant a click gave the hiss about 50 ms to rise and then killed it.
+  function silence(tau) {
+    if (AUDIO.ctx && AUDIO.gain) AUDIO.gain.gain.setTargetAtTime(0, AUDIO.ctx.currentTime, tau || 0.11);
   }
 
   function tick(strong) {
@@ -806,7 +812,7 @@
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = 'square';
     o.frequency.value = strong ? 880 : 1720;
-    g.gain.setValueAtTime(strong ? 0.045 : 0.028, ctx.currentTime);
+    g.gain.setValueAtTime(strong ? 0.1 : 0.06, ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (strong ? 0.05 : 0.022));
     o.connect(g).connect(ctx.destination);
     o.start();
@@ -914,11 +920,33 @@
     const band = f => (BANDS.find(b => inBand(f, b)) || BANDS[0]).n;
     let held = null, lockedK = null, lastBand = null, kIdx = 0, lastTick = 0;
 
+    // How wide a detent is, per entry, in pixels. A fixed width does not work: where the
+    // band is crowded the entries sit a few pixels apart, so every point on the rail was
+    // inside some detent — the hiss never came back and the clicks ran together into a wall,
+    // precisely in the stretch you spend the most time tuning. Half the gap to the closest
+    // neighbour keeps each entry findable and leaves air between them. Measured lazily
+    // because the rail's width is not known until it is laid out, and changes on resize.
+    let grip = null, gripW = 0;
+    function grips() {
+      const w = rail.clientWidth;
+      if (grip && w === gripW) return grip;
+      gripW = w;
+      grip = new Map();
+      pts.forEach((s, i) => {
+        let gap = Infinity;
+        if (i > 0) gap = Math.min(gap, (pos(s.f) - pos(pts[i - 1].f)) * w);
+        if (i < pts.length - 1) gap = Math.min(gap, (pos(pts[i + 1].f) - pos(s.f)) * w);
+        grip.set(s.k, Math.max(2.5, Math.min(14, gap / 2)));
+      });
+      return grip;
+    }
+
     function show(f, quiet) {
       const near = nearest(f);
-      // A detent is a distance on screen, not a ratio: 15px is about a thumb's precision.
+      // A detent is a distance on screen, not a ratio, because it has to match what a thumb
+      // can actually resolve.
       const away = Math.abs(pos(f) - pos(near.f)) * rail.clientWidth;
-      const lock = Math.max(0, 1 - away / 15);
+      const lock = Math.max(0, 1 - away / grips().get(near.k));
       const on = lock > .5 ? near : null;
       // Inside a detent the knob snaps, the way a real one does. The log scale is steep
       // enough that 15px can span a third of an octave, so a raw readout would disagree
@@ -951,12 +979,15 @@
         : `${b} · ${fmtFreq(f)} ${unit(f)}`;
       hint.classList.add('ru-live');
 
-      if (!quiet) hiss(1 - lock);
+      // Never fully silent while you are actually holding the rail: a receiver sitting on a
+      // quiet channel still hisses, and going mute made the knob feel dead. Landing on an
+      // entry still drops it by about 10 dB, which is the part that tells you you are on it.
+      if (!quiet) hiss(0.3 + 0.7 * (1 - lock));
       return near;
     }
 
     function rest(delay) {
-      silence();
+      silence(0.3);
       setTimeout(() => {
         rail.classList.remove('live', 'lock');
         ticks.forEach(n => n.classList.remove('k-on'));
