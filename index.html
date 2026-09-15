@@ -10,6 +10,20 @@
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/styles.css">
+<script>
+  /* Mode and country decide the page's shape, so they have to be settled before the
+     first paint — the placeholders below are sized by CSS off these attributes. This
+     repeats a few lines of app.js on purpose; a deferred script cannot run in time,
+     and the test suite asserts the two agree. */
+  try {
+    var q = new URLSearchParams(location.search).get('pro');
+    document.documentElement.dataset.mode =
+      q === '1' ? 'pro' : q === '0' ? 'simple'
+        : localStorage.getItem('aw.mode') === 'pro' ? 'pro' : 'simple';
+    var h = (location.hash.match(/^#\/([a-z]{2})\//) || [])[1];
+    document.documentElement.dataset.scope = h || localStorage.getItem('aw.scope') || 'us';
+  } catch (e) {}
+</script>
 </head>
 <body>
 
@@ -57,17 +71,47 @@
 </header>
 
 <main id="content">
-  <section class="intro" id="intro"></section>
+  <!-- The placeholders below are markup, not JS, so they are part of the first paint.
+       Injecting them from a script means a cold load paints a short page and then drops
+       everything by the height of everything above the list. They are replaced wholesale
+       by the real content; app.js leaves this first set alone. -->
+  <section class="intro" id="intro">
+    <div class="sk-x sk-sub"></div>
+    <div class="sk-x sk-h1"></div>
+    <div class="sk-x sk-b"></div>
+    <div class="sk-x sk-b2"></div>
+    <div class="sk-x sk-btn"></div>
+  </section>
 
-  <section class="now" id="now" hidden></section>
+  <section class="now" id="now">
+    <div class="sk-x sk-nw-c"></div>
+    <div class="nw-g">
+      <div class="sk-x sk-nw"></div>
+      <div class="sk-x sk-nw"></div>
+      <div class="sk-x sk-nw"></div>
+    </div>
+  </section>
 
   <div id="notice"></div>
 
   <div class="cats" id="cats" role="group" aria-label="Filter by category"></div>
 
-  <div class="ruler" id="ruler" hidden></div>
+  <div class="ruler" id="ruler">
+    <div class="sk-x sk-ru-c"></div>
+    <div class="sk-x sk-ru-r"></div>
+  </div>
 
-  <div id="list" class="list"></div>
+  <div id="list" class="list">
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+    <div class="sk"><span class="sk-f"></span><span class="sk-n"></span></div>
+  </div>
 
   <p class="empty" id="empty" hidden>
     <span data-i18n="noresults">Nothing matches that.</span>

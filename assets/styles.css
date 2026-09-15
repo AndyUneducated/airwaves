@@ -337,6 +337,10 @@ body::before {
   scrollbar-width: none;
   padding: 0 clamp(14px, 4vw, 34px) 12px;
   scroll-snap-type: x proximity;
+  /* The chips arrive from JS, so hold the row open at one chip's height. Without
+     this the sticky header is 34px short at first paint and the whole page drops
+     once the regions land. */
+  min-height: 46px;
 }
 .regions::-webkit-scrollbar { display: none; }
 
@@ -492,6 +496,12 @@ main {
 .nw-w { font-size: 11.5px; color: var(--tx-3); }
 
 .nw-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr)); gap: 8px; }
+
+/* The right-now panel ships as a placeholder in the markup so it occupies its space at
+   first paint. Only pro mode has it, and China has one fewer reading, so both are read
+   from the attributes the inline script sets before anything is drawn. */
+html:not([data-mode="pro"]) #now { display: none; }
+html[data-scope="cn"] #now > .nw-g > .sk-nw:nth-child(3) { display: none; }
 
 /* A fixed height, not a minimum. The detail line wraps to two lines on a narrow phone and
    one on a wide screen, and a card that grows to fit shoves the spectrum rail down the page

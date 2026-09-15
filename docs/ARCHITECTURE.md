@@ -30,7 +30,7 @@ Five files do the work. There is no framework, no bundler and no runtime depende
 
 | File | Responsibility |
 | --- | --- |
-| `index.html` | The shell: header, search, region strip, and the empty containers the app fills. |
+| `index.html` | The shell: header, search, region strip, and the placeholders the app replaces. |
 | `assets/app.js` | All behaviour, in one IIFE. Routing, rendering, state, i18n, audio, live data. |
 | `assets/styles.css` | All styling, hand written, with the design tokens at the top. |
 | `sw.js` | Cache-first service worker. `V` is the cache version and must be bumped on release. |
@@ -50,17 +50,36 @@ sequenceDiagram
   A->>SW: fetch data/regions.json
   SW->>D: cache first, network fallback
   D-->>A: scopes, regions, categories, legends
-  A->>A: draw skeleton reserving final heights
   A->>SW: fetch data/r/bay-area.json
   D-->>A: stations
-  A->>A: render intro, right-now panel, spectrum rail, list
+  A->>A: replace placeholders with intro, right-now panel, rail, list
   A-->>U: interactive
 ```
 
-The skeleton matters more than it looks. It reserves the height the real content will occupy,
-including the right-now cards, so nothing moves once the data lands. Cumulative layout shift
-is asserted at zero by the test suite, and the reason is physical: people use this outdoors,
-one handed, and a list that jumps as you reach for it is worse than a slow one.
+### Why the placeholders are markup
+
+The skeleton lives in `index.html`, not in `app.js`, and this is load bearing. People use
+this outdoors, one handed, and a page that jumps as you reach for it is worse than a slow
+one — so the first paint has to be the final shape.
+
+A script cannot guarantee that. First paint happens when the browser draws the parsed HTML,
+which on a cold load is *before* `app.js` executes; injected placeholders arrive after it and
+the page drops by the height of everything above the list. On a fast warm load the script
+wins the race and the bug hides, which is exactly why it survived: it only appeared on the
+first visit, on desktop, and never on the phone the site was tested on.
+
+Two consequences follow:
+
+- **`index.html` owns the placeholder markup.** `app.js` leaves the first set alone and only
+  builds skeletons for later region switches.
+- **A small inline script in `<head>` settles mode and country before anything is drawn**,
+  because those decide the shape — pro mode has the right-now panel, and China has one fewer
+  live reading. CSS sizes the placeholders off the resulting attributes. This repeats a few
+  lines that `app.js` owns, so a test asserts the two agree.
+
+Anything whose height depends on data we have not fetched cannot be reserved honestly, and
+the remaining shift is that: a per-region note that only some regions carry. Reserving space
+for it unconditionally would leave a permanent gap on the regions without one.
 
 ## Data model
 
@@ -222,19 +241,23 @@ what changes in a redesign:
 | `wheel` | Sweeping tunes continuously, does not select text, does not scroll the page |
 | `now` | The live panel works online, falls back offline, and is honest about which |
 | `geo` | Distances appear only where a real transmitter site is known |
-| `perf` | Layout shift is zero and first paint stays fast as the dataset grows |
+| `perf` | The page does not jump on load — on a phone, on a desktop, on a deep link, and on a remembered mode |
 | `layout` | The header survives a 280 px screen in both languages |
 
-Two of these exist because of bugs that measurement found and inspection did not: the hiss was
-26 dB down and silenced across the busiest part of the band, and the right-now cards sized
-themselves to their text and shoved the spectrum rail down the page after load. Both looked
-fine in a screenshot. When changing anything about the knob or the panel, measure it.
+Three of these exist because of bugs that measurement found and inspection did not: the hiss
+was 26 dB down and silenced across the busiest part of the band; the right-now cards sized
+themselves to their text and shoved the spectrum rail down the page after load; and the whole
+page dropped by a third of a screen on a cold desktop load. All three looked fine in a
+screenshot, and the last one was invisible until the suite was made to measure a viewport and
+a URL it had never tried. When changing the knob, the panel or the first paint, measure it —
+and measure it somewhere other than where it already passes.
 
 ## What is not here, on purpose
 
 - **No framework.** The whole interface is a list, a rail and a header. A framework would
   be more code than the application.
-- **No bundler.** One script tag. The payload is 100 KB of code.
+- **No bundler.** One script tag, plus a dozen inline lines that must beat the first paint.
+  The payload is 103 KB of code.
 - **No map tiles.** A third-party tile server is a network dependency and a privacy leak on a
   site whose selling point is neither.
 - **No analytics.** Nothing is sent anywhere except the three live readings, one of which

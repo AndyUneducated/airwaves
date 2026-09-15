@@ -235,9 +235,14 @@
   async function boot() {
     document.documentElement.dataset.lang = LANG;
     applyMode();
+
     try {
       META = await (await fetch('data/regions.json', { cache: 'no-cache' })).json();
     } catch (e) {
+      $('#list').textContent = '';
+      $('#ruler').hidden = true;
+      $('#now').hidden = true;
+      $('#intro').textContent = '';
       $('#list').append(el('p', 'empty', 'Could not load frequency data.'));
       return;
     }
@@ -254,6 +259,7 @@
     const hashed = fromHash();
     SCOPE = (hashed && hashed.scope) || localStorage.getItem('aw.scope') || META.scopes[0].id;
     if (!META.scopes.some(s => s.id === SCOPE)) SCOPE = META.scopes[0].id;
+    document.documentElement.dataset.scope = SCOPE;
     buildCountry();
     buildRegionTabs();
     await select((hashed || firstIn(SCOPE)).id, false);
@@ -432,6 +438,7 @@
     if (meta.scope !== SCOPE) {
       SCOPE = meta.scope;
       localStorage.setItem('aw.scope', SCOPE);
+      document.documentElement.dataset.scope = SCOPE;
       buildCountry();
       buildRegionTabs();
     }
@@ -470,38 +477,17 @@
   }
 
   function skeleton() {
-    const box = $('#list');
-    box.textContent = '';
     $('#empty').hidden = true;
 
-    // On the very first load nothing above the list exists yet, so hold that space too.
-    // Otherwise the intro and the ruler arrive together and shove the whole page down.
-    const first = !REGION;
-    if (first) {
-      const intro = $('#intro');
-      intro.textContent = '';
-      ['sk-sub', 'sk-h1', 'sk-b', 'sk-b2', 'sk-btn'].forEach(c => intro.append(el('div', 'sk-x ' + c)));
-      const ru = $('#ruler');
-      ru.textContent = '';
-      ru.append(el('div', 'sk-x sk-ru-c'), el('div', 'sk-x sk-ru-r'));
-      ru.hidden = false;
+    // The first load is already skeletoned by index.html, so that the placeholders are
+    // part of the first paint instead of arriving after it. Rebuilding them here would
+    // only give that shape a second definition to drift from.
+    if (!REGION) return;
 
-      // Pro mode has the "right now" panel between them, and it is the same size whether
-      // or not the live readings have arrived, so its space can be held exactly.
-      const nw = $('#now');
-      nw.textContent = '';
-      if (isPro()) {
-        nw.append(el('div', 'sk-x sk-nw-c'));
-        const g = el('div', 'nw-g');
-        for (let i = 0; i < (SCOPE === 'cn' ? 2 : 3); i++) g.append(el('div', 'sk-x sk-nw'));
-        nw.append(g);
-      }
-      nw.hidden = !isPro();
-    } else {
-      $('#ruler').hidden = true;
-    }
-
-    for (let i = 0; i < (first ? 9 : 7); i++) {
+    const box = $('#list');
+    box.textContent = '';
+    $('#ruler').hidden = true;
+    for (let i = 0; i < 7; i++) {
       const r = el('div', 'sk');
       r.append(el('span', 'sk-f'), el('span', 'sk-n'));
       box.append(r);

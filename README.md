@@ -15,7 +15,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
   <img alt="framework" src="https://img.shields.io/badge/framework-none-success">
   <img alt="javascript" src="https://img.shields.io/badge/JavaScript-ES2017-f7df1e?logo=javascript&logoColor=black">
   <img alt="css" src="https://img.shields.io/badge/CSS-hand%20written-1572b6?logo=css3&logoColor=white">
-  <img alt="payload" src="https://img.shields.io/badge/payload-100%20KB%20code%20%2B%20479%20KB%20data-blue">
+  <img alt="payload" src="https://img.shields.io/badge/payload-103%20KB%20code%20%2B%20479%20KB%20data-blue">
 </p>
 
 <p>
@@ -36,7 +36,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="tooling" src="https://img.shields.io/badge/scripts-Node%2018%2B%20ESM-339933?logo=nodedotjs&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-Playwright-2ead33?logo=playwright&logoColor=white">
-  <img alt="checks" src="https://img.shields.io/badge/checks-104%20assertions-2ead33">
+  <img alt="checks" src="https://img.shields.io/badge/checks-112%20assertions-2ead33">
 </p>
 
 The point is narrow: you arrive somewhere, you open the site, you find frequencies you can actually receive, and you program them. It works with no signal.
