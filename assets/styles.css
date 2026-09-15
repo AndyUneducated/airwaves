@@ -912,6 +912,59 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
 .tag-dig { color: var(--warn); border-color: rgba(245, 182, 86, .28); background: var(--warn-dim); }
 .tag-avd { color: var(--warn); border-color: rgba(245, 182, 86, .35); background: var(--warn-dim); font-weight: 600; }
 
+/* The detail panel, opened by tapping a row in pro mode. It sits in the list rather than in
+   a sheet or a new screen: you are usually comparing two or three entries, and a modal that
+   covers the list makes you close it to do that. */
+.dx-c {
+  display: inline-flex;
+  color: var(--tx-3);
+  transition: transform .18s ease, color .18s ease;
+}
+.dx-c svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.1; stroke-linecap: round; }
+.row.open .dx-c { transform: rotate(180deg); color: var(--ac); }
+
+.dx {
+  margin: -2px 0 4px;
+  padding: 13px 15px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-1);
+  animation: dx-in .16s ease;
+}
+@keyframes dx-in { from { opacity: 0; transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .dx { animation: none; } }
+
+/* Two columns where there is room, one on a phone. Facts are short; making them share a
+   line keeps the panel from pushing the next entry off the screen. */
+.dx-g { display: grid; gap: 11px 18px; }
+@media (min-width: 560px) { .dx-g { grid-template-columns: 1fr 1fr; } }
+
+.dx-k {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--tx-3);
+  margin-bottom: 3px;
+}
+.dx-v { font-size: 13px; line-height: 1.4; color: var(--tx); font-variant-numeric: tabular-nums; }
+.dx-n { font-size: 11.5px; line-height: 1.45; color: var(--tx-3); margin-top: 2px; }
+
+.dx-a { margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--line); }
+.dx-b {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  padding: 8px 14px;
+  min-height: 38px;
+  border-radius: 9px;
+  border: 1px solid rgba(94, 242, 168, .3);
+  background: rgba(94, 242, 168, .08);
+  color: var(--ac);
+  cursor: pointer;
+}
+.dx-b:active { transform: scale(.98); }
+
 /* Odds: how likely you are to hear anything if you tune here. Three bars rather than a word,
    because it has to read at arm's length in sunlight, and because it is a quantity — the eye
    compares bar heights across a list far faster than it reads three different labels. */

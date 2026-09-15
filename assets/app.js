@@ -56,6 +56,30 @@
       sound: 'Tuning sound',
       digNote: 'Struck-through rows are things a VX-6 cannot give you: digital and encrypted systems it has no way to decode, signals outside its tuning range, and a few services that simply do not exist here. They are listed so you know not to spend an evening hunting for them.',
       copyHint: 'Tap any row to copy its frequency',
+      proHint: 'Tap any row for detail · copy is inside',
+      dOdds: 'Odds',
+      dMode: 'Set the radio to',
+      dInput: 'You transmit on',
+      dShift: 'shift',
+      dTone: 'Tone',
+      dPower: 'Licensed power',
+      dLocal: 'A local signal — a few kilometres, not a region',
+      dLicensee: 'Licensed to',
+      dSite: 'Transmitter',
+      dElev: 'site elevation',
+      dAnt: 'Antenna',
+      dBand: 'Amateur band',
+      dMem: 'Memory name',
+      dMemNote: 'Used by the CHIRP export',
+      dSource: 'Source',
+      dSrcFcc: 'FCC licensing database',
+      dSrcOa: 'ourairports / ICAO data',
+      dSrcHand: 'Written for this guide',
+      dCopy: 'Copy',
+      dAir: 'airband, 25 kHz channels',
+      dMw: 'medium wave',
+      dSw: 'shortwave',
+      dBcast: 'broadcast FM',
       verify: 'Verify locally',
       avoid: 'Avoid',
       'ft.radio': 'Your radio',
@@ -115,6 +139,30 @@
       sound: '调谐声',
       digNote: '带删除线的条目是 VX-6 无法提供的内容：它无法解码的数字与加密系统、超出其调谐范围的信号，以及在当地根本不存在的业务。列出来是为了让你知道不必白费一晚上去找。',
       copyHint: '点击任意一行即可复制频率',
+      proHint: '点击任意一行查看详情 · 复制按钮在里面',
+      dOdds: '收到概率',
+      dMode: '电台设置为',
+      dInput: '你发射的频率',
+      dShift: '偏移',
+      dTone: '亚音频',
+      dPower: '执照功率',
+      dLocal: '本地信号——覆盖几公里，而非整个地区',
+      dLicensee: '执照持有人',
+      dSite: '发射台',
+      dElev: '台址海拔',
+      dAnt: '天线长度',
+      dBand: '业余频段',
+      dMem: '存储器名称',
+      dMemNote: '用于 CHIRP 导出',
+      dSource: '数据来源',
+      dSrcFcc: 'FCC 执照数据库',
+      dSrcOa: 'ourairports / ICAO 数据',
+      dSrcHand: '本指南自行撰写',
+      dCopy: '复制',
+      dAir: '航空波段，25 kHz 间隔',
+      dMw: '中波',
+      dSw: '短波',
+      dBcast: '调频广播',
       verify: '请在当地核实',
       avoid: '避免',
       'ft.radio': '你的电台',
@@ -1126,22 +1174,126 @@
     return fmtDist(km) + ' ' + compass(bearing(POS.lat, POS.lon, site[0], site[1]));
   }
 
+  // The line under a pro entry, always visible. Kept to what helps while you are scanning a
+  // list: where the thing is, and which band it sits in. The repeater input, the antenna
+  // lengths and the rest are reference figures you want when you are actually programming
+  // the radio, and they now live in the detail panel a tap away — printing them on every
+  // row made the list noisy and said the same thing twice once the panel existed.
   function proLine(s) {
     const bits = [];
     const near = distBit(s);
     if (near) bits.push(near);
     const band = hamBand(s.f);
     if (band) bits.push(band);
-    // The listed frequency is what the repeater sends out. This is the one you transmit on,
-    // and no radio or listing shows it to you.
-    if (s.o) {
-      const input = s.f + offsetMHz(s.o);
-      if (isFinite(input) && input > 0) bits.push(`${t('rptIn')} ${fmtFreq(input)}`);
-    }
-    bits.push('λ/4 ' + quarterWave(s.f));
+    if (!bits.length) return null;
 
     const box = el('div', 'px');
     bits.forEach(x => box.append(el('span', 'px-i', x)));
+    return box;
+  }
+
+  /* ---------- pro: the detail panel ---------- */
+
+  // What the radio should be set to. The VX-6R has three filters and picking the wrong one
+  // is the commonest reason a frequency "does not work" — WFM on a narrow channel sounds
+  // like nothing at all.
+  // Channel spacing depends on the service, not only the mode: 8.33 kHz is an airband
+  // convention and saying it about a medium-wave broadcaster is simply wrong.
+  function modeNote(s) {
+    if (s.m === 'AM') {
+      if (s.f >= 108 && s.f <= 137) return 'AM · ' + t('dAir');
+      if (s.f < 1.8) return 'AM · ' + t('dMw');
+      return 'AM · ' + t('dSw');
+    }
+    if (s.m === 'NFM') return 'NFM · 12.5 kHz';
+    if (s.m === 'FM') return 'FM · 25 kHz';
+    if (s.m === 'WFM') return 'WFM · ' + t('dBcast');
+    return s.m;
+  }
+
+  function detailRows(s) {
+    const out = [];
+    const add = (k, v, note) => { if (v) out.push([k, v, note]); };
+
+    // The odds, spelled out. This is where the sentence behind the bars lives.
+    if (s.odds && META.odds && META.odds[s.odds]) {
+      const o = META.odds[s.odds];
+      add(t('dOdds'), LANG === 'zh' ? o.z : o.n, LANG === 'zh' ? o.dz : o.d);
+    }
+
+    if (s.m) add(t('dMode'), modeNote(s), null);
+
+    // Repeaters: the listed frequency is the output. Transmitting needs the input and the
+    // tone, and no radio shows you either.
+    if (s.o) {
+      const input = s.f + offsetMHz(s.o);
+      if (isFinite(input) && input > 0) {
+        add(t('dInput'), `${fmtFreq(input)} ${unit(input)}`, `${t('dShift')} ${s.o} MHz`);
+      }
+    }
+    if (s.t) add(t('dTone'), isDcs(s.t) ? 'DCS ' + (s.t.match(/\d+/) || [''])[0] : 'PL ' + s.t, null);
+
+    // Broadcast: licensed power says how far it reaches, and who holds the licence says more
+    // about what you will hear than any format label we could invent.
+    if (s.kw) add(t('dPower'), s.kw >= 1 ? `${s.kw} kW` : `${Math.round(s.kw * 1000)} W`,
+      s.kw < 1 ? t('dLocal') : null);
+    if (s.by) add(t('dLicensee'), s.by, null);
+
+    // The transmitter site, where one entry means one place on the ground.
+    const site = siteOf(s);
+    if (site) {
+      const near = distBit(s);
+      add(t('dSite'), near || `${site[0].toFixed(2)}, ${site[1].toFixed(2)}`,
+        site[2] ? `${t('dElev')} ${Math.round(site[2])} m` : null);
+    }
+
+    // Only where somebody might actually cut one. A quarter wave at 740 kHz is a hundred
+    // metres of wire, which is a fact but not advice.
+    if (s.f >= 30) add(t('dAnt'), `λ/4 ${quarterWave(s.f)} · λ/2 ${quarterWave(s.f / 2)}`, null);
+
+    const band = hamBand(s.f);
+    if (band) add(t('dBand'), band, null);
+
+    if (s.tag) add(t('dMem'), s.tag, t('dMemNote'));
+
+    // Provenance. The confidence note used to be a badge on the row; it belongs here now
+    // that the bars carry one merged indicator, because it explains the bars rather than
+    // competing with them.
+    const where = s.src === 'fcc' ? t('dSrcFcc') : s.src === 'oa' ? t('dSrcOa') : t('dSrcHand');
+    const conf = s.conf && META.confidence[s.conf] ? META.confidence[s.conf] : null;
+    add(t('dSource'), where, conf ? (LANG === 'zh' ? conf.dz : conf.d) : null);
+
+    return out;
+  }
+
+  function detailPanel(s) {
+    const box = el('div', 'dx');
+
+    const grid = el('div', 'dx-g');
+    for (const [k, v, note] of detailRows(s)) {
+      const cell = el('div', 'dx-r');
+      cell.append(el('div', 'dx-k', k));
+      cell.append(el('div', 'dx-v', v));
+      if (note) cell.append(el('div', 'dx-n', note));
+      grid.append(cell);
+    }
+    box.append(grid);
+
+    // Copying is still the thing you came for; in pro mode it moves in here so that tapping
+    // a row can open the detail instead.
+    const act = el('div', 'dx-a');
+    const cp = el('button', 'dx-b');
+    cp.type = 'button';
+    cp.textContent = `${t('dCopy')} ${fmtFreq(s.f)} ${unit(s.f)}`;
+    cp.addEventListener('click', e => {
+      e.stopPropagation();
+      const txt = fmtFreq(s.f) + ' ' + unit(s.f);
+      copy(txt);
+      buzz(14);
+      toast(t('copied') + ' · ' + txt);
+    });
+    act.append(cp);
+    box.append(act);
     return box;
   }
 
@@ -1187,7 +1339,10 @@
     if (alt && alt !== (LANG === 'zh' ? s.z : s.n)) nm.append(el('div', 'alt', alt));
     const d = LANG === 'zh' ? (s.dz || s.d) : s.d;
     if (d) nm.append(el('div', 'd', d));
-    if (isPro() && s.f > 0) nm.append(proLine(s));
+    if (isPro() && s.f > 0) {
+      const px = proLine(s);
+      if (px) nm.append(px);
+    }
     b.append(nm);
 
     const m = el('div', 'meta');
@@ -1198,17 +1353,50 @@
       isDcs(s.t) ? 'DCS ' + (s.t.match(/\d+/) || [''])[0] : 'PL ' + s.t));
     const od = oddsTag(s);
     if (od) m.append(od);
+    // Something has to say the row opens. Without an affordance the detail panel is a
+    // feature only the person who built it knows about.
+    if (isPro() && s.f > 0) {
+      const chev = el('span', 'dx-c');
+      chev.setAttribute('aria-hidden', 'true');
+      chev.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg>';
+      m.append(chev);
+    }
     b.append(m);
 
-    b.addEventListener('click', () => {
-      if (s.f <= 0) { toast(t('verify')); return; }
-      const txt = fmtFreq(s.f) + ' ' + unit(s.f);
-      copy(txt);
-      flash(b);
-      buzz(14);
-      toast(t('copied') + ' · ' + txt);
-    });
+    // In pro mode the row opens its detail, and copying moves into the panel. In simple mode
+    // a tap copies, which is the whole interaction and should stay that way. Modes are for
+    // exactly this: the same list, answering a different question.
+    if (isPro() && s.f > 0) {
+      b.setAttribute('aria-expanded', 'false');
+      b.title = t('proHint');
+      b.addEventListener('click', () => toggleDetail(b, s));
+    } else {
+      b.addEventListener('click', () => {
+        if (s.f <= 0) { toast(t('verify')); return; }
+        const txt = fmtFreq(s.f) + ' ' + unit(s.f);
+        copy(txt);
+        flash(b);
+        buzz(14);
+        toast(t('copied') + ' · ' + txt);
+      });
+    }
     return b;
+  }
+
+  function toggleDetail(b, s) {
+    const open = b.nextElementSibling && b.nextElementSibling.classList.contains('dx');
+    if (open) {
+      b.nextElementSibling.remove();
+      b.setAttribute('aria-expanded', 'false');
+      b.classList.remove('open');
+      buzz(6);
+      return;
+    }
+    const panel = detailPanel(s);
+    b.after(panel);
+    b.setAttribute('aria-expanded', 'true');
+    b.classList.add('open');
+    buzz(10);
   }
 
   /* ---------- clipboard / toast ---------- */
