@@ -1,0 +1,20 @@
+{
+  "name": "airwaves",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Curated radio frequencies by region, for analog scanners. A static site with no runtime dependencies.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node .probe/suite.mjs",
+    "shots": "node .probe/suite.mjs shots",
+    "live": "node .probe/live.mjs",
+    "data:air": "node scripts/import-air.mjs",
+    "data:bcast": "node scripts/import-bcast.mjs",
+    "data:odds": "node scripts/make-odds.mjs",
+    "data:places": "node scripts/make-places.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.47.0"
+  }
+}

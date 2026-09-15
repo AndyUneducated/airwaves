@@ -235,7 +235,8 @@ is part of releasing**, not an optimisation.
 ## Tests
 
 `.probe/suite.mjs` drives a real browser through Playwright. It is grouped, and a group name
-on the command line runs only that group.
+on the command line runs only that group. It serves the project itself on an OS-assigned
+port, so a run needs nothing started first and two runs cannot collide.
 
 The suite deliberately asserts *behaviour and physics* rather than markup, because markup is
 what changes in a redesign:

@@ -36,7 +36,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="tooling" src="https://img.shields.io/badge/scripts-Node%2018%2B%20ESM-339933?logo=nodedotjs&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-Playwright-2ead33?logo=playwright&logoColor=white">
-  <img alt="checks" src="https://img.shields.io/badge/checks-112%20assertions-2ead33">
+  <img alt="checks" src="https://img.shields.io/badge/checks-115%20assertions-2ead33">
 </p>
 
 The point is narrow: you arrive somewhere, you open the site, you find frequencies you can actually receive, and you program them. It works with no signal.
@@ -147,11 +147,18 @@ The alert lookup is the only thing that sends a position anywhere. It goes out r
 
 ## Development
 
-No build step and no runtime dependencies. It is static HTML, one CSS file, one JS file, and JSON.
+No build step and no runtime dependencies. It is static HTML, one CSS file, one JS file, and JSON. Any static server will do:
 
 ```sh
 python3 -m http.server 8000
 # then open http://localhost:8000
+```
+
+The tests and the data importers are the only things that need packages, and they are dev dependencies — nothing in `devDependencies` reaches the published site:
+
+```sh
+npm install
+npx playwright install chromium
 ```
 
 A service worker requires `http://localhost` or HTTPS — opening `index.html` from the filesystem will work but without offline caching.
@@ -208,12 +215,16 @@ All of these are build-time steps, committed to the repo, because the site is st
 
 ### Tests
 
-The suite drives a real browser with Playwright and checks behaviour rather than markup — that the hiss is audible across a sweep, that a region's entries all render, that offline still works, that layout does not shift on load.
+The suite drives a real browser with Playwright and checks behaviour rather than markup — that the hiss is audible across a sweep, that a region's entries all render, that offline still works, that the page does not jump on load. It serves the project itself on a port the OS picks, so there is nothing to start first.
 
 ```sh
-node .probe/suite.mjs              # everything
+npm test                           # everything
 node .probe/suite.mjs detail odds  # named groups only
+node .probe/suite.mjs shots        # write screenshots to .probe/
+npm run live                       # smoke-test the published site
 ```
+
+Two habits are worth keeping, because both caught bugs that reading the code did not. Measure where the user is, not where it is convenient: the layout-shift checks read zero on localhost and 0.15 over the real network, because data that arrives before the first paint hides the problem entirely. And measure the physical thing rather than the markup — the tuning hiss was 26 dB too quiet while every DOM assertion passed.
 
 ## Legal
 

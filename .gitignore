@@ -1,2 +1,6 @@
 .DS_Store
-.probe/
+node_modules/
+
+# The probe scripts are tracked; the screenshots they produce are not. They are large
+# binaries that change with every visual tweak, and they are outputs, not sources.
+.probe/*.png
