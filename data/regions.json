@@ -17,6 +17,12 @@
     { "id": "safety",    "n": "Public Safety", "z": "公共安全",   "hint": "Analog only — digital systems are flagged", "hintz": "仅模拟制式——数字系统已标注" },
     { "id": "misc",      "n": "Oddities",      "z": "冷门有趣",   "hint": "Satellites, time signals, HF, one-offs", "hintz": "卫星、标准时间、短波、独特信号" }
   ],
+  "odds": {
+    "label": { "n": "Odds of hearing something", "z": "收到东西的概率" },
+    "3": { "n": "Always on",        "z": "常开",   "d": "A carrier is there essentially all the time, over a wide area, on a frequency that is not in doubt.", "dz": "几乎始终有信号，覆盖范围大，频率也没有疑问。" },
+    "2": { "n": "Usually something", "z": "多半有", "d": "Busy but intermittent. Expect to wait minutes rather than hours.", "dz": "繁忙但断续。通常等几分钟，而不是几小时。" },
+    "1": { "n": "Long shot",        "z": "难碰上", "d": "Quiet, short-range, occasional, or a frequency worth confirming. Worth programming, not worth sitting on.", "dz": "安静、距离短、偶发，或频率本身值得核实。值得存进电台，但不值得一直守着。" }
+  },
   "confidence": {
     "std":   { "n": "Standard",  "z": "统一分配", "d": "Nationally or internationally allocated. Will not change.", "dz": "国家或国际统一分配，不会变动。" },
     "high":  { "n": "Stable",    "z": "稳定",     "d": "Long-established and rarely changes.", "dz": "长期使用，极少变动。" },

@@ -129,8 +129,8 @@
       zh: '以八重洲 VX-6R 为基准：0.5 至 999 MHz 连续接收，支持 AM、窄带 FM 和宽带 FM。它是模拟接收机——无法解码 P25、DMR 或 NXDN，因此数字系统被标注为“收不到”，而不是直接删掉。'
     },
     'ft.trust.b': {
-      en: 'Every entry carries a confidence tag. Standard means a national or international allocation that will not change. Stable means long-established. Verify means it is believed correct but is local and worth confirming before you rely on it.',
-      zh: '每一条都带有可信度标签。“统一分配”指全国或国际范围内统一的频率划分，不会变动。“稳定”指长期使用。“请核实”指大致正确但地方性较强，依赖之前值得先确认。'
+      en: 'The bars on each entry are the odds of hearing anything if you tune there. Three bars means a carrier is on it essentially all the time, over a wide area — NOAA weather radio, a broadcast station, an airport ATIS loop. Two means busy but intermittent: a working tower, a port, a maintained repeater. One means quiet, short-range, occasional, or a frequency worth confirming locally before you rely on it — worth programming, not worth sitting on. Entries with no bars are digital or encrypted, so the radio cannot decode them at all.',
+      zh: '每条右侧的信号条表示：把电台调到这个频率，能收到东西的概率。三格代表几乎始终有信号且覆盖面大——NOAA 气象广播、广播电台、机场自动通播。两格代表繁忙但断续：运行中的塔台、港口、有人维护的中继台。一格代表安静、距离短、偶发，或这个频率本身值得先在当地核实——值得存进电台，但不值得一直守着。没有信号条的条目是数字或加密信号，电台根本无法解码。'
     }
   };
 
@@ -1145,6 +1145,28 @@
     return box;
   }
 
+  // One indicator answering the only question that matters before you dial something in:
+  // will I hear anything? It folds coverage, how much of the time the thing transmits, and
+  // how sure we are of the frequency into three levels — see scripts/make-odds.mjs. Three
+  // bars, because that reads at a glance in sunlight and needs no legend; the words are on
+  // the bar's label for anyone who wants them, and in the detail panel in pro mode.
+  function oddsTag(s) {
+    const lv = s.odds;
+    if (!lv || !META.odds || !META.odds[lv]) return null;
+    const meta = META.odds[lv];
+    const word = LANG === 'zh' ? meta.z : meta.n;
+
+    const box = el('span', 'od od-' + lv);
+    box.title = `${LANG === 'zh' ? META.odds.label.z : META.odds.label.n} — ${word}`;
+    box.setAttribute('role', 'img');
+    box.setAttribute('aria-label', box.title);
+    const bars = el('span', 'od-b');
+    for (let i = 1; i <= 3; i++) bars.append(el('i', i <= lv ? 'on' : null));
+    box.append(bars);
+    if (isPro()) box.append(el('span', 'od-w', word));
+    return box;
+  }
+
   function row(s) {
     const b = el('button', 'row' + (s.dig ? ' dig' : '') + (s.avoid ? ' avd' : ''));
     b.type = 'button';
@@ -1174,12 +1196,8 @@
     if (s.o) m.append(el('span', 'tag tag-o', s.o));
     if (s.t) m.append(el('span', 'tag tag-t',
       isDcs(s.t) ? 'DCS ' + (s.t.match(/\d+/) || [''])[0] : 'PL ' + s.t));
-    if (s.conf && META.confidence[s.conf]) {
-      const c = META.confidence[s.conf];
-      const tag = el('span', 'tag tag-' + s.conf, LANG === 'zh' ? c.z : c.n);
-      tag.title = LANG === 'zh' ? c.dz : c.d;
-      m.append(tag);
-    }
+    const od = oddsTag(s);
+    if (od) m.append(od);
     b.append(m);
 
     b.addEventListener('click', () => {

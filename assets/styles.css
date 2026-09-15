@@ -912,6 +912,33 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
 .tag-dig { color: var(--warn); border-color: rgba(245, 182, 86, .28); background: var(--warn-dim); }
 .tag-avd { color: var(--warn); border-color: rgba(245, 182, 86, .35); background: var(--warn-dim); font-weight: 600; }
 
+/* Odds: how likely you are to hear anything if you tune here. Three bars rather than a word,
+   because it has to read at arm's length in sunlight, and because it is a quantity — the eye
+   compares bar heights across a list far faster than it reads three different labels. */
+.od { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.od-b { display: inline-flex; align-items: flex-end; gap: 1.5px; height: 11px; }
+.od-b i {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--line-2);
+}
+.od-b i:nth-child(1) { height: 40%; }
+.od-b i:nth-child(2) { height: 70%; }
+.od-b i:nth-child(3) { height: 100%; }
+.od-w {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--tx-3);
+}
+
+/* Full bars earn the accent colour. A long shot stays grey: it is not a warning, it is just
+   a quieter promise, and colouring it amber would confuse it with "you cannot have this". */
+.od-3 .od-b i.on { background: var(--ac); }
+.od-3 .od-w { color: var(--ac); }
+.od-2 .od-b i.on { background: var(--tx-2); }
+.od-1 .od-b i.on { background: var(--tx-3); }
+
 /* Avoid: a real frequency you should not work on. Dimmed, but not struck through like a
    digital system, because you may still want it in the radio to monitor. */
 .row.avd { opacity: .72; }
