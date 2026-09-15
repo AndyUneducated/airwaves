@@ -15,6 +15,9 @@
     { "f": 118.000, "n": "Shenyang and Dalian tower bands", "z": "沈阳与大连塔台频段", "c": "air", "m": "AM", "conf": "std", "a": "Aviation", "odds": 1 },
     { "f": 132.000, "n": "Shenyang Area Control — scan 128.000–136.000", "z": "沈阳区域管制 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation", "d": "Traffic between China, Korea, Japan and Russian Far East routes crosses here.", "dz": "中国、韩国、日本以及俄罗斯远东航线之间的流量都经过这里。", "odds": 1 },
     { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Aviation", "odds": 1 },
+    { "f": 126.250, "n": "CGQ ATIS", "z": "CGQ 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Changchun Longjia International Airport (ZYCC)", "ref": "ZYCC", "src": "oa", "odds": 3 },
+    { "f": 118.450, "n": "CGQ Tower", "z": "CGQ 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Changchun Longjia International Airport (ZYCC)", "ref": "ZYCC", "src": "oa", "odds": 2 },
+    { "f": 119.450, "n": "CGQ Approach", "z": "CGQ 进场管制", "c": "air", "m": "AM", "conf": "high", "a": "Changchun Longjia International Airport (ZYCC)", "ref": "ZYCC", "src": "oa", "odds": 2 },
 
     { "f": 156.800, "n": "Marine Ch 16 — Dalian and the Bohai Gulf", "z": "海事 16 频道 · 大连与渤海湾", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine — Dalian", "d": "Dalian is a major port and naval area. Ferry traffic across the Bohai Gulf to Yantai keeps the band busy. Listen freely, but do not transmit near naval facilities.", "dz": "大连是重要港口，也是海军区域。跨渤海湾往烟台的轮渡让频段一直很忙。可以自由收听，但不要在海军设施附近发射。", "odds": 2 },
     { "f": 156.650, "n": "Bridge-to-Bridge — Ch 13", "z": "船桥互通 13 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine — Dalian", "odds": 2 },

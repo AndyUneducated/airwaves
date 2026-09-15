@@ -15,6 +15,9 @@
     { "f": 132.000, "n": "Area control — scan 128.000–136.000", "z": "区域管制 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Enroute", "d": "Long-haul traffic between Europe and East Asia crosses this airspace. From the desert with no terrain in the way, enroute reception is superb.", "dz": "欧洲与东亚之间的远程航班穿过这片空域。在毫无地形遮挡的戈壁上，航路频率的接收效果极佳。", "odds": 1 },
     { "f": 122.900, "n": "Dunhuang and regional fields", "z": "敦煌及区域机场", "c": "air", "m": "AM", "conf": "check", "a": "Enroute", "d": "Scan the airband in AM near Dunhuang, Kashgar and Jiayuguan. Regional fields are quiet but the occasional movement is easy to follow.", "dz": "在敦煌、喀什和嘉峪关附近用 AM 扫航空波段。区域机场很清静，但偶尔的起降很容易跟上。", "odds": 1 },
     { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Enroute", "odds": 1 },
+    { "f": 126.700, "n": "URC ATIS", "z": "URC 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Ürümqi Diwopu (ZWWW / URC)", "ref": "ZWWW", "src": "oa", "odds": 3 },
+    { "f": 118.100, "n": "URC Tower", "z": "URC 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Ürümqi Diwopu (ZWWW / URC)", "ref": "ZWWW", "src": "oa", "odds": 2 },
+    { "f": 121.650, "n": "URC Ground", "z": "URC 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Ürümqi Diwopu (ZWWW / URC)", "ref": "ZWWW", "src": "oa", "odds": 2 },
 
     { "f": 450.025, "n": "无线列调 — Lanzhou–Xinjiang line", "z": "无线列调 · 兰新线", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway", "d": "The conventional Lanzhou–Ürümqi railway carries enormous freight volumes through the Hexi Corridor and still uses analog 450 MHz dispatch. Where the road runs alongside the track for hundreds of kilometres, this is genuinely good listening.", "dz": "普速兰新铁路承担着穿越河西走廊的巨大货运量，仍使用 450 MHz 模拟调度。公路与铁路并行数百公里的路段，收听效果确实不错。", "odds": 2 },
     { "f": 457.700, "n": "无线列调 — paired range", "z": "无线列调 · 配对频段", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway", "odds": 1 },

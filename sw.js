@@ -1,6 +1,6 @@
 /* Airwaves service worker — precache everything so the site works with no signal */
 
-const V = 'airwaves-v9';
+const V = 'airwaves-v10';
 
 const SHELL = [
   './',
