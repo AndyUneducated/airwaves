@@ -48,13 +48,26 @@ The site opens in **Simple** mode: a frequency, a name, a short description, and
 **Pro** mode is the switch in the header, or the `P` key. It layers instruments on top for someone who is actually holding the radio:
 
 - Under every entry, the amateur band the frequency falls in, the frequency you would transmit on to reach a repeater, and the quarter-wave antenna length.
-- **How far away it is.** Once you have tapped "Near me", entries tied to a known transmitter site show the distance and compass bearing from you — the difference between "there is a tower frequency" and "that tower is 7.7 km northwest, so of course you can hear it". Only entries with a real site say anything: an approach sector covering half a state, or a dial position shared by three transmitters, has no single place, and an invented number would be worse than silence. The position is kept on your device for six hours so the distances are simply there next time, and never leaves it.
+- **Right now.** A short panel above the list, answering whether this is a good moment to listen. Whether it is dark and how long until that changes, computed on the device — below 30 MHz darkness decides what you can hear, which is why so many entries in the data say "at night". The planetary K index and solar flux, for the same reason. And in the United States, any active National Weather Service alert, with the local NOAA weather frequency next to it; tap the card and the list jumps to it.
+- **How far away it is.** Once you have tapped "Near me", entries tied to a known transmitter site show the distance and compass bearing from you — the difference between "there is a tower frequency" and "that tower is 7.7 km northwest, so of course you can hear it". Only entries with a real site say anything: an approach sector covering half a state, or a dial position shared by three transmitters, has no single place, and an invented number would be worse than silence. The position is kept on your device for six hours so the distances are simply there next time.
 - The spectrum rail becomes a **tuning knob**. Drag it and the frequency sweeps continuously; listed entries are detents you can feel and hear, band edges give a heavier click, and the receiver hiss drops away as you settle onto something — so you can find an entry without looking at the screen. Release to jump to it. Arrow keys, `Home` and `End` step entry by entry, and the speaker icon mutes the sound for good.
 - Each band on the rail is labelled with how many entries it holds.
 
-All of it is computed in the browser, so Pro works offline exactly like the rest of the site. Nothing plays audio until you actually touch the rail.
+Nothing plays audio until you actually touch the rail. The choice of mode is remembered, and `?pro=1` and `?pro=0` force one, which makes a Pro view shareable.
 
-The choice is remembered. `?pro=1` and `?pro=0` force a mode, which makes a Pro view shareable.
+### What Pro talks to, and what it does not
+
+Everything except the three live readings is worked out on the device, so Pro degrades to something still useful with no signal: distances, bands, antenna lengths, the tuning knob and the sunrise clock all keep working, and the live cards fall back to the last reading they saw, labelled as such.
+
+The three that need a network are fetched by the browser directly, because a site on GitHub Pages has no backend to do it for them:
+
+| Reading | Source | Cached for |
+| --- | --- | --- |
+| Planetary K index | `services.swpc.noaa.gov` | 30 minutes |
+| Solar flux | `services.swpc.noaa.gov` | 6 hours |
+| Active weather alerts | `api.weather.gov` | 10 minutes |
+
+The alert lookup is the only thing that sends a position anywhere. It goes out rounded to two decimal places, roughly a kilometre, which costs nothing because alerts are issued for whole counties — and if you have not shared a position, it uses the centre of the region you are reading instead, so nothing about you leaves at all. The K index and flux are the same numbers for everybody and carry no position. Every request has a timeout, fails quietly, and is skipped entirely if you move to another region before it fires.
 
 ## Features
 

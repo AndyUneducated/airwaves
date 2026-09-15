@@ -18,6 +18,29 @@
       here: 'Here',
       compass: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
       km: 'km',
+      nowT: 'Right now',
+      nowYou: 'at your position',
+      sun: 'Sun',
+      dark: 'Dark',
+      darkAm: 'Dark — the AM band is open',
+      daylight: 'Daylight',
+      sunUp: 'The sun does not set today',
+      sunDown: 'The sun does not rise today',
+      sunrise: d => `Sunrise in ${d}`,
+      sunset: d => `Sunset in ${d}`,
+      span: (h, m) => (h ? `${h} h ${m} m` : `${m} m`),
+      hf: 'HF conditions',
+      kp: ['quiet', 'quiet', 'quiet', 'unsettled', 'active', 'storm', 'storm', 'severe storm'],
+      hfSteady: 'Paths below 30 MHz are steady',
+      hfRough: 'Paths below 30 MHz are degraded, worst at high latitudes',
+      flux: f => `Solar flux ${f}`,
+      fluxV: ['high bands mostly closed', 'high bands marginal', 'high bands workable', 'high bands wide open'],
+      wxAlerts: 'Weather alerts',
+      wxNone: 'None active',
+      wxMore: n => `and ${n} more`,
+      wxOn: f => `NOAA on ${f}`,
+      liveOff: 'Needs a connection',
+      liveOld: 'last known',
       online: 'online',
       offline: 'offline · cached',
       langBtn: '中文',
@@ -54,6 +77,29 @@
       here: '当前位置',
       compass: ['北', '东北', '东', '东南', '南', '西南', '西', '西北'],
       km: '公里',
+      nowT: '此刻',
+      nowYou: '你所在的位置',
+      sun: '日照',
+      dark: '天已黑',
+      darkAm: '天已黑 —— 中波已开',
+      daylight: '白天',
+      sunUp: '今天太阳不落',
+      sunDown: '今天太阳不升',
+      sunrise: d => `日出还有 ${d}`,
+      sunset: d => `日落还有 ${d}`,
+      span: (h, m) => (h ? `${h} 小时 ${m} 分` : `${m} 分`),
+      hf: '短波条件',
+      kp: ['平静', '平静', '平静', '略受扰', '活跃', '磁暴', '磁暴', '强磁暴'],
+      hfSteady: '30 MHz 以下传播稳定',
+      hfRough: '30 MHz 以下传播受扰，高纬度最明显',
+      flux: f => `太阳射电通量 ${f}`,
+      fluxV: ['高频段基本不开', '高频段勉强', '高频段可用', '高频段大开'],
+      wxAlerts: '气象警报',
+      wxNone: '当前无警报',
+      wxMore: n => `另有 ${n} 条`,
+      wxOn: f => `NOAA 气象广播 ${f}`,
+      liveOff: '需要联网',
+      liveOld: '上次获取',
       online: '在线',
       offline: '离线 · 已缓存',
       langBtn: 'EN',
@@ -209,7 +255,7 @@
     applyMode();
     buzz(isPro() ? 14 : 8);
     toast(isPro() ? t('proOn') : t('proOff'));
-    if (REGION) paint(() => { renderIntro(); render(); });
+    if (REGION) paint(() => { renderIntro(); renderNow(); render(); });
   }
 
   /* ---------- country ---------- */
@@ -358,7 +404,7 @@
     }
     REGION = { meta, data: CACHE.get(id) };
     CAT = 'all';
-    paint(() => { renderIntro(); buildCatTabs(); render(); });
+    paint(() => { renderIntro(); renderNow(); buildCatTabs(); render(); });
     const tab = document.querySelector(`#regions .chip[data-id="${id}"]`);
     if (tab && push) tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }
@@ -391,6 +437,18 @@
       ru.textContent = '';
       ru.append(el('div', 'sk-x sk-ru-c'), el('div', 'sk-x sk-ru-r'));
       ru.hidden = false;
+
+      // Pro mode has the "right now" panel between them, and it is the same size whether
+      // or not the live readings have arrived, so its space can be held exactly.
+      const nw = $('#now');
+      nw.textContent = '';
+      if (isPro()) {
+        nw.append(el('div', 'sk-x sk-nw-c'));
+        const g = el('div', 'nw-g');
+        for (let i = 0; i < (SCOPE === 'cn' ? 2 : 3); i++) g.append(el('div', 'sk-x sk-nw'));
+        nw.append(g);
+      }
+      nw.hidden = !isPro();
     } else {
       $('#ruler').hidden = true;
     }
@@ -436,10 +494,214 @@
     });
     box.append(acts);
 
+    // The note explains the struck-through rows, so it sits just above the list rather than
+    // between you and what is happening right now.
+    const slot = $('#notice');
+    slot.textContent = '';
     if (data.stations.some(s => s.dig)) {
       const n = el('div', 'notice');
       n.append(el('span', null, t('digNote')));
-      box.append(n);
+      slot.append(n);
+    }
+  }
+
+  /* ---------- right now ---------- */
+
+  // Sunrise and sunset from the standard solar position formulas. Worth computing locally:
+  // it needs no network, and below 30 MHz darkness changes what you can hear more than
+  // anything else does — several entries in the data say "at night" in so many words.
+  function sunTimes(date, lat, lon) {
+    const rad = Math.PI / 180, day = 86400000, J1970 = 2440588, J2000 = 2451545;
+    const fromJ = j => new Date((j + 0.5 - J1970) * day);
+
+    const d = date.valueOf() / day - 0.5 + J1970 - J2000;
+    const lw = rad * -lon, phi = rad * lat;
+    const n = Math.round(d - 0.0009 - lw / (2 * Math.PI));
+    const ds = 0.0009 + lw / (2 * Math.PI) + n;
+    const M = rad * (357.5291 + 0.98560028 * ds);
+    const C = rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M));
+    const L = M + C + rad * 102.9372 + Math.PI;
+    const dec = Math.asin(Math.sin(rad * 23.4397) * Math.sin(L));
+    const jNoon = J2000 + ds + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L);
+
+    // −0.833° allows for refraction and the sun's own radius: the usual definition.
+    const cosW = (Math.sin(rad * -0.833) - Math.sin(phi) * Math.sin(dec)) /
+      (Math.cos(phi) * Math.cos(dec));
+    if (cosW >= 1) return { polar: 'night' };
+    if (cosW <= -1) return { polar: 'day' };
+    const w = Math.acos(cosW);
+    const jSet = J2000 + (0.0009 + (w + lw) / (2 * Math.PI) + n) +
+      0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L);
+    return { rise: fromJ(jNoon - (jSet - jNoon)), set: fromJ(jSet) };
+  }
+
+  function span(ms) {
+    const m = Math.max(0, Math.round(ms / 60000));
+    return t('span')(Math.floor(m / 60), m % 60);
+  }
+
+  // Live data on a site with no backend: fetched straight from the browser, cut down to the
+  // few fields that matter, cached with a TTL. Always optional — a failure leaves the card
+  // quiet instead of breaking the page, and a stale reading beats an empty one offline.
+  async function live(key, url, ttl, reduce) {
+    const now = Date.now();
+    const read = () => {
+      try { return JSON.parse(localStorage.getItem('aw.live.' + key) || 'null'); } catch (e) { return null; }
+    };
+    const had = read();
+    if (had && now - had.at < ttl) return had.v;
+
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 7000);
+    try {
+      const r = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const v = reduce(await r.json());
+      try { localStorage.setItem('aw.live.' + key, JSON.stringify({ at: now, v })); } catch (e) {}
+      return v;
+    } catch (e) {
+      return had ? Object.assign({}, had.v, { old: true }) : null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function nowCard(label, value, detail) {
+    const c = el('div', 'nw-c');
+    c.append(el('div', 'nw-k', label));
+    c.append(el('div', 'nw-v', value));
+    c.append(el('div', 'nw-d', detail));
+    return c;
+  }
+
+  function fill(c, value, detail) {
+    c.querySelector('.nw-v').textContent = value;
+    c.querySelector('.nw-d').textContent = detail || '';
+  }
+
+  let nowGen = 0;
+
+  function renderNow() {
+    // Flipping through regions must not fire a request per region, so the live readings are
+    // held back briefly and dropped if you have already moved on.
+    const gen = ++nowGen;
+    const soon = fn => setTimeout(() => { if (gen === nowGen) fn(); }, 350);
+
+    const box = $('#now');
+    box.textContent = '';
+    if (!isPro() || !REGION) { box.hidden = true; return; }
+
+    // Your own position if you have shared it, otherwise the middle of the region you are
+    // reading. Nationwide sets and the link pages have no centre, so they get no panel.
+    const own = POS.lat != null;
+    const lat = own ? POS.lat : REGION.meta.lat;
+    const lon = own ? POS.lon : REGION.meta.lon;
+    if (lat == null || lon == null) { box.hidden = true; return; }
+    box.hidden = false;
+
+    const cap = el('div', 'nw-cap');
+    cap.append(el('span', 'nw-t', t('nowT')));
+    cap.append(el('span', 'nw-w', own ? t('nowYou') : L(REGION.meta, { n: 'n', z: 'z' })));
+    box.append(cap);
+
+    const grid = el('div', 'nw-g');
+    grid.append(sunCard(lat, lon));
+
+    const hf = nowCard(t('hf'), '·  ·  ·', '');
+    grid.append(hf);
+    soon(() => fillHf(hf));
+
+    // The alert service is the US National Weather Service and rejects points outside it.
+    if (SCOPE === 'us') {
+      const wx = nowCard(t('wxAlerts'), '·  ·  ·', '');
+      grid.append(wx);
+      soon(() => fillWx(wx, lat, lon));
+    }
+
+    box.append(grid);
+  }
+
+  function sunCard(lat, lon) {
+    const c = nowCard(t('sun'), '', '');
+    const s = sunTimes(new Date(), lat, lon);
+    // Only the bands below 30 MHz care about darkness; above that it makes no difference.
+    const lowBands = REGION.data.stations.some(x => x.f > 0 && x.f < 30);
+
+    if (s.polar) {
+      fill(c, s.polar === 'day' ? t('sunUp') : t('sunDown'),
+        s.polar === 'night' && lowBands ? t('darkAm') : '');
+      return c;
+    }
+
+    const now = Date.now();
+    const dark = now < s.rise.getTime() || now > s.set.getTime();
+    let next;
+    if (!dark) next = s.set;
+    else if (now > s.set.getTime()) next = sunTimes(new Date(now + 86400000), lat, lon).rise;
+    else next = s.rise;
+
+    // A clock time is only honest for your own position, where the device clock is the
+    // right one. For a region on the other side of the world the countdown is what holds.
+    const clock = POS.lat != null
+      ? ' · ' + String(next.getHours()).padStart(2, '0') + ':' + String(next.getMinutes()).padStart(2, '0')
+      : '';
+    fill(c, dark ? (lowBands ? t('darkAm') : t('dark')) : t('daylight'),
+      (dark ? t('sunrise') : t('sunset'))(span(next.getTime() - now)) + clock);
+    return c;
+  }
+
+  async function fillHf(c) {
+    const kp = await live('kp', 'https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json',
+      30 * 60e3, j => {
+        const last = j[j.length - 1];
+        return { kp: Math.round(Number(last.Kp)) };
+      });
+    const flux = await live('flux', 'https://services.swpc.noaa.gov/products/summary/10cm-flux.json',
+      6 * 3600e3, j => ({ flux: Math.round(Number((Array.isArray(j) ? j[0] : j).flux)) }));
+
+    if (!kp) { fill(c, t('liveOff'), ''); return; }
+    const k = Math.min(7, Math.max(0, kp.kp));
+    const verdict = k >= 5 ? t('hfRough') : t('hfSteady');
+    const detail = flux
+      ? t('flux')(flux.flux) + ' · ' + t('fluxV')[flux.flux < 90 ? 0 : flux.flux < 120 ? 1 : flux.flux < 160 ? 2 : 3]
+      : verdict;
+    fill(c, `Kp ${k} · ${t('kp')[k]}`, detail + (kp.old ? ' · ' + t('liveOld') : ''));
+    c.classList.toggle('nw-warn', k >= 5);
+  }
+
+  async function fillWx(c, lat, lon) {
+    // Rounded to about a kilometre on the way out. Alerts are issued for whole counties, so
+    // nothing is lost, and there is no reason to hand over a sharper position than the
+    // question needs.
+    const at = `${lat.toFixed(2)},${lon.toFixed(2)}`;
+    const a = await live('wx' + at,
+      `https://api.weather.gov/alerts/active?point=${at}`,
+      10 * 60e3, j => {
+        const rank = { Extreme: 4, Severe: 3, Moderate: 2, Minor: 1 };
+        const list = (j.features || [])
+          .map(f => ({ event: f.properties.event, sev: rank[f.properties.severity] || 0 }))
+          .sort((x, y) => y.sev - x.sev);
+        return { n: list.length, worst: list.length ? list[0].event : null, sev: list.length ? list[0].sev : 0 };
+      });
+
+    // Whatever the alerts say, the useful next move is the weather frequency for here.
+    const noaa = REGION.data.stations.find(s => s.c === 'wx' && s.f > 0);
+    const on = noaa ? t('wxOn')(fmtFreq(noaa.f) + ' ' + unit(noaa.f)) : '';
+
+    if (!a) { fill(c, t('liveOff'), on); return; }
+    const extra = a.n > 1 ? t('wxMore')(a.n - 1) + (on ? ' · ' : '') : '';
+    fill(c, a.worst || t('wxNone'), extra + on + (a.old ? ' · ' + t('liveOld') : ''));
+    c.classList.toggle('nw-warn', a.sev >= 3);
+
+    if (noaa) {
+      c.classList.add('nw-hit');
+      c.setAttribute('role', 'button');
+      c.tabIndex = 0;
+      const go = () => jumpTo(noaa);
+      c.addEventListener('click', go);
+      c.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+      });
     }
   }
 
@@ -1044,6 +1306,7 @@
         buildRegionTabs();
         buildCatTabs();
         renderIntro();
+        renderNow();
         render();
       });
     });
