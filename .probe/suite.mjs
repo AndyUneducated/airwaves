@@ -719,6 +719,251 @@ if (want('layout')) {
   }
 }
 
+/* ================= skins: the outdoor display modes ================= */
+if (want('skin')) {
+  // Composite a node's effective background down through any translucent layers, then
+  // report WCAG contrast for every node that draws its own text. Measuring rather than
+  // trusting the tokens is the point: a single hardcoded colour left behind in a rule is
+  // exactly how the header stayed dark while the page around it went white.
+  const PROBE = () => {
+    const lum = (r, g, b) => {
+      const f = c => (c /= 255) <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+    };
+    const parse = s => (s.match(/[\d.]+/g) || []).map(Number);
+    const bgOf = node => {
+      const stack = [];
+      let el = node;
+      while (el) {
+        const c = parse(getComputedStyle(el).backgroundColor || '');
+        const a = c.length >= 3 ? (c[3] === undefined ? 1 : c[3]) : 0;
+        if (a > 0) { stack.push([c[0], c[1], c[2], a]); if (a >= 1) break; }
+        el = el.parentElement;
+      }
+      let r = 255, g = 255, b = 255;
+      for (let i = stack.length - 1; i >= 0; i--) {
+        const [sr, sg, sb, a] = stack[i];
+        r = sr * a + r * (1 - a); g = sg * a + g * (1 - a); b = sb * a + b * (1 - a);
+      }
+      return [r, g, b];
+    };
+
+    let worst = { ratio: 99, sel: '', text: '' };
+    for (const el of document.querySelectorAll('body *')) {
+      const cs = getComputedStyle(el);
+      if (!el.offsetParent && cs.position !== 'fixed') continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      // Skip anything parked off-screen, such as the skip link: it is never seen, so its
+      // contrast is not a claim about the skin.
+      if (r.right < 0 || r.bottom < 0 || r.left > innerWidth) continue;
+      if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue;
+      const fg = parse(cs.color);
+      if (fg.length < 3 || (fg[3] !== undefined && fg[3] < 0.5)) continue;
+      const [br, bg, bb] = bgOf(el);
+      const l1 = lum(fg[0], fg[1], fg[2]), l2 = lum(br, bg, bb);
+      const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      if (ratio < worst.ratio) {
+        worst = {
+          ratio: Math.round(ratio * 100) / 100,
+          sel: el.tagName.toLowerCase() + '.' + (el.className || '').toString().split(' ')[0],
+          text: el.textContent.trim().slice(0, 30)
+        };
+      }
+    }
+
+    // Every surface that paints a panel must sit on the same side of the light/dark line
+    // as the skin claims. This is the assertion the header bug would have failed. Chips are
+    // deliberately left out: a selected one is accent-filled and so inverts against the
+    // page in both skins, which is the design rather than a defect.
+    const surfaces = {};
+    for (const sel of ['.hd', '.nw-c', '.dx', '.view-menu', '.row', 'body']) {
+      const el = document.querySelector(sel);
+      if (!el) continue;
+      const [r, g, b] = bgOf(el);
+      surfaces[sel] = Math.round(lum(r, g, b) * 1000) / 1000;
+    }
+    return {
+      worst, surfaces,
+      skin: document.documentElement.dataset.skin,
+      bar: (document.querySelector('meta[name="theme-color"]') || {}).content,
+      bg: getComputedStyle(document.body).backgroundColor
+    };
+  };
+
+  for (const skin of ['auto', 'glare', 'black']) {
+    const { ctx, page, errs } = await session();
+    await page.addInitScript(s => localStorage.setItem('aw.skin', s), skin);
+    await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+    // Open a detail panel and the settings menu so those surfaces are measured too.
+    await page.evaluate(() => {
+      const t = [...document.querySelectorAll('.row')].find(x => x.textContent.includes('Mount Diablo'));
+      if (t) t.click();
+    });
+    await page.click('#btn-view');
+    await page.waitForTimeout(300);
+    const m = await page.evaluate(PROBE);
+
+    pass(`${skin}: skin survives the reload`, m.skin === skin, `data-skin=${m.skin}`);
+
+    const light = skin === 'glare';
+    const surfaces = Object.entries(m.surfaces);
+    const wrong = surfaces.filter(([, l]) => light ? l < 0.5 : l > 0.2);
+    pass(`${skin}: every surface is ${light ? 'light' : 'dark'}`,
+      wrong.length === 0 && surfaces.length >= 6,
+      wrong.length ? 'wrong side: ' + wrong.map(([s, l]) => `${s} ${l}`).join(', ')
+        : surfaces.length + ' surfaces checked');
+
+    // Sunlight mode exists to be read in sunlight, so it is held to WCAG AA on every
+    // visible word. The other two keep the panel look and are only held to a floor that
+    // stops a skin change from quietly making them worse.
+    const floor = light ? 4.5 : 2.9;
+    pass(`${skin}: worst text contrast >= ${floor}`,
+      m.worst.ratio >= floor,
+      `${m.worst.ratio}:1 on ${m.worst.sel} ${JSON.stringify(m.worst.text)}`);
+
+    pass(`${skin}: browser chrome colour matches`,
+      m.bar === { auto: '#0a0b0d', glare: '#ffffff', black: '#000000' }[skin], `theme-color ${m.bar}`);
+
+    if (skin === 'black') {
+      pass('black: background is true black', m.bg === 'rgb(0, 0, 0)', m.bg);
+    }
+    pass(`${skin}: no console errors`, errs.length === 0, errs.join(' | '));
+    await ctx.close();
+  }
+
+  /* the settings popover itself */
+  {
+    const { ctx, page, errs } = await session();
+    await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+
+    const shut = () => page.evaluate(() => document.getElementById('view-menu').hidden);
+    pass('settings start closed', await shut() === true);
+
+    await page.click('#btn-view');
+    const opened = await page.evaluate(() => ({
+      open: !document.getElementById('view-menu').hidden,
+      expanded: document.getElementById('btn-view').getAttribute('aria-expanded'),
+      radios: [...document.querySelectorAll('[role="menuitemradio"]')].map(o => o.getAttribute('aria-checked')),
+      // The gloved-thumb requirement from the brief: these rows are hit outdoors.
+      short: [...document.querySelectorAll('.view-o')].filter(o => o.getBoundingClientRect().height < 44).length,
+      labels: [...document.querySelectorAll('.view-o .view-n')].every(n => n.textContent.trim().length > 2)
+    }));
+    pass('settings open with one skin selected',
+      opened.open && opened.expanded === 'true' &&
+      opened.radios.filter(c => c === 'true').length === 1 && opened.labels,
+      `checked: ${opened.radios.join(',')}`);
+    pass('settings rows are thumb-sized', opened.short === 0, `${opened.short} rows under 44px`);
+
+    // Switching skin must repaint immediately, not only after a reload.
+    const before = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    await page.click('[role="menuitemradio"]:nth-of-type(1) ~ [role="menuitemradio"]');
+    await page.waitForTimeout(250);
+    const after = await page.evaluate(() => ({
+      bg: getComputedStyle(document.body).backgroundColor,
+      skin: document.documentElement.dataset.skin,
+      saved: localStorage.getItem('aw.skin'),
+      closed: document.getElementById('view-menu').hidden
+    }));
+    pass('picking a skin repaints and closes',
+      after.bg !== before && after.skin === 'glare' && after.saved === 'glare' && after.closed,
+      `${before} -> ${after.bg}, saved ${after.saved}`);
+
+    // Escape and an outside tap both have to dismiss it, or it traps a one-handed user.
+    await page.click('#btn-view');
+    await page.keyboard.press('Escape');
+    pass('escape closes settings', await shut() === true);
+    await page.click('#btn-view');
+    await page.mouse.click(10, 400);
+    pass('tapping outside closes settings', await shut() === true);
+
+    // Escape inside the menu must not also wipe the search box.
+    await page.evaluate(() => { const q = document.getElementById('q'); q.value = '146'; });
+    await page.click('#btn-view');
+    await page.keyboard.press('Escape');
+    pass('escape in settings leaves the search alone',
+      await page.evaluate(() => document.getElementById('q').value) === '146');
+
+    pass('settings: no console errors', errs.length === 0, errs.join(' | '));
+    await ctx.close();
+  }
+
+  /* keep-screen-on, against a stubbed lock so both outcomes are reachable */
+  {
+    // Headless Chromium has navigator.wakeLock but rejects the request, since there is no
+    // screen to hold. Stubbing it is what makes the working path testable at all, and the
+    // rejecting path below is then the real browser behaviour rather than a contrivance.
+    const { ctx, page } = await session();
+    await page.addInitScript(() => {
+      let held = 0;
+      window.__held = () => held;
+      Object.defineProperty(navigator, 'wakeLock', {
+        configurable: true,
+        value: {
+          request: async () => {
+            held++;
+            return { type: 'screen', released: false, release: async () => { held--; }, addEventListener() {} };
+          }
+        }
+      });
+    });
+    await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+    await page.click('#btn-view');
+    await page.click('#btn-awake');
+    await page.waitForTimeout(200);
+    const on = await page.evaluate(() => ({
+      checked: document.getElementById('btn-awake').getAttribute('aria-checked'),
+      saved: localStorage.getItem('aw.awake'),
+      held: window.__held()
+    }));
+    pass('keep-screen-on takes a real lock and is remembered',
+      on.checked === 'true' && on.saved === '1' && on.held === 1,
+      `checked ${on.checked}, saved ${on.saved}, locks held ${on.held}`);
+
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+    await page.click('#btn-view');
+    const back = await page.evaluate(() => ({
+      checked: document.getElementById('btn-awake').getAttribute('aria-checked'),
+      held: window.__held()
+    }));
+    pass('keep-screen-on retakes the lock on load',
+      back.checked === 'true' && back.held === 1, `checked ${back.checked}, locks held ${back.held}`);
+
+    await page.click('#btn-awake');
+    await page.waitForTimeout(200);
+    const off = await page.evaluate(() => ({
+      saved: localStorage.getItem('aw.awake'), held: window.__held()
+    }));
+    pass('keep-screen-on releases the lock when turned off',
+      off.saved === '0' && off.held === 0, `saved ${off.saved}, locks held ${off.held}`);
+    await ctx.close();
+  }
+
+  /* and when the browser refuses, which is what headless actually does */
+  {
+    const { ctx, page, errs } = await session();
+    await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+    await page.click('#btn-view');
+    await page.click('#btn-awake');
+    await page.waitForTimeout(250);
+    const r = await page.evaluate(() => ({
+      checked: document.getElementById('btn-awake').getAttribute('aria-checked'),
+      saved: localStorage.getItem('aw.awake')
+    }));
+    // A refused lock must leave the switch off: showing it on would promise a screen that
+    // then sleeps anyway, which is worse than not offering it.
+    pass('a refused lock leaves the switch off and unsaved',
+      r.checked === 'false' && r.saved !== '1', `checked ${r.checked}, saved ${r.saved}`);
+    pass('a refused lock throws nothing at the console', errs.length === 0, errs.join(' | '));
+    await ctx.close();
+  }
+}
+
 /* ================= CHIRP export ================= */
 if (want('export')) {
   const { ctx, page } = await session();

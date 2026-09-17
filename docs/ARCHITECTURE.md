@@ -212,6 +212,59 @@ to whichever question it serves.
 Pro is chosen deliberately: it is remembered, and `?pro=1` or `?pro=0` forces it so a view can
 be shared. Simple remains the design centre — outdoors, one hand, bright sun, no signal.
 
+## Skins
+
+A skin is a token override and nothing else. Every colour in the stylesheet resolves through a
+custom property on `:root`, so `html[data-skin="glare"]` restates those properties and no rule,
+component or script needs to know that skins exist.
+
+Three of the tokens are held as bare RGB triples — `--ac-g`, `--wn-g`, `--t-t`, `--t-o` — rather
+than colours, because each is used at a dozen different alphas for borders and glows. A triple
+is overridden once; a colour would have to be overridden at every alpha it appears in.
+
+```mermaid
+flowchart LR
+  A["inline script in head<br/>reads aw.skin"] --> B["data-skin on html"]
+  B --> C["token block in root"]
+  C --> D["every rule, unchanged"]
+  E["settings popover"] --> F["applySkin"]
+  F --> B
+  F --> G["theme-color meta<br/>so the notch matches"]
+```
+
+The skin is resolved in the inline head script alongside mode and scope, for the same reason:
+it repaints every surface on the page, so deciding it after first paint would show a dark screen
+to someone who chose the light one.
+
+The risk this design carries is a hardcoded colour left behind in a rule, which then ignores the
+skin. That is not hypothetical — the header kept `rgba(8, 9, 11, .82)` for its translucent
+backdrop and stayed dark while the page around it went white. So the suite does not check the
+tokens; it composites the real background of each surface through any translucent layers and
+asserts that all of them sit on the light side in Sunlight and the dark side in the other two.
+
+Contrast is measured the same way, per skin, over every node that draws its own text:
+
+| Skin | Floor | Why that floor |
+| --- | --- | --- |
+| Sunlight | 4.5:1 | WCAG AA on every visible word. This is the entire purpose of the mode, so it is held to a standard rather than to a preference. Measures 4.92:1. |
+| Panel, Battery | 2.9:1 | A regression floor, not a quality claim. The default theme uses muted greys for secondary labels at roughly 3.9:1 by choice; the floor exists so a token change cannot quietly make them worse. |
+
+Nodes parked off-screen, such as the skip link, are excluded: they are never seen, so their
+contrast is not a claim about the skin. Chips are excluded from the surface check for the
+opposite reason — a selected chip is accent-filled and so inverts against the page in both
+skins, which is the design.
+
+Keep-screen-on wraps the Screen Wake Lock API. The lock is dropped whenever the page is hidden,
+so it is retaken on `visibilitychange`, and it is not requested at all on a background tab
+because the request is rejected outright there. A refused lock leaves the switch off: showing it
+on would promise a screen that then sleeps anyway, which is worse than not offering it. Both
+paths are tested — the working one against a stubbed lock, since headless Chromium exposes the
+API but refuses the request, and the refusing one against the real browser.
+
+The brief also asked for an ambient light sensor to switch to Sunlight automatically. That is
+not built. `AmbientLightSensor` is behind a flag in Chromium and absent everywhere else, so it
+would be dead code in every browser that reaches this site.
+
 ## Offline
 
 ```mermaid
@@ -252,13 +305,16 @@ what changes in a redesign:
 | `geo` | Distances appear only where a real transmitter site is known |
 | `perf` | The page does not jump on load — phone and desktop, landing and deep link, remembered mode, and over a throttled connection |
 | `layout` | The header survives a 280 px screen in both languages |
+| `skin` | Each skin repaints every surface, holds its contrast floor, and the wake lock is taken and released for real |
 
-Three of these exist because of bugs that measurement found and inspection did not: the hiss
+Four of these exist because of bugs that measurement found and inspection did not: the hiss
 was 26 dB down and silenced across the busiest part of the band; the right-now cards sized
-themselves to their text and shoved the spectrum rail down the page after load; and the whole
-page dropped by a third of a screen on a cold desktop load. All three looked fine in a
-screenshot, and the last one was invisible until the suite was made to measure a viewport and
-a URL it had never tried. When changing the knob, the panel or the first paint, measure it —
+themselves to their text and shoved the spectrum rail down the page after load; the whole page
+dropped by a third of a screen on a cold desktop load; and the header kept a hardcoded colour
+for its translucent backdrop, so it stayed dark while the page around it turned white. All four
+looked fine to read, and each needed something to composite the actual pixels and compare them;
+the layout one stayed invisible until the suite was made to measure a viewport and a URL it had
+never tried. When changing the knob, the panel, a skin or the first paint, measure it —
 and measure it somewhere other than where it already passes.
 
 ## What is not here, on purpose
@@ -266,7 +322,7 @@ and measure it somewhere other than where it already passes.
 - **No framework.** The whole interface is a list, a rail and a header. A framework would
   be more code than the application.
 - **No bundler.** One script tag, plus a dozen inline lines that must beat the first paint.
-  The payload is 103 KB of code.
+  The payload is 115 KB of code.
 - **No map tiles.** A third-party tile server is a network dependency and a privacy leak on a
   site whose selling point is neither.
 - **No analytics.** Nothing is sent anywhere except the three live readings, one of which

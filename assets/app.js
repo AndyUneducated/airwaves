@@ -20,6 +20,22 @@
       km: 'km',
       nowT: 'Right now',
       nowYou: 'at your position',
+
+      view: 'Display and outdoor settings',
+      vDisplay: 'Display',
+      vAuto: 'Panel',
+      vAutoS: 'Dark, for normal light',
+      vGlare: 'Sunlight',
+      vGlareS: 'Ink on white, readable in direct sun',
+      vBlack: 'Battery',
+      vBlackS: 'True black, saves power on OLED',
+      vAwake: 'Keep screen on',
+      vAwakeS: 'Stops the phone sleeping while you tune',
+      vAwakeNo: 'This browser will not hold the screen on',
+      vSkinOn: n => `${n} display`,
+      vAwakeOn: 'Screen will stay on',
+      vAwakeOff: 'Screen can sleep again',
+
       sun: 'Sun',
       dark: 'Dark',
       darkAm: 'Dark — the AM band is open',
@@ -103,6 +119,22 @@
       km: '公里',
       nowT: '此刻',
       nowYou: '你所在的位置',
+
+      view: '显示与户外设置',
+      vDisplay: '显示',
+      vAuto: '仪表盘',
+      vAutoS: '深色，适合常规光线',
+      vGlare: '强光',
+      vGlareS: '白底黑字，烈日下也看得清',
+      vBlack: '省电',
+      vBlackS: '纯黑，OLED 屏更省电',
+      vAwake: '屏幕常亮',
+      vAwakeS: '调频时不让手机息屏',
+      vAwakeNo: '此浏览器不支持屏幕常亮',
+      vSkinOn: n => `已切换到${n}显示`,
+      vAwakeOn: '屏幕将保持常亮',
+      vAwakeOff: '屏幕可以自动息屏了',
+
       sun: '日照',
       dark: '天已黑',
       darkAm: '天已黑 —— 中波已开',
@@ -253,8 +285,13 @@
       .then(p => { PLACES = p; if (POS.lat != null && REGION) render(); })
       .catch(() => {});
     applyStatic();
+    applySkin();
+    buildView();
     wire();
     netState();
+    // Restore the wake lock, but only once the page is actually visible - the request is
+    // rejected outright on a background tab.
+    if (wantAwake() && !document.hidden) holdScreen(true);
 
     const hashed = fromHash();
     SCOPE = (hashed && hashed.scope) || localStorage.getItem('aw.scope') || META.scopes[0].id;
@@ -342,11 +379,115 @@
     });
   }
 
-  function countryMenu(open) {
-    $('#cty').classList.toggle('open', open);
-    $('#cty-menu').hidden = !open;
-    $('#btn-cty').setAttribute('aria-expanded', String(open));
-  }
+    function countryMenu(open) {
+      $('#cty').classList.toggle('open', open);
+      $('#cty-menu').hidden = !open;
+      $('#btn-cty').setAttribute('aria-expanded', String(open));
+    }
+
+    /* ---------- outdoor settings ---------- */
+
+    // The skin is read before the first paint by the inline script in index.html, so this
+    // reads it back rather than deciding it again.
+    const SKINS = ['auto', 'glare', 'black'];
+    let SKIN = SKINS.includes(document.documentElement.dataset.skin)
+      ? document.documentElement.dataset.skin : 'auto';
+    let AWAKE = null;
+
+    function applySkin() {
+      document.documentElement.dataset.skin = SKIN;
+      // The browser chrome should match, or the notch area stays the old colour.
+      const bar = { auto: '#0a0b0d', glare: '#ffffff', black: '#000000' }[SKIN];
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', bar);
+    }
+
+    // Screen Wake Lock drops the lock whenever the page is hidden, so it has to be retaken
+    // on return or the screen quietly starts sleeping again after the first notification.
+    async function holdScreen(on) {
+      if (!('wakeLock' in navigator)) return false;
+      try {
+        if (on) {
+          AWAKE = await navigator.wakeLock.request('screen');
+          AWAKE.addEventListener('release', () => { AWAKE = null; });
+        } else if (AWAKE) {
+          await AWAKE.release();
+          AWAKE = null;
+        }
+        return true;
+      } catch (e) {
+        AWAKE = null;
+        return false;
+      }
+    }
+
+    const wantAwake = () => localStorage.getItem('aw.awake') === '1';
+
+    function buildView() {
+      const menu = $('#view-menu');
+      const open = !menu.hidden;
+      menu.textContent = '';
+      $('#btn-view').setAttribute('aria-label', t('view'));
+      $('#btn-view').title = t('view');
+
+      menu.append(el('p', 'view-h', t('vDisplay')));
+      const names = { auto: 'vAuto', glare: 'vGlare', black: 'vBlack' };
+      SKINS.forEach(id => {
+        const o = el('button', 'view-o');
+        o.type = 'button';
+        o.setAttribute('role', 'menuitemradio');
+        o.setAttribute('aria-checked', String(id === SKIN));
+        o.append(el('span', 'view-d'));
+        const n = el('span', 'view-n', t(names[id]));
+        n.append(el('span', 'view-s', t(names[id] + 'S')));
+        o.append(n);
+        o.addEventListener('click', () => {
+          if (id !== SKIN) {
+            SKIN = id;
+            localStorage.setItem('aw.skin', SKIN);
+            applySkin();
+            buzz(8);
+            toast(t('vSkinOn')(t(names[id])));
+          }
+          viewMenu(false);
+        });
+        menu.append(o);
+      });
+
+      menu.append(el('div', 'view-sep'));
+
+      const can = 'wakeLock' in navigator;
+      const sw = el('button', 'view-o');
+      sw.type = 'button';
+      sw.id = 'btn-awake';
+      sw.setAttribute('role', 'menuitemcheckbox');
+      sw.setAttribute('aria-checked', String(can && wantAwake()));
+      sw.disabled = !can;
+      const sn = el('span', 'view-n', t('vAwake'));
+      sn.append(el('span', 'view-s', can ? t('vAwakeS') : t('vAwakeNo')));
+      sw.append(sn);
+      const tg = el('span', 'view-t');
+      tg.append(el('i'));
+      sw.append(tg);
+      sw.addEventListener('click', async () => {
+        const on = !wantAwake();
+        const ok = await holdScreen(on);
+        if (!ok && on) return;
+        localStorage.setItem('aw.awake', on ? '1' : '0');
+        sw.setAttribute('aria-checked', String(on));
+        buzz(on ? 14 : 8);
+        toast(on ? t('vAwakeOn') : t('vAwakeOff'));
+      });
+      menu.append(sw);
+
+      menu.hidden = !open;
+    }
+
+    function viewMenu(open) {
+      $('#view').classList.toggle('open', open);
+      $('#view-menu').hidden = !open;
+      $('#btn-view').setAttribute('aria-expanded', String(open));
+    }
 
   /* ---------- tabs ---------- */
 
@@ -1523,19 +1664,36 @@
       LANG = LANG === 'zh' ? 'en' : 'zh';
       localStorage.setItem('aw.lang', LANG);
       document.documentElement.dataset.lang = LANG;
-      paint(() => {
-        applyStatic();
-        buildCountry();
-        buildRegionTabs();
-        buildCatTabs();
-        renderIntro();
-        renderNow();
-        render();
-      });
+        paint(() => {
+          applyStatic();
+          buildCountry();
+          buildView();
+          buildRegionTabs();
+          buildCatTabs();
+          renderIntro();
+          renderNow();
+          render();
+        });
     });
 
-    const cty = $('#cty'), ctyBtn = $('#btn-cty');
-    ctyBtn.addEventListener('click', () => countryMenu(!cty.classList.contains('open')));
+      const view = $('#view');
+      $('#btn-view').addEventListener('click', () => viewMenu(!view.classList.contains('open')));
+      document.addEventListener('pointerdown', e => {
+        if (view.classList.contains('open') && !view.contains(e.target)) viewMenu(false);
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && view.classList.contains('open')) {
+          viewMenu(false);
+          $('#btn-view').focus();
+        }
+      });
+      // A wake lock is dropped when the tab goes to the background; take it again on return.
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && wantAwake() && !AWAKE) holdScreen(true);
+      });
+
+      const cty = $('#cty'), ctyBtn = $('#btn-cty');
+      ctyBtn.addEventListener('click', () => countryMenu(!cty.classList.contains('open')));
     document.addEventListener('pointerdown', e => {
       if (cty.classList.contains('open') && !cty.contains(e.target)) countryMenu(false);
     });

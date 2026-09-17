@@ -15,12 +15,75 @@
   --warn: #f5b656;
   --warn-dim: rgba(245, 182, 86, .12);
   --dead: #565d67;
+  /* Held as bare RGB triples because these three are used at a dozen different alphas for
+     borders and glows; a skin overrides the triple once instead of every alpha. */
+  --ac-g: 94, 242, 168;
+  --wn-g: 245, 182, 86;
+  --t-t: 157, 199, 255;
+  --t-o: 212, 179, 255;
+  --ac-tx: #06231a;
+  --hd-bg: rgba(8, 9, 11, .82);
+  --sh: rgba(0, 0, 0, .55);
   --r: 10px;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue",
           "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --hd: 0px;
 }
+
+/* Two alternatives to the default panel, both for being outdoors rather than for taste.
+   Every colour in the site comes from the tokens above, so a skin is a token override and
+   nothing else needs to know a skin exists. */
+
+/* Direct sun. A phone cannot out-emit the sun, so the answer is not a brighter dark theme
+   but a light one: ink on paper keeps its contrast ratio when the screen is washed out,
+   and the accent has to darken to stay legible against white. */
+html[data-skin="glare"] {
+  --bg: #ffffff;
+  --bg-1: #f2f4f7;
+  --bg-2: #e8ebf0;
+  --bg-3: #dde1e8;
+  --line: rgba(0, 0, 0, .16);
+  --line-2: rgba(0, 0, 0, .3);
+  --tx: #000000;
+  --tx-2: #333941;
+  --tx-3: #555c66;
+  --ac: #00662f;
+  --ac-dim: rgba(0, 102, 47, .13);
+  --warn: #8a4b00;
+  --warn-dim: rgba(138, 75, 0, .13);
+  --dead: #5c636d;
+  /* The pale tints that glow against black turn invisible on white, so each one drops to a
+     shade that still carries its meaning: green for standard, blue for tone, purple for
+     offset. Shadows lighten too - a heavy black shadow on paper looks like a smudge. */
+  --ac-g: 0, 102, 47;
+  --wn-g: 138, 75, 0;
+  --t-t: 0, 74, 153;
+  --t-o: 91, 26, 158;
+  --ac-tx: #ffffff;
+  --hd-bg: rgba(255, 255, 255, .88);
+  --sh: rgba(0, 0, 0, .17);
+}
+/* The wash behind the page is a dark-theme flourish and turns to grey haze on white. */
+html[data-skin="glare"] body::before { display: none; }
+
+/* True black for OLED. Lit pixels cost power and black ones cost none, so the background
+   goes to #000 and the greys come down with it - on a mountain the battery is the
+   constraint, not the contrast. */
+html[data-skin="black"] {
+  --bg: #000000;
+  --bg-1: #000000;
+  --bg-2: #0a0c0e;
+  --bg-3: #101317;
+  --line: rgba(255, 255, 255, .1);
+  --tx: #d7dade;
+  --tx-2: #9096a0;
+  --tx-3: #666c75;
+  --ac: #46d98f;
+  --ac-g: 70, 217, 143;
+  --hd-bg: rgba(0, 0, 0, .86);
+}
+html[data-skin="black"] body::before { display: none; }
 
 * { box-sizing: border-box; }
 
@@ -44,7 +107,7 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(90rem 40rem at 50% -18rem, rgba(94, 242, 168, .055), transparent 65%),
+    radial-gradient(90rem 40rem at 50% -18rem, rgba(var(--ac-g), .055), transparent 65%),
     radial-gradient(60rem 30rem at 100% 0, rgba(120, 160, 255, .04), transparent 60%);
 }
 
@@ -64,7 +127,7 @@ body::before {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(8, 9, 11, .82);
+  background: var(--hd-bg);
   backdrop-filter: saturate(160%) blur(18px);
   -webkit-backdrop-filter: saturate(160%) blur(18px);
   border-bottom: 1px solid var(--line);
@@ -195,7 +258,7 @@ body::before {
   transition: border-color .16s, background .16s;
 }
 #q::placeholder { color: var(--tx-3); }
-#q:focus { border-color: rgba(94, 242, 168, .4); background: var(--bg-3); }
+#q:focus { border-color: rgba(var(--ac-g), .4); background: var(--bg-3); }
 #q::-webkit-search-cancel-button { display: none; }
 
 .s-kbd {
@@ -280,7 +343,7 @@ body::before {
   border: 1px solid var(--line-2);
   border-radius: 12px;
   padding: 5px;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, .55);
+  box-shadow: 0 18px 44px var(--sh);
   animation: pop .15s cubic-bezier(.2, .8, .2, 1);
 }
 @keyframes pop {
@@ -317,7 +380,7 @@ body::before {
   padding: 1px 5px;
   flex: 0 0 auto;
 }
-.cty-o[aria-selected="true"] .cty-ok { color: var(--ac); border-color: rgba(94, 242, 168, .45); }
+.cty-o[aria-selected="true"] .cty-ok { color: var(--ac); border-color: rgba(var(--ac-g), .45); }
 .cty-on { flex: 1 1 auto; }
 .cty-oc { font-family: var(--mono); font-size: 10px; color: var(--tx-3); }
 
@@ -327,6 +390,114 @@ body::before {
   .cty-n { display: none; }
   html[data-lang="zh"] .cty-n { display: inline; }
 }
+
+/* ---------- outdoor settings ---------- */
+
+.view { position: relative; }
+
+.chip-ico {
+  padding: 6px;
+  line-height: 0;
+}
+.chip-ico svg {
+  width: 17px; height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+/* The half-filled disc reads as "contrast" at a glance and needs no word beside it. */
+.chip-ico .ico-fill { fill: currentColor; stroke: none; }
+.view.open .chip-ico { color: var(--tx); border-color: var(--line-2); }
+
+.view-menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  z-index: 40;
+  min-width: 212px;
+  padding: 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r);
+  box-shadow: 0 16px 40px var(--sh);
+  animation: pop .15s cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) { .view-menu { animation: none; } }
+
+.view-h {
+  margin: 5px 8px 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--tx-3);
+}
+
+.view-o {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  /* Tall enough to hit with a gloved thumb, which is the whole point of these settings. */
+  min-height: 44px;
+  padding: 7px 8px;
+  background: none;
+  border: 0;
+  border-radius: 7px;
+  color: var(--tx-2);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.view-o:hover { background: var(--bg-3); color: var(--tx); }
+.view-o[aria-checked="true"] { color: var(--tx); }
+
+/* A dot rather than a tick, so the selected state survives being read at arm's length. */
+.view-d {
+  flex: 0 0 auto;
+  width: 15px; height: 15px;
+  border: 1.6px solid var(--line-2);
+  border-radius: 50%;
+}
+.view-o[aria-checked="true"] .view-d {
+  border-color: var(--ac);
+  background: radial-gradient(circle, var(--ac) 0 42%, transparent 44%);
+}
+
+.view-n { flex: 1 1 auto; }
+.view-s {
+  display: block;
+  font-size: 11.5px;
+  color: var(--tx-3);
+  line-height: 1.35;
+}
+
+.view-sep {
+  height: 1px;
+  margin: 5px 8px;
+  background: var(--line);
+}
+
+/* The switch is square-cornered where the skin picker is round, so the two kinds of
+   control do not look like one list of five equal options. */
+.view-t {
+  flex: 0 0 auto;
+  width: 30px; height: 17px;
+  padding: 2px;
+  border: 1.6px solid var(--line-2);
+  border-radius: 999px;
+}
+.view-t i {
+  display: block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--dead);
+  transition: transform .14s, background .14s;
+}
+.view-o[aria-checked="true"] .view-t { border-color: var(--ac); }
+.view-o[aria-checked="true"] .view-t i { background: var(--ac); transform: translateX(13px); }
+@media (prefers-reduced-motion: reduce) { .view-t i { transition: none; } }
 
 /* ---------- region tabs ---------- */
 
@@ -394,7 +565,7 @@ body::before {
 .chip-geo { display: inline-flex; align-items: center; gap: 6px; }
 .chip-geo svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.9; }
 /* Once it knows where you are it says so, without pretending to be the selected region. */
-.chip-geo.on-geo { color: var(--ac); border-color: rgba(94, 242, 168, .35); }
+.chip-geo.on-geo { color: var(--ac); border-color: rgba(var(--ac-g), .35); }
 
 /* Private Link is a set of channels, not a place, so it sits past a divider. */
 .r-sep {
@@ -477,8 +648,8 @@ main {
 }
 .btn:hover { border-color: var(--line-2); background: var(--bg-3); }
 .btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
-.btn-a { border-color: rgba(94, 242, 168, .3); color: var(--ac); }
-.btn-a:hover { background: var(--ac-dim); border-color: rgba(94, 242, 168, .5); }
+.btn-a { border-color: rgba(var(--ac-g), .3); color: var(--ac); }
+.btn-a:hover { background: var(--ac-dim); border-color: rgba(var(--ac-g), .5); }
 .btn-lk { background: none; border-color: transparent; color: var(--tx-3); padding: 7px 4px; font-size: 12.5px; }
 .btn-lk:hover { color: var(--ac); background: none; }
 
@@ -538,8 +709,8 @@ html[data-scope="cn"] #now > .nw-g > .sk-nw:nth-child(3) { display: none; }
 
 /* A magnetic storm or a severe alert is the whole reason to glance at this panel, so those
    two readings are the only ones allowed to raise their voice. */
-.nw-c.nw-warn { border-color: rgba(255, 176, 90, .34); }
-.nw-c.nw-warn .nw-v { color: var(--wn); }
+.nw-c.nw-warn { border-color: rgba(var(--wn-g), .34); }
+.nw-c.nw-warn .nw-v { color: var(--warn); }
 
 .nw-c.nw-hit { cursor: pointer; transition: border-color .16s ease, background .16s ease; }
 .nw-c.nw-hit:hover { border-color: var(--line-2); background: var(--bg-2); }
@@ -663,11 +834,11 @@ html[data-mode="pro"] .ru-h.ru-live {
   border-radius: 1px;
   background: var(--ac);
   opacity: .8;
-  box-shadow: 0 0 6px rgba(94, 242, 168, .35);
+  box-shadow: 0 0 6px rgba(var(--ac-g), .35);
   pointer-events: none;
 }
 .ru-k.k-dig { background: var(--dead); height: 10px; opacity: .55; box-shadow: none; }
-.ru-k.k-avd { background: var(--warn); height: 13px; box-shadow: 0 0 6px rgba(245, 182, 86, .3); }
+.ru-k.k-avd { background: var(--warn); height: 13px; box-shadow: 0 0 6px rgba(var(--wn-g), .3); }
 
 /* ---------- pro: the rail becomes a tuning knob ---------- */
 
@@ -683,11 +854,11 @@ html[data-mode="pro"] .ru-rail {
 html.tuning, html.tuning body { user-select: none; -webkit-user-select: none; }
 html[data-mode="pro"] .ru-k { height: 22px; }
 html[data-mode="pro"] .ru-k.k-dig { height: 12px; }
-html[data-mode="pro"] .ru-rail.lock { box-shadow: inset 0 0 26px rgba(94, 242, 168, .11); }
+html[data-mode="pro"] .ru-rail.lock { box-shadow: inset 0 0 26px rgba(var(--ac-g), .11); }
 
 /* Sweeping is continuous, so the cursor must not lag behind the finger. */
 html[data-mode="pro"] .ru-cur, html[data-mode="pro"] .ru-out { transition: opacity .12s; }
-html[data-mode="pro"] .ru-cur { width: 2px; margin-left: -1px; box-shadow: 0 0 10px rgba(94, 242, 168, .55); }
+html[data-mode="pro"] .ru-cur { width: 2px; margin-left: -1px; box-shadow: 0 0 10px rgba(var(--ac-g), .55); }
 
 /* Off a detent the readout is a plain number; on one it lights up. */
 html[data-mode="pro"] .ru-rail:not(.lock) .ru-out { background: var(--tx-3); color: var(--bg-1); }
@@ -697,7 +868,7 @@ html[data-mode="pro"] .ru-rail:not(.lock) .ru-out { background: var(--tx-3); col
   height: 30px;
   opacity: 1;
   background: var(--ac);
-  box-shadow: 0 0 14px rgba(94, 242, 168, .85);
+  box-shadow: 0 0 14px rgba(var(--ac-g), .85);
 }
 
 .ru-cur {
@@ -849,7 +1020,7 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
 /* Confirms a copy, and marks the row the spectrum ruler jumped to. */
 .row.hit { animation: hit .95s ease-out; }
 @keyframes hit {
-  0%   { background: rgba(94, 242, 168, .17); box-shadow: inset 0 0 0 1px rgba(94, 242, 168, .45); }
+  0%   { background: rgba(var(--ac-g), .17); box-shadow: inset 0 0 0 1px rgba(var(--ac-g), .45); }
   100% { background: transparent; box-shadow: none; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -923,13 +1094,13 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
   white-space: nowrap;
 }
 .tag-m { color: var(--tx-2); background: var(--bg-2); }
-.tag-t { color: #9dc7ff; border-color: rgba(157, 199, 255, .22); }
-.tag-o { color: #d4b3ff; border-color: rgba(212, 179, 255, .22); }
-.tag-std { color: var(--ac); border-color: rgba(94, 242, 168, .25); }
+.tag-t { color: rgb(var(--t-t)); border-color: rgba(var(--t-t), .22); }
+.tag-o { color: rgb(var(--t-o)); border-color: rgba(var(--t-o), .22); }
+.tag-std { color: var(--ac); border-color: rgba(var(--ac-g), .25); }
 .tag-high { color: var(--tx-2); }
-.tag-check { color: var(--warn); border-color: rgba(245, 182, 86, .28); }
-.tag-dig { color: var(--warn); border-color: rgba(245, 182, 86, .28); background: var(--warn-dim); }
-.tag-avd { color: var(--warn); border-color: rgba(245, 182, 86, .35); background: var(--warn-dim); font-weight: 600; }
+.tag-check { color: var(--warn); border-color: rgba(var(--wn-g), .28); }
+.tag-dig { color: var(--warn); border-color: rgba(var(--wn-g), .28); background: var(--warn-dim); }
+.tag-avd { color: var(--warn); border-color: rgba(var(--wn-g), .35); background: var(--warn-dim); font-weight: 600; }
 
 /* The detail panel, opened by tapping a row in pro mode. It sits in the list rather than in
    a sheet or a new screen: you are usually comparing two or three entries, and a modal that
@@ -977,8 +1148,8 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
   padding: 8px 14px;
   min-height: 38px;
   border-radius: 9px;
-  border: 1px solid rgba(94, 242, 168, .3);
-  background: rgba(94, 242, 168, .08);
+  border: 1px solid rgba(var(--ac-g), .3);
+  background: rgba(var(--ac-g), .08);
   color: var(--ac);
   cursor: pointer;
 }
@@ -1111,7 +1282,7 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
   transform: translate(-50%, 22px);
   z-index: 60;
   background: var(--ac);
-  color: #06231a;
+  color: var(--ac-tx);
   font-family: var(--mono);
   font-size: 12.5px;
   font-weight: 600;
@@ -1121,7 +1292,7 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
   opacity: 0;
   pointer-events: none;
   transition: opacity .18s, transform .18s cubic-bezier(.2, .8, .2, 1);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+  box-shadow: 0 8px 30px var(--sh);
   max-width: calc(100vw - 32px);
   text-align: center;
 }

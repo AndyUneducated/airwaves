@@ -22,6 +22,10 @@
         : localStorage.getItem('aw.mode') === 'pro' ? 'pro' : 'simple';
     var h = (location.hash.match(/^#\/([a-z]{2})\//) || [])[1];
     document.documentElement.dataset.scope = h || localStorage.getItem('aw.scope') || 'us';
+    // The skin repaints every colour in the page, so it has to be settled here too, or a
+    // glare-mode reader gets a full screen of dark before the stylesheet catches up.
+    var s = localStorage.getItem('aw.skin');
+    document.documentElement.dataset.skin = s === 'glare' || s === 'black' ? s : 'auto';
   } catch (e) {}
 </script>
 </head>
@@ -55,6 +59,18 @@
         <span id="mode-t">Pro</span>
       </button>
       <button class="chip chip-sm" id="btn-lang" type="button" title="Switch language / 切换语言">中文</button>
+
+      <!-- Outdoor settings live together behind one control: a fourth labelled chip does
+           not fit a 320px header, and these are the things you reach for in the field. -->
+      <div class="view" id="view">
+        <button class="chip chip-sm chip-ico" id="btn-view" type="button" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.4"/>
+            <path d="M12 3.6a8.4 8.4 0 0 1 0 16.8z" class="ico-fill"/>
+          </svg>
+        </button>
+        <div class="view-menu" id="view-menu" role="menu" aria-labelledby="btn-view" hidden></div>
+      </div>
       <span class="net" id="net" title=""><i></i><em id="net-t">offline ready</em></span>
     </div>
   </div>
