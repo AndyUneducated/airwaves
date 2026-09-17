@@ -1,0 +1,4 @@
+# The SGP4 verification fixtures are reference data, not source. Git's line-ending
+# conversion would rewrite them per platform, and a test fixture that differs between two
+# checkouts is no longer a fixture.
+.probe/sgp4-ver/* -text

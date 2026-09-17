@@ -15,7 +15,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
   <img alt="framework" src="https://img.shields.io/badge/framework-none-success">
   <img alt="javascript" src="https://img.shields.io/badge/JavaScript-ES2017-f7df1e?logo=javascript&logoColor=black">
   <img alt="css" src="https://img.shields.io/badge/CSS-hand%20written-1572b6?logo=css3&logoColor=white">
-  <img alt="payload" src="https://img.shields.io/badge/payload-115%20KB%20code%20%2B%20479%20KB%20data-blue">
+  <img alt="payload" src="https://img.shields.io/badge/payload-141%20KB%20code%20%2B%20491%20KB%20data-blue">
 </p>
 
 <p>
@@ -36,7 +36,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="tooling" src="https://img.shields.io/badge/scripts-Node%2018%2B%20ESM-339933?logo=nodedotjs&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-Playwright-2ead33?logo=playwright&logoColor=white">
-  <img alt="checks" src="https://img.shields.io/badge/checks-144%20assertions-2ead33">
+  <img alt="checks" src="https://img.shields.io/badge/checks-163%20assertions-2ead33">
 </p>
 
 The point is narrow: you arrive somewhere, you open the site, you find frequencies you can actually receive, and you program them. It works with no signal.
@@ -140,6 +140,9 @@ The alert lookup is the only thing that sends a position anywhere. It goes out r
 - **Spectrum ruler** — a log-scale rail above the list shows where the visible entries sit across 0.5–999 MHz, split into HF, VHF and UHF. Tap it to jump to the nearest entry; the ticks also show at a glance how busy each band is.
 - **Near me** — browser geolocation picks the closest region across both countries and switches country automatically.
 - **CHIRP export** — download a region as a CHIRP-compatible CSV and program the radio in one shot. Digital entries, "avoid" entries and anything outside 0.5–999 MHz are filtered out automatically, and the tuning step is set to 5 or 12.5 kHz per channel as appropriate.
+- **Overhead passes** (Pro) — once you share your location, the next satellite passes worth tuning, each with its downlink frequency, when it rises, how high it gets, which way to look, and the Doppler shift to chase. Orbits are propagated on your phone with a from-scratch SGP4 implementation, so this works in airplane mode; the elements are refreshed daily by a GitHub Action. Only passes above 10° are offered, because a lower one spends its time in the atmosphere and in whatever is on your horizon.
+
+  Satellites are curated, not scraped. The orbital elements are automated because they genuinely go stale, but which satellites are worth tuning is a judgement: the SatNOGS database lists 29 transmitters for the ISS alone, including Soyuz suit channels and a 1990s Progress beacon. The NOAA APT weather satellites — the classic beginner catch on 137 MHz — are deliberately absent: all three were decommissioned during 2025 and APT is no longer transmitted by anything, yet their orbital elements are still published, so a tracker built on orbits alone would cheerfully predict passes for three silent satellites.
 - **Outdoor display** — the half-disc control in the header holds the settings that matter in the field, grouped rather than spread across four chips that would not fit a 320px header.
 
   | Display | What it is for |

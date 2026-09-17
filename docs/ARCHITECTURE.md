@@ -212,6 +212,100 @@ to whichever question it serves.
 Pro is chosen deliberately: it is remembered, and `?pro=1` or `?pro=0` forces it so a view can
 be shared. Simple remains the design centre — outdoors, one hand, bright sun, no signal.
 
+## Satellites
+
+The constraint that shapes this feature is the same one as everywhere else: there is no
+server. Pass predictions cannot be computed anywhere but on the phone, which rules out
+calling a prediction API and means carrying an orbit propagator in the page.
+
+```mermaid
+flowchart TB
+  A["GitHub Action, daily<br/>scripts/import-tle.mjs"] --> B["Celestrak<br/>group files"]
+  B --> C["data/sat.json<br/>tle fields only"]
+  C --> D["assets/sgp4.js<br/>runs on the phone"]
+  E["hand-curated<br/>frequencies and notes"] --> C
+  F["your position"] --> D
+  D --> G["horizon crossings<br/>peak, azimuth, Doppler"]
+  G --> H["Overhead panel"]
+```
+
+### What is automated and what is not
+
+The split is not arbitrary. Orbital elements are a fit to a short arc of tracking data: good
+to about a kilometre for a day or two, and by a week out wrong enough to move a predicted pass
+by minutes. That decays on its own and must be automated. Which satellites are worth tuning
+does not decay, and cannot be automated, because the databases answer a different question.
+
+| | Source | Refresh |
+| --- | --- | --- |
+| Orbital elements | Celestrak group files, by catalogue number for the rest | Daily, by Action |
+| Frequencies, modes, tones | SatNOGS transmitter database, filtered by hand | Never; edited when something changes |
+| Which satellites appear at all | Judgement, with the reasoning recorded in `data/sat.json` | Never |
+
+SatNOGS tracks what a satellite has ever carried, not what is worth tuning. It lists 29
+transmitters for the ISS, among them Soyuz suit channels and a Progress beacon from the
+nineties, and it marks satellites alive whose missions have ended. Its frequencies also cannot
+be taken on trust: it gives NOAA 19 as 137.932 MHz where the APT downlink was 137.100.
+
+The instructive exclusion is the NOAA APT trio. NOAA 18, 19 and 15 were decommissioned in June
+and August 2025 and APT is now transmitted by nothing, but Celestrak still publishes their
+elements — so a tracker built on orbits alone will confidently predict passes for three silent
+satellites. Orbital data says where something is, never whether it is transmitting. The suite
+asserts those three catalogue numbers stay out, because they are exactly what a well-meaning
+later change would add back.
+
+### Scope of the propagator
+
+`assets/sgp4.js` implements the near-Earth half of SGP4 against WGS-72 constants — WGS-72
+because TLE mean elements are fitted with it, so feeding the model WGS-84 makes the answer
+worse rather than more modern.
+
+The deep-space half, SDP4, is absent. Anything needing it has a period of 225 minutes or more,
+which means geosynchronous or Molniya, and nothing in that class is workable with a 5 W
+handheld and a rubber duck. `init()` therefore reports such an element set as deep-space and
+the caller drops it, rather than propagating it badly. Refusing is tested; so is the boundary.
+
+### How it is known to be right
+
+A wrong propagator does not look wrong. It returns a confident time and a confident bearing,
+and the only way to discover the error is to be standing outside pointing at empty sky. So it
+is not reviewed, it is measured, against two independent references:
+
+| Check | Reference | Result |
+| --- | --- | --- |
+| Propagator arithmetic | Vallado's published `SGP4-VER.TLE` / `tcppver.out`, the fixtures every SGP4 implementation is validated against | 158 near-Earth state vectors agree to 7.3 × 10⁻⁹ km; all 24 deep-space cases correctly identified |
+| The whole chain, including frame conversion | `wheretheiss.at`, a separate implementation using its own elements | ISS ground position agrees to 7.8 km, altitude to 0.5 km |
+
+Seven microns is arithmetic precision, not physical accuracy — it says the terms are typed
+correctly, nothing more. The 7.8 km is the meaningful number, and it is about one second of ISS
+travel, which is clock and element skew rather than error. The fixtures are committed so the
+check is hermetic and runs offline; `.probe/sgp4-fetch.mjs` records where they came from.
+
+One fixture is worth knowing about. Catalogue number 28872 has a perigee 51 km below the
+surface and is mid-re-entry. The reference propagates it for 50 minutes and only then fails, so
+`init()` deliberately does not reject sub-surface perigees — matching that behaviour is what
+lets the vectors be used unmodified. Whether an object has decayed is a question about the
+data, and `scripts/import-tle.mjs` answers it there.
+
+### Finding a pass
+
+Elevation is sampled forward in one-minute steps, which must be shorter than the shortest
+pass or a pass can be stepped straight over; the fastest of these satellites is above the
+horizon for roughly eight minutes. A sign change brackets the horizon crossing, which is then
+bisected. Peak elevation is found by ternary search, valid because elevation over a single
+pass is unimodal.
+
+Rotating TEME by Greenwich sidereal time alone gives PEF and skips polar motion. That is worth
+tens of metres — far below what a hand-held compass can be pointed to, and below the error in
+the elements themselves.
+
+A constellation sharing one downlink is collapsed to its best pass: with the nine Tevel-2
+satellites strung around one orbit, what matters is whether anything is up there, not which.
+
+The panel does not appear until you share a position. Falling back to the region centre was
+rejected: it would produce times that look authoritative and are wrong by however far away you
+happen to be, and a confidently wrong timetable is worse than none.
+
 ## Skins
 
 A skin is a token override and nothing else. Every colour in the stylesheet resolves through a
@@ -306,6 +400,8 @@ what changes in a redesign:
 | `perf` | The page does not jump on load — phone and desktop, landing and deep link, remembered mode, and over a throttled connection |
 | `layout` | The header survives a 280 px screen in both languages |
 | `skin` | Each skin repaints every surface, holds its contrast floor, and the wake lock is taken and released for real |
+| `sgp4` | The propagator matches the official verification vectors, and refuses deep space rather than approximating it |
+| `sky` | Passes are chronological, never below 10 degrees, never shown without a position - and the decommissioned NOAA birds stay out of the data |
 
 Four of these exist because of bugs that measurement found and inspection did not: the hiss
 was 26 dB down and silenced across the busiest part of the band; the right-now cards sized
@@ -322,7 +418,7 @@ and measure it somewhere other than where it already passes.
 - **No framework.** The whole interface is a list, a rail and a header. A framework would
   be more code than the application.
 - **No bundler.** One script tag, plus a dozen inline lines that must beat the first paint.
-  The payload is 115 KB of code.
+  The payload is 141 KB of code.
 - **No map tiles.** A third-party tile server is a network dependency and a privacy leak on a
   site whose selling point is neither.
 - **No analytics.** Nothing is sent anywhere except the three live readings, one of which

@@ -1,0 +1,50 @@
+name: Refresh orbital elements
+
+# A TLE is a fit to a short arc of tracking data. Within a day or two it is good to a
+# kilometre or so along-track; by a week out the error is enough to move a predicted pass by
+# minutes, which is the difference between pointing an antenna at a satellite and pointing it
+# at empty sky. GitHub Pages cannot fetch and cache this itself - there is no server - so the
+# elements are baked into the repository on a schedule instead.
+on:
+  schedule:
+    # 05:40 UTC. Off the hour, because scheduled jobs on the hour queue behind everyone
+    # else's and Celestrak asks that callers spread their load.
+    - cron: '40 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tle
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # No install step: the importer uses only the standard library, so there is nothing to
+      # resolve and nothing that can break between the cron firing and the fetch.
+      - name: Fetch current elements
+        run: node scripts/import-tle.mjs
+
+      - name: Commit if anything moved
+        run: |
+          if [ -z "$(git status --porcelain data/sat.json)" ]; then
+            echo "Elements already current."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/sat.json
+          git commit -m "Refresh orbital elements
+
+          Automated daily update from Celestrak. Only the tle fields change; the curated
+          satellite and frequency data in this file is not touched by the importer."
+          git push

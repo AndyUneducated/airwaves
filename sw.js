@@ -1,11 +1,12 @@
 /* Airwaves service worker — precache everything so the site works with no signal */
 
-const V = 'airwaves-v15';
+const V = 'airwaves-v16';
 
 const SHELL = [
   './',
   'index.html',
   'assets/styles.css',
+  'assets/sgp4.js',
   'assets/app.js',
   'manifest.webmanifest',
   'icons/icon.svg',
@@ -13,7 +14,10 @@ const SHELL = [
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
   'data/regions.json',
-  'data/places.json'
+  'data/places.json',
+  // Cached so passes can still be predicted with no signal: SGP4 runs locally, and the
+  // elements are good for days. This is the one live-ish reading that survives airplane mode.
+  'data/sat.json'
 ];
 
 self.addEventListener('install', e => {

@@ -391,6 +391,93 @@ body::before {
   html[data-lang="zh"] .cty-n { display: inline; }
 }
 
+/* ---------- overhead passes ---------- */
+
+.sky {
+  margin: 0 clamp(14px, 4vw, 34px) 18px;
+}
+.sky[hidden] { display: none; }
+
+.sky-l {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sky-r {
+  padding: 11px 13px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+/* A pass in progress is the only thing here that is time-critical, so it is the only thing
+   allowed to stand out. */
+.sky-r.live {
+  border-color: rgba(var(--ac-g), .38);
+  background: var(--ac-dim);
+}
+
+.sky-h {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.sky-f {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ac);
+  font-variant-numeric: tabular-nums;
+}
+.sky-f i { font-size: 10px; font-style: normal; color: var(--tx-3); margin-left: 2px; }
+.sky-n { font-size: 13.5px; font-weight: 600; }
+
+.sky-w {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 10px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--tx-3);
+}
+.sky-up { color: var(--tx-2); font-weight: 600; }
+.sky-r.live .sky-up { color: var(--ac); }
+
+.sky-t {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.sky-m {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--tx-3);
+}
+
+.sky-why {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--tx-3);
+}
+
+.sky-b {
+  align-self: flex-start;
+  min-height: 38px;
+  padding: 7px 13px;
+  background: none;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  color: var(--tx-2);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.sky-b:hover { color: var(--tx); border-color: var(--ac); }
+
 /* ---------- outdoor settings ---------- */
 
 .view { position: relative; }

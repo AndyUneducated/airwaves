@@ -21,6 +21,24 @@
       nowT: 'Right now',
       nowYou: 'at your position',
 
+      skyT: 'Overhead',
+      skyNone: 'No workable pass in the next 12 hours',
+      skyNoPos: 'Share your location to see passes',
+      skyWait: 'Working out passes…',
+      skyNow: 'Overhead now',
+      skyUp: d => `in ${d}`,
+      skyRise: (a, b) => `rises ${a}, sets ${b}`,
+      skyPeak: d => `${d}° at best`,
+      skyLasts: d => `${d} long`,
+      skyLive: (el, az) => `${el}° up, bearing ${az}`,
+      skyDop: k => `Doppler ±${k} kHz`,
+      skyDig: 'Digital',
+      skyDigWhy: 'Audible as a harsh buzz, but turning it into a picture needs a computer',
+      skyHigh: 'High pass',
+      skyMore: 'All passes',
+      skyLess: 'Next few',
+      skyStale: d => `Orbits are ${d} days old`,
+
       view: 'Display and outdoor settings',
       vDisplay: 'Display',
       vAuto: 'Panel',
@@ -119,6 +137,24 @@
       km: '公里',
       nowT: '此刻',
       nowYou: '你所在的位置',
+
+      skyT: '头顶',
+      skyNone: '未来 12 小时内没有值得一试的过顶',
+      skyNoPos: '共享位置后即可查看过顶时刻',
+      skyWait: '正在推算过顶…',
+      skyNow: '正在头顶',
+      skyUp: d => `${d}后`,
+      skyRise: (a, b) => `${a}升起，${b}落下`,
+      skyPeak: d => `最高 ${d}°`,
+      skyLasts: d => `持续 ${d}`,
+      skyLive: (el, az) => `仰角 ${el}°，方位 ${az}`,
+      skyDop: k => `多普勒 ±${k} kHz`,
+      skyDig: '数字',
+      skyDigWhy: '能听到刺耳的杂音，但要还原成图像得用电脑',
+      skyHigh: '高仰角',
+      skyMore: '全部过顶',
+      skyLess: '只看最近',
+      skyStale: d => `轨道数据已有 ${d} 天`,
 
       view: '显示与户外设置',
       vDisplay: '显示',
@@ -346,7 +382,7 @@
     applyMode();
     buzz(isPro() ? 14 : 8);
     toast(isPro() ? t('proOn') : t('proOff'));
-    if (REGION) paint(() => { renderIntro(); renderNow(); render(); });
+    if (REGION) paint(() => { renderIntro(); renderNow(); renderSky(); render(); });
   }
 
   /* ---------- country ---------- */
@@ -600,7 +636,7 @@
     }
     REGION = { meta, data: CACHE.get(id) };
     CAT = 'all';
-    paint(() => { renderIntro(); renderNow(); buildCatTabs(); render(); });
+    paint(() => { renderIntro(); renderNow(); renderSky(); buildCatTabs(); render(); });
     const tab = document.querySelector(`#regions .chip[data-id="${id}"]`);
     if (tab && push) tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }
@@ -794,6 +830,213 @@
     }
 
     box.append(grid);
+  }
+
+  /* ---------- satellite passes ---------- */
+
+  // A handheld needs the satellite reasonably high: below about 10 degrees the path runs
+  // through too much atmosphere and too much of whatever is on your horizon.
+  const SKY_MIN_EL = 10;
+  const SKY_HOURS = 12;
+  const C_KM_S = 299792.458;
+
+  let SATS = null, SAT_ERR = false, SKY_ALL = false;
+
+  async function loadSats() {
+    if (SATS || SAT_ERR) return SATS;
+    try {
+      SATS = await (await fetch('data/sat.json')).json();
+      // One SGP4 init per satellite, reused for every pass search afterwards.
+      for (const b of SATS.birds) {
+        b.rec = [];
+        for (const id of b.norad) {
+          const tle = b.tle[String(id)];
+          if (!tle) continue;
+          const r = window.SGP4.init(window.SGP4.parse(tle[0], tle[1]));
+          if (!r.deepspace && !r.error) b.rec.push({ id, r });
+        }
+      }
+    } catch (e) { SAT_ERR = true; SATS = null; }
+    return SATS;
+  }
+
+  // Walk time forward in coarse steps looking for the satellite to clear the horizon, then
+  // bisect the crossing. A coarse step has to be shorter than the shortest pass or a pass
+  // can be stepped straight over; the fastest of these birds is above the horizon for about
+  // eight minutes, so one minute leaves a wide margin.
+  function findPasses(rec, lat, lon, from, hours) {
+    const S = window.SGP4;
+    const jdOf = ms => ms / 86400000 + 2440587.5;
+    const minOf = ms => (jdOf(ms) - rec.jdsatepoch) * 1440;
+    const elAt = ms => {
+      const l = S.look(rec, minOf(ms), jdOf(ms), lat, lon, 0);
+      return l ? l.el : -90;
+    };
+
+    const out = [];
+    const step = 60000;
+    const end = from + hours * 3600000;
+    let prev = elAt(from), prevT = from;
+
+    for (let tms = from + step; tms <= end; tms += step) {
+      const now = elAt(tms);
+      if (prev < 0 && now >= 0) {
+        // Rising. Bisect for the horizon crossing, then sample the arc for its peak.
+        let lo = prevT, hi = tms;
+        for (let i = 0; i < 18; i++) {
+          const mid = (lo + hi) / 2;
+          if (elAt(mid) < 0) lo = mid; else hi = mid;
+        }
+        const aos = hi;
+        let setT = null, pLo = tms, pPrev = now;
+        for (let u = tms + step; u <= end + 1800000; u += step) {
+          const e = elAt(u);
+          if (pPrev >= 0 && e < 0) {
+            let a = pLo, b = u;
+            for (let i = 0; i < 18; i++) {
+              const mid = (a + b) / 2;
+              if (elAt(mid) >= 0) a = mid; else b = mid;
+            }
+            setT = a;
+            break;
+          }
+          pLo = u; pPrev = e;
+        }
+        if (setT == null) break;
+
+        // Peak by ternary search: elevation over a single pass is unimodal.
+        let a = aos, b = setT;
+        for (let i = 0; i < 40; i++) {
+          const m1 = a + (b - a) / 3, m2 = b - (b - a) / 3;
+          if (elAt(m1) < elAt(m2)) a = m1; else b = m2;
+        }
+        const peakT = (a + b) / 2;
+        const peak = S.look(rec, minOf(peakT), jdOf(peakT), lat, lon, 0);
+        const rise = S.look(rec, minOf(aos), jdOf(aos), lat, lon, 0);
+        const fall = S.look(rec, minOf(setT), jdOf(setT), lat, lon, 0);
+        if (peak && peak.el >= SKY_MIN_EL) {
+          out.push({
+            aos, los: setT, peakT,
+            el: peak.el, riseAz: rise ? rise.az : 0, setAz: fall ? fall.az : 0
+          });
+        }
+        tms = setT;
+        prev = -1; prevT = setT;
+        continue;
+      }
+      prev = now; prevT = tms;
+    }
+    return out;
+  }
+
+  // Best pass per frequency, since a constellation shares one downlink and what matters is
+  // whether anything is up there, not which of the nine it is.
+  function skyPasses(lat, lon) {
+    const from = Date.now();
+    const rows = [];
+    for (const f of SATS.freqs) {
+      const bird = SATS.birds.find(b => b.id === f.bird);
+      if (!bird || !bird.rec.length) continue;
+      let best = null;
+      for (const { id, r } of bird.rec) {
+        for (const p of findPasses(r, lat, lon, from, SKY_HOURS)) {
+          // Prefer one already in progress, then the soonest.
+          const live = p.aos <= from && p.los >= from;
+          if (!best || (live && !best.live) || (live === !!best.live && p.aos < best.aos)) {
+            best = Object.assign({}, p, { live, norad: id, rec: r });
+          }
+          break;
+        }
+      }
+      if (best) rows.push(Object.assign({ f }, best, { bird }));
+    }
+    rows.sort((a, b) => (b.live ? 1 : 0) - (a.live ? 1 : 0) || a.aos - b.aos);
+    return rows;
+  }
+
+  function renderSky() {
+    const box = $('#sky');
+    if (!box) return;
+    box.textContent = '';
+    if (!isPro() || !REGION) { box.hidden = true; return; }
+
+    // Passes are only meaningful for a real observer. A region centre would give times that
+    // look authoritative and are wrong by however far away you are, so it is not offered.
+    if (POS.lat == null) { box.hidden = true; return; }
+    box.hidden = false;
+
+    const cap = el('div', 'nw-cap');
+    cap.append(el('span', 'nw-t', t('skyT')));
+    box.append(cap);
+    const list = el('div', 'sky-l');
+    list.append(el('p', 'sky-m', t('skyWait')));
+    box.append(list);
+
+    loadSats().then(ok => {
+      if (!ok || !isPro() || POS.lat == null) { box.hidden = true; return; }
+      const rows = skyPasses(POS.lat, POS.lon);
+      list.textContent = '';
+      if (!rows.length) { list.append(el('p', 'sky-m', t('skyNone'))); return; }
+
+      const show = SKY_ALL ? rows : rows.slice(0, 3);
+      for (const p of show) list.append(skyRow(p));
+
+      if (rows.length > 3) {
+        const more = el('button', 'sky-b', SKY_ALL ? t('skyLess') : t('skyMore'));
+        more.type = 'button';
+        more.addEventListener('click', () => { SKY_ALL = !SKY_ALL; renderSky(); });
+        list.append(more);
+      }
+
+      // Elements go stale, and a pass predicted from a fortnight-old TLE can be minutes out.
+      // Say so rather than presenting it with the same confidence as a fresh one.
+      const age = Math.floor(Date.now() / 86400000 + 2440587.5 - show[0].rec.jdsatepoch);
+      if (age >= 7) list.append(el('p', 'sky-m', t('skyStale')(age)));
+    });
+  }
+
+  function skyRow(p) {
+    const row = el('div', 'sky-r');
+    if (p.live) row.classList.add('live');
+
+    const head = el('div', 'sky-h');
+    const f = el('span', 'sky-f', fmtFreq(p.f.f));
+    f.append(el('i', null, unit(p.f.f)));
+    head.append(f);
+    head.append(el('span', 'sky-n', L(p.f, { n: 'n', z: 'z' })));
+    row.append(head);
+
+    const when = el('div', 'sky-w');
+    if (p.live) {
+      const jd = Date.now() / 86400000 + 2440587.5;
+      const l = window.SGP4.look(p.rec, (jd - p.rec.jdsatepoch) * 1440, jd, POS.lat, POS.lon, 0);
+      when.append(el('span', 'sky-up', t('skyNow')));
+      if (l) {
+        when.append(el('span', null, t('skyLive')(Math.round(l.el), compass(l.az))));
+        // Doppler shift, which on 70 cm is wide enough that you have to chase it by hand.
+        const k = Math.abs(p.f.f * 1000 * (l.rangeRate / C_KM_S));
+        if (k >= 0.5) when.append(el('span', null, t('skyDop')(k.toFixed(1))));
+      }
+    } else {
+      when.append(el('span', 'sky-up', t('skyUp')(span(p.aos - Date.now()))));
+      when.append(el('span', null, t('skyPeak')(Math.round(p.el))));
+      when.append(el('span', null, t('skyRise')(compass(p.riseAz), compass(p.setAz))));
+      when.append(el('span', null, t('skyLasts')(span(p.los - p.aos))));
+    }
+    row.append(when);
+
+    const tags = el('div', 'sky-t');
+    if (p.el >= 45) tags.append(el('span', 'tag tag-std', t('skyHigh')));
+    if (p.f.m) tags.append(el('span', 'tag tag-m', p.f.m));
+    if (p.f.t) tags.append(el('span', 'tag tag-t', 'PL ' + p.f.t));
+    if (p.f.dig) tags.append(el('span', 'tag tag-dig', t('skyDig')));
+    if (tags.children.length) row.append(tags);
+
+    // The explanation is a sentence, so it goes in a paragraph that wraps rather than in a
+    // tag, which does not.
+    if (p.f.dig) row.append(el('p', 'sky-why', t('skyDigWhy')));
+
+    return row;
   }
 
   function sunCard(lat, lon) {
@@ -1620,8 +1863,11 @@
       if (!best) { label.textContent = t('near'); toast(t('nogeo')); return; }
       // Rebuilding the strip relabels the chip, and selecting repaints the rows so the
       // distances appear without a second tap.
-      buildRegionTabs();
-      select(best.id, true);
+        buildRegionTabs();
+        select(best.id, true);
+        // Explicitly, rather than relying on select() to repaint: if you are already on the
+        // nearest region that call changes nothing, and the passes would never appear.
+        renderSky();
       toast(t('geoOk')(L(best, { n: 'n', z: 'z' })) + ` · ${fmtDist(bd)}`);
     }, () => {
       label.textContent = t('near');
@@ -1672,6 +1918,7 @@
           buildCatTabs();
           renderIntro();
           renderNow();
+          renderSky();
           render();
         });
     });

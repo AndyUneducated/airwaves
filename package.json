@@ -12,7 +12,9 @@
     "data:air": "node scripts/import-air.mjs",
     "data:bcast": "node scripts/import-bcast.mjs",
     "data:odds": "node scripts/make-odds.mjs",
-    "data:places": "node scripts/make-places.mjs"
+    "data:places": "node scripts/make-places.mjs",
+    "data:tle": "node scripts/import-tle.mjs",
+    "data:tle:check": "node scripts/import-tle.mjs --check"
   },
   "devDependencies": {
     "playwright": "^1.47.0"

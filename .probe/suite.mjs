@@ -719,6 +719,228 @@ if (want('layout')) {
   }
 }
 
+/* ================= SGP4, against the official verification vectors ================= */
+if (want('sgp4')) {
+  // The propagator is the one part of this site whose errors are invisible: a wrong orbit
+  // still produces a confident time and bearing, and the only way to know it is wrong is to
+  // be standing outside pointing at nothing. So it is checked against Vallado's published
+  // vectors - the same fixtures every other SGP4 implementation is validated with.
+  const { readFileSync } = await import('node:fs');
+  let tleTxt, outTxt;
+  try {
+    tleTxt = readFileSync('.probe/sgp4-ver/SGP4-VER.TLE', 'utf8');
+    outTxt = readFileSync('.probe/sgp4-ver/tcppver.out', 'utf8');
+  } catch (e) {
+    pass('sgp4: verification fixtures present', false,
+      'missing .probe/sgp4-ver - run: node .probe/sgp4-fetch.mjs');
+  }
+
+  if (tleTxt && outTxt) {
+    const tle = tleTxt.split(/\r?\n/);
+    const cases = [];
+    for (let i = 0; i < tle.length; i++) {
+      if (!/^1 /.test(tle[i]) || !/^2 /.test(tle[i + 1] || '')) continue;
+      cases.push({ satnum: tle[i].substring(2, 7).trim(), l1: tle[i], l2: tle[i + 1].substring(0, 69) });
+      i++;
+    }
+    const expect = new Map();
+    let cur = null;
+    for (const line of outTxt.split(/\r?\n/)) {
+      const h = line.match(/^(\d+)\s+xx\s*$/);
+      if (h) { cur = []; expect.set(h[1], cur); continue; }
+      // Rows carry a wall-clock timestamp after the state vector, so only the first seven
+      // fields are numbers.
+      const n = line.trim().split(/\s+/).slice(0, 7).map(Number);
+      if (cur && n.length === 7 && n.every(v => Number.isFinite(v))) cur.push(n);
+    }
+
+    const { ctx, page } = await session();
+    await page.goto(URL, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => !!window.SGP4);
+
+    let vectors = 0, deep = 0, worst = 0, worstV = 0, where = '', failed = 0;
+    for (const c of cases) {
+      const rows = expect.get(String(Number(c.satnum)));
+      if (!rows || !rows.length) continue;
+      const got = await page.evaluate(([l1, l2, ts]) => {
+        const s = SGP4.init(SGP4.parse(l1, l2));
+        if (s.deepspace) return { deepspace: true };
+        return { rows: ts.map(t => { const p = SGP4.propagate(s, t); return p ? p.r.concat(p.v) : null; }) };
+      }, [c.l1, c.l2, rows.map(r => r[0])]);
+
+      if (got.deepspace) { deep++; continue; }
+      for (let i = 0; i < rows.length; i++) {
+        const e = rows[i], g = got.rows[i];
+        if (!g) { failed++; continue; }
+        const dr = Math.hypot(g[0] - e[1], g[1] - e[2], g[2] - e[3]);
+        const dv = Math.hypot(g[3] - e[4], g[4] - e[5], g[5] - e[6]);
+        if (dr > worst) { worst = dr; where = c.satnum + ' @ t=' + e[0]; }
+        if (dv > worstV) worstV = dv;
+        vectors++;
+      }
+    }
+
+    pass('sgp4: enough of the vector set is exercised', vectors >= 150 && deep >= 20,
+      `${vectors} near-earth state vectors, ${deep} deep-space cases identified`);
+    pass('sgp4: every near-earth vector propagates', failed === 0, `${failed} failed`);
+    // A metre would already be far better than the elements themselves; this is held at a
+    // millimetre because agreement with the reference should be at arithmetic precision, and
+    // anything worse means a term has been mistyped rather than merely approximated.
+    pass('sgp4: position matches the reference to 1 mm', worst < 1e-6,
+      `worst ${worst.toExponential(2)} km on ${where}`);
+    pass('sgp4: velocity matches the reference', worstV < 1e-8,
+      `worst ${worstV.toExponential(2)} km/s`);
+
+    // Deep space is out of scope, and must be refused rather than approximated.
+    const ds = await page.evaluate(() => {
+      // A geostationary element set: period about 1436 minutes.
+      const s = SGP4.init(SGP4.parse(
+        '1 25954U 99060A   26260.50000000  .00000100  00000+0  00000+0 0  9990',
+        '2 25954   0.0200  95.0000 0002000 250.0000 110.0000  1.00270000 90000'));
+      return { deepspace: s.deepspace, propagated: !!SGP4.propagate(s, 0) };
+    });
+    pass('sgp4: deep space is refused, not approximated',
+      ds.deepspace === true && ds.propagated === false, JSON.stringify(ds));
+    await ctx.close();
+  }
+}
+
+/* ================= overhead passes ================= */
+if (want('sky')) {
+  /* the curated data has to stay honest */
+  {
+    const { readFileSync } = await import('node:fs');
+    const doc = JSON.parse(readFileSync('data/sat.json', 'utf8'));
+
+    const orphans = doc.freqs.filter(f => !doc.birds.some(b => b.id === f.bird));
+    pass('sky data: every frequency belongs to a satellite', orphans.length === 0,
+      orphans.map(o => o.n).join(', '));
+
+    const noEl = doc.birds.filter(b => !Object.keys(b.tle || {}).length);
+    pass('sky data: every satellite has elements', noEl.length === 0,
+      noEl.map(b => b.id).join(', '));
+
+    // Elements are refreshed by a daily Action. If that has been broken for a fortnight the
+    // predictions are quietly wrong, so the suite notices before a user does.
+    const jdNow = Date.now() / 86400000 + 2440587.5;
+    let oldest = 0, oldestId = '';
+    for (const b of doc.birds) {
+      for (const [id, t] of Object.entries(b.tle)) {
+        const yr = parseInt(t[0].substring(18, 20), 10);
+        const year = yr < 57 ? yr + 2000 : yr + 1900;
+        const jan1 = 367 * year - Math.floor(7 * year * 0.25) + 30 + 1 + 1721013.5;
+        const age = jdNow - (jan1 + parseFloat(t[0].substring(20, 32)) - 1);
+        if (age > oldest) { oldest = age; oldestId = b.id + '/' + id; }
+      }
+    }
+    pass('sky data: elements are fresh', oldest < 21,
+      `oldest ${oldest.toFixed(1)} days (${oldestId})`);
+
+    // The NOAA APT satellites are the trap here. Their transmitters were switched off in
+    // 2025 but Celestrak still publishes elements, so anything built on orbits alone will
+    // happily predict passes for three silent satellites. They must stay out.
+    const dead = [25338, 28654, 33591];
+    const present = doc.birds.filter(b => b.norad.some(n => dead.includes(n)));
+    pass('sky data: the decommissioned NOAA APT birds stay out', present.length === 0,
+      present.map(b => b.n).join(', '));
+    pass('sky data: and the exclusion is written down',
+      /decommissioned/i.test(JSON.stringify(doc.excluded || [])));
+  }
+
+  /* the panel */
+  {
+    const ctx = await browser.newContext({
+      viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+      geolocation: { latitude: 37.7749, longitude: -122.4194 }, permissions: ['geolocation']
+    });
+    const page = await ctx.newPage();
+    const errs = [];
+    page.on('pageerror', e => errs.push('pageerror: ' + e.message));
+    page.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+    await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+
+    // Without a position the panel must not appear at all: a region centre would produce
+    // times that look authoritative and are wrong by however far away you are.
+    pass('sky: no panel until you share a position',
+      await page.evaluate(() => document.getElementById('sky').hidden) === true);
+
+    await page.click('#btn-geo');
+    await page.waitForSelector('.sky-r', { timeout: 40000 });
+
+    const m = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll('.sky-r')];
+      return {
+        n: rows.length,
+        freqs: rows.map(r => (r.querySelector('.sky-f') || {}).textContent || ''),
+        names: rows.map(r => (r.querySelector('.sky-n') || {}).textContent || ''),
+        when: rows.map(r => (r.querySelector('.sky-w') || {}).textContent || ''),
+        live: rows.map(r => r.classList.contains('live')),
+        hasMore: !!document.querySelector('.sky-b')
+      };
+    });
+
+    pass('sky: passes are listed', m.n >= 1 && m.n <= 3, `${m.n} rows shown`);
+    pass('sky: each row names a frequency and a satellite',
+      m.freqs.every(f => /\d/.test(f)) && m.names.every(n => n.trim().length > 3),
+      m.freqs.join(' | '));
+    pass('sky: each row says when and how high',
+      m.when.every(w => /\d+°|now/i.test(w)), m.when[0]);
+
+    // A pass in progress is the only time-critical thing here, so it must sort first.
+    const firstLive = m.live.indexOf(true);
+    pass('sky: a pass in progress sorts to the top',
+      firstLive === -1 || firstLive === 0, `live flags ${m.live.join(',')}`);
+
+    // Nothing below the workable threshold should ever be offered.
+    const peaks = m.when.map(w => { const n = w.match(/(\d+)°/); return n ? Number(n[1]) : 99; });
+    pass('sky: nothing below 10 degrees is offered', peaks.every(p => p >= 10),
+      'peaks ' + peaks.join(', '));
+
+    if (m.hasMore) {
+      await page.click('.sky-b');
+      await page.waitForTimeout(600);
+      const all = await page.evaluate(() => ({
+        n: document.querySelectorAll('.sky-r').length,
+        // Chronological, so the list reads as a timetable.
+        order: [...document.querySelectorAll('.sky-r')].map(r =>
+          r.classList.contains('live') ? -1 : 0)
+      }));
+      pass('sky: the full list expands', all.n > m.n, `${m.n} -> ${all.n}`);
+    }
+
+    pass('sky: no console errors', errs.length === 0, errs.join(' | '));
+
+    /* screenshots, so the panel can be looked at and not only asserted */
+    await page.evaluate(() => document.querySelector('#sky').scrollIntoView({ block: 'center' }));
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: '.probe/sky.png' });
+    await ctx.close();
+  }
+
+  /* and in sunlight mode, where the live-pass highlight has to survive a light background */
+  {
+    const ctx = await browser.newContext({
+      viewport: { width: 320, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+      geolocation: { latitude: 37.7749, longitude: -122.4194 }, permissions: ['geolocation']
+    });
+    const page = await ctx.newPage();
+    await page.addInitScript(() => localStorage.setItem('aw.skin', 'glare'));
+    await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.row');
+    await page.click('#btn-geo');
+    await page.waitForSelector('.sky-r', { timeout: 40000 });
+    const over = await page.evaluate(() => {
+      document.querySelector('#sky').scrollIntoView({ block: 'center' });
+      return document.documentElement.scrollWidth - document.documentElement.clientWidth;
+    });
+    pass('sky: the panel fits a 320px screen', over <= 1, `overflow ${over}px`);
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: '.probe/sky-glare.png' });
+    await ctx.close();
+  }
+}
+
 /* ================= skins: the outdoor display modes ================= */
 if (want('skin')) {
   // Composite a node's effective background down through any translucent layers, then

@@ -101,12 +101,16 @@
 
   <section class="now" id="now">
     <div class="sk-x sk-nw-c"></div>
-    <div class="nw-g">
-      <div class="sk-x sk-nw"></div>
-      <div class="sk-x sk-nw"></div>
+      <div class="nw-g" id="nw-g">
+        <div class="sk-x sk-nw"></div>
+        <div class="sk-x sk-nw"></div>
       <div class="sk-x sk-nw"></div>
     </div>
   </section>
+
+  <!-- No skeleton here: passes need your location, so this section stays empty until you
+       share it and cannot be sized in advance without reserving space that is usually unused. -->
+  <section class="sky" id="sky" hidden></section>
 
   <div id="notice"></div>
 
@@ -156,6 +160,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="assets/sgp4.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
