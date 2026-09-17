@@ -26,6 +26,28 @@
     // glare-mode reader gets a full screen of dark before the stylesheet catches up.
     var s = localStorage.getItem('aw.skin');
     document.documentElement.dataset.skin = s === 'glare' || s === 'black' ? s : 'auto';
+
+    /* The intro is prose from a file not loaded yet, and the right-now panel only exists
+       for a region with a centre, so the two blocks above the list cannot be sized from
+       the markup alone. app.js records the shape it last drew; if this load lands on that
+       same region, reserve it exactly. Otherwise fall back to the medians in the
+       stylesheet — and on a landing page, to the nationwide sets both countries open on,
+       which have no right-now panel at all. */
+    var reg = (location.hash.match(/^#\/(?:[a-z]{2}\/)?([a-z0-9-]+)/) || [])[1] || '';
+    var d = document.documentElement.dataset;
+    var last = JSON.parse(localStorage.getItem('aw.shape') || 'null');
+    var lang = localStorage.getItem('aw.lang') === 'zh' ? 'zh' : 'en';
+    if (last && last.r === (reg || localStorage.getItem('aw.region.' + d.scope)) &&
+      last.m === d.mode && last.l === lang) {
+      d.skNow = last.n ? 'y' : 'n';
+      // The intro wraps, so its remembered height is only good at the width it was measured.
+      if (last.w === innerWidth) {
+        document.documentElement.style.setProperty('--sk-intro', last.i + 'px');
+      }
+    } else {
+      d.skNow = reg ? 'y' : 'n';
+      if (!reg) d.land = 'y';
+    }
   } catch (e) {}
 </script>
 </head>
@@ -108,9 +130,11 @@
     </div>
   </section>
 
-  <!-- No skeleton here: passes need your location, so this section stays empty until you
-       share it and cannot be sized in advance without reserving space that is usually unused. -->
+  <!-- No skeletons here: both panels need your location, so they stay empty until you share
+       it and cannot be sized in advance without reserving space that is usually unused.
+       Because they only ever appear in answer to a tap, they shift nothing on load. -->
   <section class="sky" id="sky" hidden></section>
+  <section class="mp-w" id="map" hidden></section>
 
   <div id="notice"></div>
 

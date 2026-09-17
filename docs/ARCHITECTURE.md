@@ -84,6 +84,35 @@ does not move at all and the outliers move about half as far. A per-region note 
 unreserved entirely, because holding space for it would leave a permanent gap on the regions
 that do not carry one.
 
+### Remembering the shape
+
+The median is a poor guess in one case that turns out to be the common one. A URL with no
+`#/region` in it restores the last region you read, and the right-now panel only exists for
+a region with a centre — nationwide sets and the link pages have none. Reserving a panel that
+never arrives dropped the list by half a screen, which measured 0.29 on the landing page.
+
+So the shape is not guessed twice. `app.js` records what it actually drew, and the inline
+script reserves it on the next load:
+
+```mermaid
+flowchart LR
+  A[render a region] --> B[measure intro height<br/>and whether a panel appeared]
+  B --> C[(localStorage<br/>aw.shape)]
+  C --> D{next load:<br/>same region, mode, language?}
+  D -- yes --> E[reserve that exact shape]
+  D -- no --> F[fall back to the medians]
+```
+
+Only the last region is kept, because that is the one a bare URL will restore. The panel bit
+is reused even when the width has changed, since whether a region has a centre does not
+depend on the viewport; the intro height is not, since prose rewraps. With nothing remembered
+at all, a landing page reserves the nationwide intro for its country — 225 px in the US
+against 493 px in China on a phone — and no panel, because both countries open on a
+nationwide set.
+
+This is memory, not prediction, so it is self-correcting: a stale height costs one small
+shift and is then right again.
+
 Measure this over a throttled connection. On localhost the data arrives before the first
 paint, every shift is attributed to the initial render and the number reads zero no matter
 what the placeholders do — the phone pages that measured 0 locally measured 0.15 over the
@@ -306,6 +335,67 @@ The panel does not appear until you share a position. Falling back to the region
 rejected: it would produce times that look authoritative and are wrong by however far away you
 happen to be, and a confidently wrong timetable is worse than none.
 
+## Line of sight
+
+The map answers one question — which transmitter sites are geometrically in reach of a
+handheld, and which are behind the curve of the Earth — using only coordinates already in
+`data/places.json`. No tiles, no map library, no network.
+
+### What the rings mean
+
+```
+site elevation from places.json
+        │
+        ├── + 10 m nominal mast
+        │
+        ▼
+  4.12 · √h  ──┐
+               ├── sum = how far the two can see each other
+  4.12 · √2  ──┘
+        ▲
+        │
+your height, a handheld held up
+```
+
+The coefficient 4.12 carries the standard 4/3 refraction factor: radio bends with the
+atmosphere and so reaches about 15% further than the purely geometric 3.57 would give. The
+suite checks it against the closed form it approximates — a tangent from height *h* to a
+sphere of radius 4/3 R, or √(2kRh + h²) — and they agree to 0.06% up to 4 km.
+
+Two honesty constraints shape the panel. Field elevation is not antenna height: `ourairports`
+gives the ground, so the 10 m mast is an assumption and is stated as one. And this is the
+horizon and nothing else — terrain is not modelled, which the panel says in as many words,
+because the hill in front of you beats all of this arithmetic.
+
+### Projection invariants
+
+An equirectangular projection with longitude compressed by cos(latitude), which leaves two
+properties the drawing depends on:
+
+| Invariant | Why it matters | How it is held |
+| --- | --- | --- |
+| One kilometre is the same number of pixels in every direction | Otherwise the scale bar is true only horizontally and every horizon ring is a wrong ellipse | The panel's aspect is clamped for shape, and the *bounds* are then widened to match rather than the axes stretched. More empty margin is honest; misstated distance is not |
+| One SVG unit is one CSS pixel | A fixed 1000-unit viewBox turned a 19 px label into 7 px on a phone | The width is measured at draw time and the map is redrawn when it changes |
+
+Because the scale is isotropic, a horizon ring is a plain `<circle>`. That it stays one is the
+cheapest possible regression test for the whole projection.
+
+### What is deliberately absent
+
+There is no coastline. No boundary data exists in this repository, and an invented one would
+read as fact — a wrong shoreline is worse than none. A graticule and a scale bar orient the
+reader without asserting any geography.
+
+Airport codes are placed by hand rather than left to the browser, which will happily stack
+four of them into one smudge; the bay has airports a few kilometres apart. Each label tries
+four positions around its dot, and one that would land on a label already placed, or run off
+the panel, is dropped — its dot and tooltip remain. Sites in reach are offered a position
+first, since they are the answer to the question the panel asks.
+
+Like the pass list, the map waits for a position. Without one it could still draw the sites
+and their horizons, but not the one thing it is for; and a panel this tall arriving on its own
+after the data loads shoves the tuning rail and the whole list down the page.
+
 ## Skins
 
 A skin is a token override and nothing else. Every colour in the stylesheet resolves through a
@@ -397,11 +487,12 @@ what changes in a redesign:
 | `wheel` | Sweeping tunes continuously, does not select text, does not scroll the page |
 | `now` | The live panel works online, falls back offline, and is honest about which |
 | `geo` | Distances appear only where a real transmitter site is known |
-| `perf` | The page does not jump on load — phone and desktop, landing and deep link, remembered mode, and over a throttled connection |
+| `perf` | The page does not jump on load — phone and desktop, landing and deep link, remembered mode and remembered shape, and over a throttled connection |
 | `layout` | The header survives a 280 px screen in both languages |
 | `skin` | Each skin repaints every surface, holds its contrast floor, and the wake lock is taken and released for real |
 | `sgp4` | The propagator matches the official verification vectors, and refuses deep space rather than approximating it |
 | `sky` | Passes are chronological, never below 10 degrees, never shown without a position - and the decommissioned NOAA birds stay out of the data |
+| `map` | The horizon matches closed-form geometry, one scale holds in every direction, and no label overlaps another or runs off the panel |
 
 Four of these exist because of bugs that measurement found and inspection did not: the hiss
 was 26 dB down and silenced across the busiest part of the band; the right-now cards sized
@@ -417,8 +508,8 @@ and measure it somewhere other than where it already passes.
 
 - **No framework.** The whole interface is a list, a rail and a header. A framework would
   be more code than the application.
-- **No bundler.** One script tag, plus a dozen inline lines that must beat the first paint.
-  The payload is 141 KB of code.
+- **No bundler.** Two script tags, plus a dozen inline lines that must beat the first paint.
+  The payload is 160 KB of code.
 - **No map tiles.** A third-party tile server is a network dependency and a privacy leak on a
   site whose selling point is neither.
 - **No analytics.** Nothing is sent anywhere except the three live readings, one of which

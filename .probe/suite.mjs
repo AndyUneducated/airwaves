@@ -719,6 +719,281 @@ if (want('layout')) {
   }
 }
 
+/* ================= line of sight ================= */
+if (want('map')) {
+  const ctx = await browser.newContext({
+    viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+    geolocation: { latitude: 37.7749, longitude: -122.4194 }, permissions: ['geolocation']
+  });
+  const page = await ctx.newPage();
+  const errs = [];
+  page.on('pageerror', e => errs.push('pageerror: ' + e.message));
+  page.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
+  await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  // Nothing about reach can be drawn until the reader asks to be located, and a panel this
+  // tall arriving unbidden would shove the tuning rail and the list down the page.
+  pass('map: hidden until you share your location',
+    await page.evaluate(() => document.getElementById('map').hidden) === true);
+  await page.click('#btn-geo');
+  await page.waitForSelector('.mp-me', { timeout: 20000 });
+
+  // The horizon is the one number here that is physics rather than presentation, so it is
+  // checked against the closed form it approximates: a tangent from height h to a sphere of
+  // radius 4/3 R, which is d = sqrt(2kRh + h^2). If the coefficient is ever "tidied" the
+  // rings silently resize and nothing else would notice.
+  const phys = await page.evaluate(() => {
+    const K = 4 / 3, R = 6371.0088;
+    const exact = h => Math.sqrt(2 * K * R * (h / 1000) + (h / 1000) ** 2);
+    const app = h => 4.12 * Math.sqrt(h);
+    let worst = 0;
+    for (const h of [2, 10, 30, 100, 165, 500, 1173, 2000, 4000]) {
+      worst = Math.max(worst, Math.abs(app(h) - exact(h)) / exact(h) * 100);
+    }
+    return { worst, mast: app(2) + app(10), diablo: app(2) + app(1173), jet: app(2) + app(10000) };
+  });
+  pass('map: the horizon matches spherical geometry with 4/3 refraction',
+    phys.worst < 0.2, `worst ${phys.worst.toFixed(3)}% up to 4000 m`);
+  // Three figures any radio handbook quotes, which catch a coefficient wrong by a factor.
+  pass('map: and reproduces the textbook distances',
+    Math.abs(phys.mast - 18.9) < 0.5 && Math.abs(phys.diablo - 147) < 1.5 &&
+    Math.abs(phys.jet - 418) < 2,
+    `2+10 m ${phys.mast.toFixed(1)} km, Diablo ${phys.diablo.toFixed(1)} km, jet ${phys.jet.toFixed(0)} km`);
+
+  const m = await page.evaluate(() => {
+    const svg = document.querySelector('.mp');
+    const rings = [...svg.querySelectorAll('.mp-ring')];
+    const box = svg.viewBox.baseVal;
+    return {
+      sites: svg.querySelectorAll('.mp-s').length,
+      rings: rings.length,
+      los: svg.querySelectorAll('.mp-s.los').length,
+      me: svg.querySelectorAll('.mp-me').length,
+      grid: svg.querySelectorAll('.mp-grid line').length,
+      scale: (svg.querySelector('.mp-sc text') || {}).textContent || '',
+      titles: [...svg.querySelectorAll('.mp-s title')].map(t => t.textContent),
+      links: svg.querySelectorAll('.mp-link line').length,
+      w: box.width, h: box.height,
+      // Everything needed to check the projection from what is actually drawn: the scale bar
+      // fixes pixels per km, and each site's title states its true distance from you.
+      bar: (() => {
+        const ls = [...svg.querySelectorAll('.mp-sc line')];
+        const horiz = ls.filter(l => Math.abs(l.y1.baseVal.value - l.y2.baseVal.value) < 0.5)[0];
+        const lbl = (svg.querySelector('.mp-sc text') || {}).textContent || '';
+        return horiz ? { px: Math.abs(horiz.x2.baseVal.value - horiz.x1.baseVal.value), km: parseFloat(lbl) } : null;
+      })(),
+      me: (() => {
+        const c = svg.querySelector('.mp-me circle');
+        return c ? [c.cx.baseVal.value, c.cy.baseVal.value] : null;
+      })(),
+      plots: [...svg.querySelectorAll('.mp-s')].map(g => {
+        const c = g.querySelector('circle'), tl = g.querySelector('title').textContent;
+        const x = c.cx.baseVal.value, y = c.cy.baseVal.value;
+        // The ring is a sibling of the marker, not a child, so pair them by centre rather
+        // than by document order - matching on order would pass even if they came apart.
+        const ring = rings.find(r => Math.abs(r.cx.baseVal.value - x) < 0.2 &&
+          Math.abs(r.cy.baseVal.value - y) < 0.2);
+        return {
+          x, y, ring: ring ? ring.r.baseVal.value : null, dot: c.r.baseVal.value,
+          km: (tl.match(/([\d.]+)\s*km/) || [])[1], elev: (tl.match(/([\d.]+)\s*m\b/) || [])[1]
+        };
+      })
+    };
+  });
+
+  pass('map: sites are plotted with a ring each', m.sites >= 3 && m.rings === m.sites,
+    `${m.sites} sites, ${m.rings} rings`);
+  pass('map: you are on it', m.me !== null);
+  pass('map: a graticule and a scale bar orient the reader',
+    m.grid >= 4 && /\d+\s*(km|公里)/.test(m.scale), `${m.grid} grid lines, scale "${m.scale}"`);
+
+  // The projection is checked against the drawing itself: pixels per km from the scale bar
+  // must also hold for the straight-line pixel distance to each site, whose true distance the
+  // site states. Sites lie in every direction from San Francisco, so an axis scaled wrongly
+  // - which is what clamping the panel height used to do - shows up here as a spread.
+  const barPx = m.bar ? m.bar.px / m.bar.km : 0;
+  const spread = m.plots.filter(p => p.km && +p.km > 10).map(p =>
+    Math.hypot(p.x - m.me[0], p.y - m.me[1]) / +p.km / barPx);
+  const lo = Math.min(...spread), hi = Math.max(...spread);
+  pass('map: one scale holds in every direction',
+    spread.length >= 4 && lo > 0.96 && hi < 1.04,
+    `${spread.length} sites, px/km vs scale bar ranges ${lo.toFixed(3)}-${hi.toFixed(3)}`);
+
+  // And the rings are that same scale applied to the horizon of each site's own elevation.
+  const ringErr = m.plots.filter(p => p.elev && p.ring).map(p =>
+    p.ring / ((4.12 * Math.sqrt(+p.elev + 10) + 4.12 * Math.sqrt(2)) * barPx));
+  pass('map: rings are drawn to the horizon they claim',
+    ringErr.length >= 4 && Math.min(...ringErr) > 0.98 && Math.max(...ringErr) < 1.02,
+    `ratio ${Math.min(...ringErr).toFixed(3)}-${Math.max(...ringErr).toFixed(3)}`);
+
+  // Typography: the viewBox used to be a fixed 1000 units wide, so an 19px label came out
+  // near 7px on a phone. One unit per pixel is what keeps these honest.
+  const type = await page.evaluate(() => {
+    const svg = document.querySelector('.mp');
+    const r = svg.getBoundingClientRect();
+    const px = t => parseFloat(getComputedStyle(t).fontSize) * (r.width / svg.viewBox.baseVal.width);
+    // Overlap is checked over every label including "You"; the count is site codes only.
+    const labels = [...svg.querySelectorAll('.mp-marks text')];
+    const boxes = labels.map(t => t.getBBox());
+    const codes = svg.querySelectorAll('.mp-s text').length;
+    let overlaps = 0;
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const a = boxes[i], b = boxes[j];
+        if (a.x < b.x + b.width && a.x + a.width > b.x &&
+          a.y < b.y + b.height && a.y + a.height > b.y) overlaps++;
+      }
+    }
+    return {
+      unit: r.width / svg.viewBox.baseVal.width,
+      site: labels.length ? px(labels[0]) : 0,
+      scale: px(svg.querySelector('.mp-sc text')),
+      labels: codes, overlaps,
+      sites: svg.querySelectorAll('.mp-s').length
+    };
+  });
+  pass('map: one svg unit is one screen pixel', Math.abs(type.unit - 1) < 0.02,
+    `${type.unit.toFixed(3)} px per unit`);
+  pass('map: labels are big enough to read', type.site >= 10 && type.scale >= 9.5,
+    `codes ${type.site.toFixed(1)}px, scale bar ${type.scale.toFixed(1)}px`);
+  pass('map: no two labels overlap', type.overlaps === 0, `${type.overlaps} collisions`);
+  // Dropping a colliding label is the fix, but dropping most of them would mean the map
+  // names almost nothing.
+  pass('map: most sites still get named', type.labels >= Math.ceil(type.sites * 0.8),
+    `${type.labels} of ${type.sites} labelled`);
+
+  // The sites in reach are the answer to the question the panel asks, so if any label has to
+  // go it must not be one of theirs.
+  const named = await page.evaluate(() => {
+    const has = sel => [...document.querySelectorAll(sel)].map(g => !!g.querySelector('text'));
+    return { los: has('.mp-s.los'), all: has('.mp-s') };
+  });
+  pass('map: sites in reach keep their code', named.los.length > 0 && named.los.every(Boolean),
+    `${named.los.filter(Boolean).length} of ${named.los.length} in-reach labelled`);
+
+  // A code clipped by the panel edge reads as a different airport.
+  const clipped = await page.evaluate(() => {
+    const svg = document.querySelector('.mp'), vb = svg.viewBox.baseVal;
+    return [...svg.querySelectorAll('.mp-marks text')].filter(t => {
+      const b = t.getBBox();
+      return b.x < 0 || b.y < 0 || b.x + b.width > vb.width || b.y + b.height > vb.height;
+    }).map(t => t.textContent);
+  });
+  pass('map: no label runs off the edge', clipped.length === 0, clipped.join(', '));
+
+  pass('map: each site says how far and how high', m.titles.length === m.sites &&
+    m.titles.every(x => /\d+\s*m\b/.test(x) && /[\d.]+\s*km/.test(x)), m.titles[0]);
+  pass('map: only sites in reach are joined to you', m.links === m.los,
+    `${m.links} lines, ${m.los} in reach`);
+
+  // A handheld in San Francisco cannot see every airport in the region; if everything or
+  // nothing is in reach the calculation has collapsed into a constant.
+  pass('map: the reach calculation discriminates', m.los > 0 && m.los < m.sites,
+    `${m.los} of ${m.sites} within line of sight`);
+
+  // The explanation has to state that this is horizon only, or the map overclaims: it knows
+  // nothing about the hill in front of you.
+  const how = await page.evaluate(() => (document.querySelector('.mp-how') || {}).textContent || '');
+  pass('map: the panel says what it does not know',
+    /terrain|地形/i.test(how) && /horizon|视距/i.test(how), how.slice(0, 60));
+
+  // Pixel geometry has to be rebuilt when the width changes, or a rotated phone shows a map
+  // drawn for the old width, stretched by the browser, with the scale bar now lying.
+  const before = await page.evaluate(() => document.querySelector('.mp').viewBox.baseVal.width);
+  await page.setViewportSize({ width: 800, height: 844 });
+  await page.waitForTimeout(400);
+  const after = await page.evaluate(() => {
+    const svg = document.querySelector('.mp');
+    return { vb: svg.viewBox.baseVal.width, unit: svg.getBoundingClientRect().width / svg.viewBox.baseVal.width };
+  });
+  pass('map: it redraws when the width changes',
+    after.vb > before + 50 && Math.abs(after.unit - 1) < 0.02,
+    `${before} -> ${after.vb} units, ${after.unit.toFixed(3)} px per unit`);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(400);
+
+  pass('map: no console errors', errs.length === 0, errs.join(' | '));
+
+  await page.evaluate(() => document.querySelector('#map').scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: '.probe/map.png' });
+
+  // The narrowest phone still in use. The panel is wide - a whole SVG - so it is the most
+  // likely thing on the page to burst the viewport.
+  const ctx2 = await browser.newContext({
+    viewport: { width: 320, height: 844 }, isMobile: true, hasTouch: true,
+    geolocation: { latitude: 37.7749, longitude: -122.4194 }, permissions: ['geolocation']
+  });
+  const p2 = await ctx2.newPage();
+  await p2.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+  await p2.waitForSelector('.row');
+  await p2.click('#btn-geo');
+  await p2.waitForSelector('.mp-me', { timeout: 20000 });
+  const tiny = await p2.evaluate(() => ({
+    over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    labels: document.querySelectorAll('.mp-s text').length,
+    sites: document.querySelectorAll('.mp-s').length
+  }));
+  pass('map: fits a 320px screen', tiny.over <= 1, `overflow ${tiny.over}px`);
+  // Labels are dropped when they collide, and a 320px panel is where that bites hardest.
+  pass('map: still names sites on the narrowest phone', tiny.labels >= tiny.sites / 2,
+    `${tiny.labels} of ${tiny.sites}`);
+  await p2.screenshot({ path: '.probe/map-tiny.png' });
+  await ctx2.close();
+
+  // Sunlight mode inverts the panel, and the label haloes are drawn in the panel background,
+  // so they have to follow the skin or the codes turn into dark text ringed in dark.
+  await page.evaluate(() => document.documentElement.setAttribute('data-skin', 'glare'));
+  await page.waitForTimeout(200);
+  const gl = await page.evaluate(() => {
+    const p = getComputedStyle(document.querySelector('.mp')).backgroundColor;
+    const t = document.querySelector('.mp-s text');
+    const cs = getComputedStyle(t);
+    const lum = c => {
+      const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(Number).map(v => {
+        v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const a = lum(cs.fill), b = lum(p);
+    return { ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05), halo: cs.stroke, panel: p };
+  });
+  pass('map: labels stay readable in sunlight mode', gl.ratio >= 3,
+    `contrast ${gl.ratio.toFixed(2)}:1 against ${gl.panel}, halo ${gl.halo}`);
+
+  // Rings carry the reading, and a thin translucent stroke that works indoors disappears on
+  // a white screen in the sun, so sunlight mode must not be weaker than the dark one.
+  const alpha = await page.evaluate(() => {
+    const a = () => {
+      const g = getComputedStyle(document.querySelector('.mp-ring:not(.los)')).stroke;
+      const l = getComputedStyle(document.querySelector('.mp-ring.los')).stroke;
+      const grab = c => parseFloat((c.match(/[\d.]+\)/) || ['1)'])[0]) || 1;
+      return [grab(g), grab(l)];
+    };
+    const glare = a();
+    document.documentElement.setAttribute('data-skin', 'auto');
+    const dark = a();
+    document.documentElement.setAttribute('data-skin', 'glare');
+    return { glare, dark };
+  });
+  pass('map: rings are stronger in sunlight, not weaker',
+    alpha.glare[0] > alpha.dark[0] && alpha.glare[1] > alpha.dark[1],
+    `over-horizon ${alpha.dark[0]} -> ${alpha.glare[0]}, in-reach ${alpha.dark[1]} -> ${alpha.glare[1]}`);
+  await page.evaluate(() => document.querySelector('#map').scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: '.probe/map-glare.png' });
+
+  // Simple mode is the design centre and stays uncluttered.
+  const ctx3 = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const p3 = await ctx3.newPage();
+  await p3.goto(URL + '?pro=0#/us/bay-area', { waitUntil: 'networkidle' });
+  await p3.waitForSelector('.row');
+  pass('map: simple mode does not show it',
+    await p3.evaluate(() => document.getElementById('map').hidden) === true);
+  await ctx3.close();
+  await ctx.close();
+}
+
 /* ================= SGP4, against the official verification vectors ================= */
 if (want('sgp4')) {
   // The propagator is the one part of this site whose errors are invisible: a wrong orbit
@@ -1576,6 +1851,10 @@ if (want('perf')) {
   for (const [label, path, viewport] of [
     ['phone, slow network', '?pro=1#/us/bay-area', undefined],
     ['phone, slow network, zh', '?pro=1#/cn/beijing', undefined],
+    // The landing page, which every one of these had skipped: it is the only path where the
+    // region is not known at first paint, and a loaded machine caught it shifting 0.29.
+    ['phone, slow network, landing', '?pro=1', undefined],
+    ['desktop, slow network, landing', '?pro=1', { width: 1280, height: 900 }],
     ['desktop, slow network', '?pro=1#/us/bay-area', { width: 1280, height: 900 }]
   ]) {
     const { ctx, page } = await session(viewport ? { viewport } : {});
@@ -1606,6 +1885,72 @@ if (want('perf')) {
     const m = await page.evaluate(() => ({ cls: +window.__cls.toFixed(4), worst: window.__worst }));
     const blame = m.worst ? `, worst ${m.worst.v} on ${m.worst.el}` : '';
     pass(`layout stable on load (${label})`, m.cls < 0.1, `CLS ${m.cls}${blame}`);
+    await ctx.close();
+  }
+
+  // Coming back. A bare URL restores the last region, so the shape to reserve is whatever
+  // that region drew last time - which nothing above covers, because every case here is
+  // either a first visit or a deep link. Both directions have to hold: a region with a
+  // right-now panel must have its 370px reserved, and one without must not.
+  for (const [label, first, panel] of [
+    ['region with a panel', '#/us/bay-area', true],
+    ['nationwide, no panel', '#/us/nationwide', false]
+  ]) {
+    const { ctx, page } = await session({ viewport: { width: 390, height: 844 } });
+    // Visit once so the shape is recorded, exactly as a real reader would.
+    await page.goto(URL + '?pro=1' + first, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('.row');
+    await page.waitForTimeout(900);
+    const seen = await page.evaluate(() => ({
+      now: !document.getElementById('now').hidden,
+      shape: JSON.parse(localStorage.getItem('aw.shape') || 'null'),
+      intro: Math.round(document.getElementById('intro').getBoundingClientRect().height)
+    }));
+    pass(`shape recorded (${label})`,
+      !!seen.shape && seen.shape.n === (panel ? 1 : 0) && Math.abs(seen.shape.i - seen.intro) <= 1,
+      seen.shape ? `panel ${seen.shape.n}, intro ${seen.shape.i}px vs drawn ${seen.intro}px` : 'nothing stored');
+
+    // Now come back to the bare URL, slowly, and see whether the reserved shape matches.
+    await page.route('**/data/**', async route => {
+      await new Promise(r => setTimeout(r, 700));
+      route.continue();
+    });
+    await page.addInitScript(() => {
+      window.__cls = 0;
+      window.__worst = null;
+      new PerformanceObserver(l => {
+        for (const e of l.getEntries()) {
+          if (e.hadRecentInput) continue;
+          window.__cls += e.value;
+          if (!window.__worst || e.value > window.__worst.v) {
+            const s = (e.sources || [])[0], n = s && s.node;
+            window.__worst = {
+              v: +e.value.toFixed(4),
+              el: n ? (n.nodeName || '?').toLowerCase() + (n.id ? '#' + n.id : '') : '?'
+            };
+          }
+        }
+      }).observe({ type: 'layout-shift', buffered: true });
+    });
+    await page.goto(URL, { waitUntil: 'domcontentloaded' });
+    const reserved = await page.evaluate(() => {
+      const n = document.getElementById('now');
+      return {
+        now: getComputedStyle(n).display !== 'none' ? Math.round(n.getBoundingClientRect().height) : 0,
+        intro: Math.round(document.getElementById('intro').getBoundingClientRect().height)
+      };
+    });
+    await page.waitForSelector('.row');
+    await page.waitForTimeout(2600);
+    const back = await page.evaluate(() => ({
+      cls: +window.__cls.toFixed(4), worst: window.__worst,
+      region: location.hash, now: !document.getElementById('now').hidden
+    }));
+    pass(`returning reserves the right shape (${label})`,
+      back.now === panel && (panel ? reserved.now > 300 : reserved.now === 0),
+      `reserved ${reserved.now}px for the panel, drew ${back.now ? 'one' : 'none'} (${back.region})`);
+    pass(`layout stable on load (phone, returning, ${label})`,
+      back.cls < 0.02, `CLS ${back.cls}` + (back.worst ? `, worst ${back.worst.v} on ${back.worst.el}` : ''));
     await ctx.close();
   }
 

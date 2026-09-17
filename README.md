@@ -15,7 +15,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
   <img alt="framework" src="https://img.shields.io/badge/framework-none-success">
   <img alt="javascript" src="https://img.shields.io/badge/JavaScript-ES2017-f7df1e?logo=javascript&logoColor=black">
   <img alt="css" src="https://img.shields.io/badge/CSS-hand%20written-1572b6?logo=css3&logoColor=white">
-  <img alt="payload" src="https://img.shields.io/badge/payload-141%20KB%20code%20%2B%20491%20KB%20data-blue">
+  <img alt="payload" src="https://img.shields.io/badge/payload-160%20KB%20code%20%2B%20491%20KB%20data-blue">
 </p>
 
 <p>
@@ -36,7 +36,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="tooling" src="https://img.shields.io/badge/scripts-Node%2018%2B%20ESM-339933?logo=nodedotjs&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-Playwright-2ead33?logo=playwright&logoColor=white">
-  <img alt="checks" src="https://img.shields.io/badge/checks-163%20assertions-2ead33">
+  <img alt="checks" src="https://img.shields.io/badge/checks-196%20assertions-2ead33">
 </p>
 
 The point is narrow: you arrive somewhere, you open the site, you find frequencies you can actually receive, and you program them. It works with no signal.
@@ -143,6 +143,9 @@ The alert lookup is the only thing that sends a position anywhere. It goes out r
 - **Overhead passes** (Pro) — once you share your location, the next satellite passes worth tuning, each with its downlink frequency, when it rises, how high it gets, which way to look, and the Doppler shift to chase. Orbits are propagated on your phone with a from-scratch SGP4 implementation, so this works in airplane mode; the elements are refreshed daily by a GitHub Action. Only passes above 10° are offered, because a lower one spends its time in the atmosphere and in whatever is on your horizon.
 
   Satellites are curated, not scraped. The orbital elements are automated because they genuinely go stale, but which satellites are worth tuning is a judgement: the SatNOGS database lists 29 transmitters for the ISS alone, including Soyuz suit channels and a 1990s Progress beacon. The NOAA APT weather satellites — the classic beginner catch on 137 MHz — are deliberately absent: all three were decommissioned during 2025 and APT is no longer transmitted by anything, yet their orbital elements are still published, so a tracker built on orbits alone would cheerfully predict passes for three silent satellites.
+- **Line of sight** (Pro) — once you share your location, a map of the region's transmitter sites with each one's radio horizon drawn around it, so you can see which are geometrically in reach of a handheld and which are behind the curve of the Earth. The rings are the 4/3-refraction horizon for each site's own field elevation plus your 2 m, verified in the suite against the closed-form tangent-to-a-sphere geometry it approximates.
+
+  The map is drawn from the coordinates already in the repository — no tiles, no map library, no network. There is no coastline, because there is no boundary data here and an invented one would read as fact; a graticule and a true scale bar orient the reader instead. It answers the horizon and nothing more: terrain is not modelled, and the panel says so, since the hill in front of you beats any of this arithmetic.
 - **Outdoor display** — the half-disc control in the header holds the settings that matter in the field, grouped rather than spread across four chips that would not fit a 320px header.
 
   | Display | What it is for |

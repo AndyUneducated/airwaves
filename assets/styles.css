@@ -391,6 +391,107 @@ body::before {
   html[data-lang="zh"] .cty-n { display: inline; }
 }
 
+/* ---------- line of sight ---------- */
+
+.mp-w { margin: 0 clamp(14px, 4vw, 34px) 18px; }
+.mp-w[hidden] { display: none; }
+
+.mp {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+
+.mp-grid line {
+  stroke: var(--line);
+  stroke-width: .5;
+}
+
+/* Rings are the reading, so they carry the colour. A site in reach is filled faintly; one
+   over the horizon gets an outline only, which reads as "drawn but not available". */
+.mp-ring {
+  fill: none;
+  stroke: rgba(var(--ac-g), .22);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+.mp-ring.los {
+  fill: rgba(var(--ac-g), .07);
+  stroke: rgba(var(--ac-g), .5);
+  stroke-dasharray: none;
+}
+
+.mp-link line {
+  stroke: rgba(var(--ac-g), .4);
+  stroke-width: 1.5;
+}
+
+/* Sunlight mode is for a screen washed out by the sun, and a 22% stroke that reads indoors
+   is simply not there outdoors. The alphas go up rather than the colour changing, so the
+   ring stays clearly secondary to the one that is in reach. */
+html[data-skin="glare"] .mp-ring { stroke: rgba(var(--ac-g), .5); }
+html[data-skin="glare"] .mp-ring.los {
+  stroke: rgba(var(--ac-g), .85);
+  fill: rgba(var(--ac-g), .1);
+}
+html[data-skin="glare"] .mp-link line { stroke: rgba(var(--ac-g), .7); }
+html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
+
+.mp-marks circle { stroke-width: 1.5; }
+
+/* The map is drawn one unit per CSS pixel, so these sizes are literal. Labels sit over grid
+   lines and rings, so each is painted with a halo of the panel background first. */
+.mp-marks text {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: var(--tx-3);
+  paint-order: stroke;
+  stroke: var(--bg-1);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.mp-s circle { fill: var(--bg-3); stroke: var(--dead); }
+.mp-s.los circle { fill: var(--ac-dim); stroke: var(--ac); }
+.mp-s.los text { fill: var(--tx-2); }
+
+.mp-me circle { fill: var(--ac); stroke: var(--bg); }
+.mp-me text { fill: var(--ac); font-weight: 600; font-size: 11.5px; }
+
+.mp-sc line { stroke: var(--tx-3); stroke-width: 1; }
+.mp-sc text { font-family: var(--mono); font-size: 10px; fill: var(--tx-3); }
+
+.mp-lg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 9px;
+}
+.mp-k {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--tx-3);
+}
+.mp-k::before {
+  content: "";
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--dead);
+}
+.mp-in::before { background: var(--ac-dim); border-color: var(--ac); }
+
+.mp-how {
+  margin: 7px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--tx-3);
+}
+
 /* ---------- overhead passes ---------- */
 
 .sky {
@@ -761,14 +862,35 @@ main {
 html:not([data-mode="pro"]) #now { display: none; }
 html[data-scope="cn"] #now > .nw-g > .sk-nw:nth-child(3) { display: none; }
 
+/* Nationwide sets and the link pages have no centre and so get no panel at all. Reserving
+   370px for one that never arrives dropped the list half a screen once the data landed, so
+   where the inline script can tell there will be none, none is reserved. Scoped to the
+   placeholder, so a real panel is never hidden by it. */
+html[data-sk-now="n"] #now:has(.sk-x) { display: none; }
+
 /* The intro is prose from the region file, so its height is unknowable at first paint -
    across regions and both languages it runs from 208px to 493px on a phone. The bars
    themselves are far shorter than the text they stand in for, so hold the median height
    per width instead: the typical region then does not move at all, and the outliers move
-   half as far as they used to. The rule lapses the moment the bars are replaced. */
-#intro:has(.sk-x) { min-height: 284px; }
-@media (max-width: 600px) { #intro:has(.sk-x) { min-height: 316px; } }
-@media (max-width: 400px) { #intro:has(.sk-x) { min-height: 360px; } }
+   half as far as they used to. The rule lapses the moment the bars are replaced.
+   Where app.js remembers the exact height it last drew at this width, --sk-intro carries it
+   and every median below is bypassed. */
+#intro:has(.sk-x) { min-height: var(--sk-intro, 284px); }
+@media (max-width: 600px) { #intro:has(.sk-x) { min-height: var(--sk-intro, 316px); } }
+@media (max-width: 400px) { #intro:has(.sk-x) { min-height: var(--sk-intro, 360px); } }
+
+/* A landing page with nothing remembered opens on a nationwide set, and those two intros
+   are nothing like the median region: 225px in the US against 493px in China on a phone.
+   Country is known at first paint, so they are reserved separately. */
+html[data-land] #intro:has(.sk-x) { min-height: var(--sk-intro, 225px); }
+html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 381px); }
+@media (max-width: 400px) {
+  html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 493px); }
+}
+@media (min-width: 601px) {
+  html[data-land] #intro:has(.sk-x) { min-height: var(--sk-intro, 214px); }
+  html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 351px); }
+}
 
 /* A fixed height, not a minimum. The detail line wraps to two lines on a narrow phone and
    one on a wide screen, and a card that grows to fit shoves the spectrum rail down the page

@@ -1,6 +1,10 @@
 .DS_Store
 node_modules/
 
-# The probe scripts are tracked; the screenshots they produce are not. They are large
-# binaries that change with every visual tweak, and they are outputs, not sources.
+# The probe scripts are tracked; what they produce is not. Screenshots are large binaries
+# that change with every visual tweak, logs are run output, and base-* are throwaway
+# worktrees checked out at an older commit to compare against. All outputs, not sources.
 .probe/*.png
+.probe/*.log
+.probe/msg.txt
+.probe/base-*/

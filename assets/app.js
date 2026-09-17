@@ -21,6 +21,16 @@
       nowT: 'Right now',
       nowYou: 'at your position',
 
+      mapT: 'Line of sight',
+      mapYou: 'You',
+      mapIn: n => `${n} within line of sight`,
+      mapOut: n => `${n} over the horizon`,
+      mapHow: 'Rings are the radio horizon for a handheld at 2 m: how far the curve of the Earth lets you see, before terrain. Aircraft aloft are heard far past it, which is why airband carries when the tower does not.',
+      mapScale: km => `${km} km`,
+      mapSite: (d, h) => `${d} · site at ${h} m`,
+      mapLos: 'Line of sight',
+      mapNlos: 'Over the horizon',
+
       skyT: 'Overhead',
       skyNone: 'No workable pass in the next 12 hours',
       skyNoPos: 'Share your location to see passes',
@@ -137,6 +147,16 @@
       km: '公里',
       nowT: '此刻',
       nowYou: '你所在的位置',
+
+      mapT: '视距',
+      mapYou: '你',
+      mapIn: n => `${n} 个在视距内`,
+      mapOut: n => `${n} 个在视距外`,
+      mapHow: '圆环是手台举到 2 米高时的无线电视距：地球曲率允许你看到多远，未计入地形遮挡。空中的飞机远在圆环之外也能听到 —— 这就是为什么塔台收不到时航空频段依然有信号。',
+      mapScale: km => `${km} 公里`,
+      mapSite: (d, h) => `${d} · 站点海拔 ${h} 米`,
+      mapLos: '视距内',
+      mapNlos: '视距外',
 
       skyT: '头顶',
       skyNone: '未来 12 小时内没有值得一试的过顶',
@@ -382,7 +402,8 @@
     applyMode();
     buzz(isPro() ? 14 : 8);
     toast(isPro() ? t('proOn') : t('proOff'));
-    if (REGION) paint(() => { renderIntro(); renderNow(); renderSky(); render(); });
+    if (REGION) paint(() => { renderIntro(); renderNow(); renderSky(); renderMap(); render(); });
+    noteShape();
   }
 
   /* ---------- country ---------- */
@@ -636,10 +657,35 @@
     }
     REGION = { meta, data: CACHE.get(id) };
     CAT = 'all';
-    paint(() => { renderIntro(); renderNow(); renderSky(); buildCatTabs(); render(); });
+    paint(() => { renderIntro(); renderNow(); renderSky(); renderMap(); buildCatTabs(); render(); });
+    noteShape();
     const tab = document.querySelector(`#regions .chip[data-id="${id}"]`);
     if (tab && push) tab.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }
+
+  /* ---------- remembering the shape of the page ---------- */
+
+  // The intro is prose from the region file and the right-now panel only exists for regions
+  // that have a centre, so neither height is knowable at first paint - and both sit above
+  // the tuning rail and the list, which is why a wrong guess drags the whole page. The last
+  // shape drawn is therefore recorded here and reserved by the inline script in index.html
+  // on the next load. Only the last region is kept: a load with no #/region in it restores
+  // exactly that region, which is the case the guessing was worst at.
+  function rememberShape() {
+    if (!REGION) return;
+    const now = $('#now');
+    try {
+      localStorage.setItem('aw.shape', JSON.stringify({
+        r: REGION.meta.id, m: MODE, l: LANG, w: innerWidth,
+        i: Math.round($('#intro').getBoundingClientRect().height),
+        // Whether there is a panel at all does not depend on the width; its height does.
+        n: now && !now.hidden ? 1 : 0
+      }));
+    } catch (e) {}
+  }
+
+  // After the browser has laid the new content out, not before.
+  const noteShape = () => requestAnimationFrame(() => requestAnimationFrame(rememberShape));
 
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
@@ -830,6 +876,244 @@
     }
 
     box.append(grid);
+  }
+
+  /* ---------- line of sight ---------- */
+
+  // Radio horizon over a smooth Earth, in km, for antenna heights in metres. The 4.12
+  // coefficient carries the standard 4/3 refraction factor: radio bends slightly with the
+  // atmosphere, so it reaches about 15% further than the purely geometric 3.57 would give.
+  // This is the horizon and nothing else - it does not know about the hill in front of you.
+  const horizonKm = h => 4.12 * Math.sqrt(Math.max(h, 0));
+
+  // Field elevation plus a nominal mast. ourairports gives ground elevation, not antenna
+  // height, so the mast is an assumption and is stated as one in the panel text.
+  const MAST_M = 10;
+  const HAND_M = 2;
+
+  function mapSites() {
+    if (!REGION || !PLACES) return [];
+    const seen = new Map();
+    for (const s of REGION.data.stations) {
+      const p = siteOf(s);
+      if (!p) continue;
+      const k = s.ref;
+      if (!seen.has(k)) seen.set(k, { ref: k, lat: p[0], lon: p[1], elev: p[2], name: p[3], n: 0 });
+      seen.get(k).n++;
+    }
+    return [...seen.values()];
+  }
+
+  function renderMap() {
+    const box = $('#map');
+    if (!box) return;
+    box.textContent = '';
+    // Held back until the location is known. Without it the panel could draw the sites and
+    // their horizons but not answer the only question it asks - what reaches you - and a
+    // panel this tall appearing on its own after the data loads shoves the tuning rail and
+    // the whole list down the page.
+    if (!isPro() || !REGION || POS.lat == null) { box.hidden = true; return; }
+
+    const sites = mapSites();
+    if (!sites.length) { box.hidden = true; return; }
+    box.hidden = false;
+
+    const cap = el('div', 'nw-cap');
+    cap.append(el('span', 'nw-t', t('mapT')));
+    box.append(cap);
+
+    const me = { lat: POS.lat, lon: POS.lon };
+
+    // Each site's own horizon, plus yours, is how far the two can see each other.
+    for (const s of sites) {
+      s.reach = horizonKm(s.elev + MAST_M) + horizonKm(HAND_M);
+      s.km = haversine(me.lat, me.lon, s.lat, s.lon);
+      s.los = s.km <= s.reach;
+    }
+
+    // The map is drawn one SVG unit to one CSS pixel, so a 11 px label is 11 px on screen.
+    // That means the drawing depends on the width, and has to be redone when it changes.
+    box.append(drawMap(sites, me, box.clientWidth || innerWidth));
+
+    const legend = el('div', 'mp-lg');
+    const inn = sites.filter(s => s.los).length;
+    legend.append(el('span', 'mp-k mp-in', t('mapIn')(inn)));
+    legend.append(el('span', 'mp-k mp-out', t('mapOut')(sites.length - inn)));
+    box.append(legend);
+    box.append(el('p', 'mp-how', t('mapHow')));
+  }
+
+  function drawMap(sites, me, wide) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const mk = (tag, attrs) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      return n;
+    };
+
+    // Bounds wide enough to hold every site, its horizon ring, and you.
+    const pts = sites.map(s => [s.lat, s.lon, s.reach]);
+    pts.push([me.lat, me.lon, 0]);
+    const midLat = pts.reduce((a, p) => a + p[0], 0) / pts.length;
+    // Degrees per km, so a ring drawn in degrees comes out round on screen.
+    const kmPerLat = 110.574;
+    const kmPerLon = 111.32 * Math.cos(midLat * Math.PI / 180);
+
+    let n = -90, s = 90, e = -180, w = 180;
+    for (const [la, lo, r] of pts) {
+      n = Math.max(n, la + r / kmPerLat); s = Math.min(s, la - r / kmPerLat);
+      e = Math.max(e, lo + r / kmPerLon); w = Math.min(w, lo - r / kmPerLon);
+    }
+    const padLat = Math.max((n - s) * 0.06, 0.05);
+    const padLon = Math.max((e - w) * 0.06, 0.05);
+    n += padLat; s -= padLat; e += padLon; w -= padLon;
+
+    // Equirectangular, with longitude compressed by cos(lat) so shapes are not stretched.
+    let spanKmX = (e - w) * kmPerLon;
+    let spanKmY = (n - s) * kmPerLat;
+    // One unit per CSS pixel: text then sizes in the same units as the rest of the page
+    // instead of being scaled by whatever the viewBox happened to be.
+    const W = Math.round(Math.max(260, Math.min(920, wide)));
+    // Tall enough for the rings to read, short enough to leave the frequency list in view.
+    const H = Math.max(210, Math.min(460, Math.round(W * spanKmY / spanKmX)));
+
+    // Clamping the height would stretch one axis, and a stretched axis turns every horizon
+    // ring into a wrong ellipse and makes the scale bar true in only one direction. So the
+    // view is widened instead of squashed: whichever axis the clamp left short grows until a
+    // kilometre is the same number of pixels both ways. Showing more empty margin is honest;
+    // misstating distance is not.
+    const needY = spanKmX * H / W;
+    if (needY > spanKmY) {
+      const g = (needY - spanKmY) / kmPerLat / 2;
+      n += g; s -= g; spanKmY = needY;
+    } else {
+      const needX = spanKmY * W / H;
+      const g = (needX - spanKmX) / kmPerLon / 2;
+      e += g; w -= g; spanKmX = needX;
+    }
+
+    const X = lo => (lo - w) / (e - w) * W;
+    const Y = la => (n - la) / (n - s) * H;
+    // One scale for both axes, which is what lets a ring be drawn as a plain circle.
+    const kmToPx = spanKmX ? W / spanKmX : 1;
+
+    const svg = mk('svg', {
+      class: 'mp', viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: 'xMidYMid meet',
+      role: 'img', 'aria-label': t('mapT')
+    });
+
+    // A graticule rather than a coastline. There is no boundary data in this repository and
+    // inventing one would be worse than having none: a wrong coastline reads as fact. Grid
+    // lines and a scale bar orient the reader without asserting any geography.
+    const stepFor = deg => {
+      for (const c of [10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05]) if (deg / c >= 2.5) return c;
+      return 0.02;
+    };
+    const gLat = stepFor(n - s), gLon = stepFor(e - w);
+    const grid = mk('g', { class: 'mp-grid' });
+    for (let la = Math.ceil(s / gLat) * gLat; la <= n; la += gLat) {
+      grid.append(mk('line', { x1: 0, y1: Y(la).toFixed(1), x2: W, y2: Y(la).toFixed(1) }));
+    }
+    for (let lo = Math.ceil(w / gLon) * gLon; lo <= e; lo += gLon) {
+      grid.append(mk('line', { x1: X(lo).toFixed(1), y1: 0, x2: X(lo).toFixed(1), y2: H }));
+    }
+    svg.append(grid);
+
+    // Horizon rings under the markers, so a marker is never hidden by a ring.
+    const rings = mk('g', { class: 'mp-rings' });
+    for (const st of sites) {
+      rings.append(mk('circle', {
+        class: 'mp-ring' + (st.los ? ' los' : ''),
+        cx: X(st.lon).toFixed(1), cy: Y(st.lat).toFixed(1),
+        r: (st.reach * kmToPx).toFixed(1)
+      }));
+    }
+    svg.append(rings);
+
+    // A line from you to each site that is actually in reach.
+    const link = mk('g', { class: 'mp-link' });
+    for (const st of sites.filter(x => x.los)) {
+      link.append(mk('line', {
+        x1: X(me.lon).toFixed(1), y1: Y(me.lat).toFixed(1),
+        x2: X(st.lon).toFixed(1), y2: Y(st.lat).toFixed(1)
+      }));
+    }
+    svg.append(link);
+
+    // Labels are placed here rather than left to the browser, because SVG will cheerfully
+    // stack four airport codes into one illegible smudge - the bay has airports a few km
+    // apart. Sites in reach are offered a label first, then the nearest, then the busiest;
+    // a code that would land on one already placed is dropped. The dot and the tooltip
+    // remain, and a missing label reads better than a pile of them.
+    const marks = mk('g', { class: 'mp-marks' });
+    const taken = [];
+    const free = b => !taken.some(o => b.x1 < o.x2 && b.x2 > o.x1 && b.y1 < o.y2 && b.y2 > o.y1);
+
+    // The scale bar and the "you" tag are drawn unconditionally, so they claim their space
+    // first and the airport codes work around them.
+    const barKm = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000].reduce((a, b) =>
+      Math.abs(b - spanKmX / 4) < Math.abs(a - spanKmX / 4) ? b : a);
+    taken.push({ x1: 8, x2: 16 + barKm * kmToPx, y1: H - 34, y2: H - 6 });
+    taken.push({ x1: X(me.lon) - 20, x2: X(me.lon) + 20, y1: Y(me.lat) + 6, y2: Y(me.lat) + 22 });
+
+    const order = [...sites].sort((a, b) =>
+      (b.los ? 1 : 0) - (a.los ? 1 : 0) || a.km - b.km);
+
+    for (const st of order) {
+      const cx = X(st.lon), cy = Y(st.lat);
+      const g = mk('g', { class: 'mp-s' + (st.los ? ' los' : '') });
+      g.append(mk('circle', { cx: cx.toFixed(1), cy: cy.toFixed(1), r: 4.5 }));
+
+      // Half the advance width of the 11px monospace face, plus a little air.
+      const half = st.ref.length * 3.4 + 3;
+      // Above the dot reads best, so it is tried first; the rest are fallbacks, because
+      // giving up on the label of a site that is actually in reach costs more than putting
+      // its code somewhere less tidy.
+      const spots = [
+        { x: cx, y: cy - 8, a: 'middle', x1: cx - half, x2: cx + half, y1: cy - 20, y2: cy - 6 },
+        { x: cx, y: cy + 17, a: 'middle', x1: cx - half, x2: cx + half, y1: cy + 6, y2: cy + 20 },
+        { x: cx + 8, y: cy + 4, a: 'start', x1: cx + 7, x2: cx + 9 + half * 2, y1: cy - 6, y2: cy + 7 },
+        { x: cx - 8, y: cy + 4, a: 'end', x1: cx - 9 - half * 2, x2: cx - 7, y1: cy - 6, y2: cy + 7 }
+      ];
+      // A label half off the panel is worse than none: it reads as a different word.
+      const spot = spots.find(p => p.x1 > 1 && p.x2 < W - 1 && p.y1 > 1 && p.y2 < H - 1 && free(p));
+      if (spot) {
+        taken.push(spot);
+        const lbl = mk('text', {
+          x: spot.x.toFixed(1), y: spot.y.toFixed(1), 'text-anchor': spot.a
+        });
+        lbl.textContent = st.ref;
+        g.append(lbl);
+      }
+      const title = mk('title');
+      title.textContent = st.name + ' (' + st.ref + ') — ' +
+        t('mapSite')(fmtDist(st.km), st.elev) + ' — ' + (st.los ? t('mapLos') : t('mapNlos'));
+      g.append(title);
+      marks.append(g);
+    }
+
+    const you = mk('g', { class: 'mp-me' });
+    you.append(mk('circle', { cx: X(me.lon).toFixed(1), cy: Y(me.lat).toFixed(1), r: 5.5 }));
+    const yl = mk('text', {
+      x: X(me.lon).toFixed(1), y: (Y(me.lat) + 19).toFixed(1), 'text-anchor': 'middle'
+    });
+    yl.textContent = t('mapYou');
+    you.append(yl);
+    marks.append(you);
+    svg.append(marks);
+
+    // Scale bar: a round number of km, drawn to its true length on this projection.
+    const sc = mk('g', { class: 'mp-sc' });
+    const bx = 12, by = H - 12, bw = barKm * kmToPx;
+    sc.append(mk('line', { x1: bx, y1: by, x2: bx + bw, y2: by }));
+    sc.append(mk('line', { x1: bx, y1: by - 4, x2: bx, y2: by + 4 }));
+    sc.append(mk('line', { x1: bx + bw, y1: by - 4, x2: bx + bw, y2: by + 4 }));
+    const st = mk('text', { x: bx, y: by - 8 });
+    st.textContent = t('mapScale')(barKm);
+    sc.append(st);
+    svg.append(sc);
+
+    return svg;
   }
 
   /* ---------- satellite passes ---------- */
@@ -1866,8 +2150,9 @@
         buildRegionTabs();
         select(best.id, true);
         // Explicitly, rather than relying on select() to repaint: if you are already on the
-        // nearest region that call changes nothing, and the passes would never appear.
+        // nearest region that call changes nothing, and neither panel would ever appear.
         renderSky();
+        renderMap();
       toast(t('geoOk')(L(best, { n: 'n', z: 'z' })) + ` · ${fmtDist(bd)}`);
     }, () => {
       label.textContent = t('near');
@@ -1885,6 +2170,19 @@
   /* ---------- wiring ---------- */
 
   function wire() {
+    // The map bakes its geometry into pixels, so a width change means redrawing it. Height
+    // changes do not matter, and on a phone the address bar collapsing fires resize
+    // constantly, so the width is compared before doing any work.
+    let mapW = 0;
+    addEventListener('resize', () => {
+      const box = $('#map');
+      if (!box || box.hidden) return;
+      const w = box.clientWidth;
+      if (Math.abs(w - mapW) < 8) return;
+      mapW = w;
+      renderMap();
+    });
+
     const q = $('#q'), clear = $('#q-clear');
     let deb;
     q.addEventListener('input', () => {
@@ -1919,8 +2217,10 @@
           renderIntro();
           renderNow();
           renderSky();
+          renderMap();
           render();
         });
+      noteShape();
     });
 
       const view = $('#view');
