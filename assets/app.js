@@ -482,34 +482,58 @@
 
     function buildView() {
       const menu = $('#view-menu');
-      const open = !menu.hidden;
       menu.textContent = '';
       $('#btn-view').setAttribute('aria-label', t('view'));
       $('#btn-view').title = t('view');
 
       menu.append(el('p', 'view-h', t('vDisplay')));
+
+      // One strip with a sliding highlight rather than three rows with dots. The skin is a
+      // one-of-three choice, so showing it as a position in a single control says that;
+      // three dotted rows read as three independent switches, which is what the screen-on
+      // row below actually is. The filled segment also survives being read in direct sun,
+      // where a 15px ring outline does not.
       const names = { auto: 'vAuto', glare: 'vGlare', black: 'vBlack' };
+      const seg = el('div', 'seg');
+      seg.setAttribute('role', 'group');
+      seg.setAttribute('aria-label', t('vDisplay'));
+      // One source of truth for where the highlight sits and which button is checked.
+      const at = i => {
+        seg.dataset.i = String(i);
+        seg.style.setProperty('--i', String(i));
+        seg.style.setProperty('--n', String(SKINS.length));
+      };
+      at(SKINS.indexOf(SKIN));
+      const hl = el('span', 'seg-hl');
+      hl.setAttribute('aria-hidden', 'true');
+      seg.append(hl);
+      // The per-option descriptions cannot fit inside the segments, so one line under the
+      // strip carries the description of whatever is selected.
+      const note = el('p', 'view-sd', t(names[SKIN] + 'S'));
+
       SKINS.forEach(id => {
-        const o = el('button', 'view-o');
+        const o = el('button', 'seg-o', t(names[id]));
         o.type = 'button';
         o.setAttribute('role', 'menuitemradio');
         o.setAttribute('aria-checked', String(id === SKIN));
-        o.append(el('span', 'view-d'));
-        const n = el('span', 'view-n', t(names[id]));
-        n.append(el('span', 'view-s', t(names[id] + 'S')));
-        o.append(n);
         o.addEventListener('click', () => {
-          if (id !== SKIN) {
-            SKIN = id;
-            localStorage.setItem('aw.skin', SKIN);
-            applySkin();
-            buzz(8);
-            toast(t('vSkinOn')(t(names[id])));
-          }
-          viewMenu(false);
+          if (id === SKIN) return;
+          SKIN = id;
+          localStorage.setItem('aw.skin', SKIN);
+          applySkin();
+          // Repaint the control in place. The menu deliberately stays open: you are picking
+          // how the screen looks, so you want to see it change and try the next one without
+          // reopening. The screen-on row already behaves this way.
+          at(SKINS.indexOf(SKIN));
+          [...seg.querySelectorAll('.seg-o')].forEach(x =>
+            x.setAttribute('aria-checked', String(x === o)));
+          note.textContent = t(names[SKIN] + 'S');
+          buzz(8);
+          toast(t('vSkinOn')(t(names[id])));
         });
-        menu.append(o);
+        seg.append(o);
       });
+      menu.append(seg, note);
 
       menu.append(el('div', 'view-sep'));
 
@@ -536,11 +560,13 @@
         toast(on ? t('vAwakeOn') : t('vAwakeOff'));
       });
       menu.append(sw);
-
-      menu.hidden = !open;
     }
 
     function viewMenu(open) {
+      // Rebuilt on every open, so the menu always shows the live state. Patching the
+      // indicators at each place that can change them is how the ticked option came to
+      // disagree with the applied skin.
+      if (open) buildView();
       $('#view').classList.toggle('open', open);
       $('#view-menu').hidden = !open;
       $('#btn-view').setAttribute('aria-expanded', String(open));

@@ -1229,13 +1229,27 @@ if (want('skin')) {
     };
     const parse = s => (s.match(/[\d.]+/g) || []).map(Number);
     const bgOf = node => {
+      // Composite down the real paint stack under the text, not just the ancestor chain.
+      // An ancestor walk misses anything that paints between a node and its parent, such
+      // as the sliding highlight behind the selected segment of the display picker: that
+      // reads as dark-on-dark and is in fact light-on-accent.
+      const box = node.getBoundingClientRect();
+      const x = Math.round(box.left + box.width / 2);
+      const y = Math.round(box.top + box.height / 2);
+      let chain = null;
+      if (x >= 0 && y >= 0 && x < innerWidth && y < innerHeight) {
+        const hit = document.elementsFromPoint(x, y);
+        const i = hit.indexOf(node);
+        if (i >= 0) chain = hit.slice(i);
+      }
       const stack = [];
-      let el = node;
-      while (el) {
+      // No hit test available (off-screen, or covered by something opaque, in which case
+      // the text is not visible anyway) falls back to the ancestor chain.
+      const walk = chain || (() => { const a = []; for (let e = node; e; e = e.parentElement) a.push(e); return a; })();
+      for (const el of walk) {
         const c = parse(getComputedStyle(el).backgroundColor || '');
         const a = c.length >= 3 ? (c[3] === undefined ? 1 : c[3]) : 0;
         if (a > 0) { stack.push([c[0], c[1], c[2], a]); if (a >= 1) break; }
-        el = el.parentElement;
       }
       let r = 255, g = 255, b = 255;
       for (let i = stack.length - 1; i >= 0; i--) {
@@ -1340,33 +1354,75 @@ if (want('skin')) {
     pass('settings start closed', await shut() === true);
 
     await page.click('#btn-view');
+    // The popover animates in from scale(.985), so measuring immediately reads every row
+    // about 1.5% short and the thumb-size checks below fail on nothing.
+    await page.waitForTimeout(250);
     const opened = await page.evaluate(() => ({
       open: !document.getElementById('view-menu').hidden,
       expanded: document.getElementById('btn-view').getAttribute('aria-expanded'),
       radios: [...document.querySelectorAll('[role="menuitemradio"]')].map(o => o.getAttribute('aria-checked')),
-      // The gloved-thumb requirement from the brief: these rows are hit outdoors.
+      // The gloved-thumb requirement from the brief: these are hit outdoors. The skin
+      // segments are a third of the menu wide, so they earn their height back in width.
       short: [...document.querySelectorAll('.view-o')].filter(o => o.getBoundingClientRect().height < 44).length,
-      labels: [...document.querySelectorAll('.view-o .view-n')].every(n => n.textContent.trim().length > 2)
+      smallSeg: [...document.querySelectorAll('.seg-o')].filter(o => {
+        const r = o.getBoundingClientRect();
+        return r.height < 40 || r.width < 44;
+      }).length,
+      labels: [...document.querySelectorAll('.view-o .view-n')].every(n => n.textContent.trim().length > 2),
+      segLabels: [...document.querySelectorAll('.seg-o')].every(o => o.textContent.trim().length > 1),
+      // The description under the strip has to say something about the live choice.
+      note: (document.querySelector('.view-sd') || {}).textContent || ''
     }));
     pass('settings open with one skin selected',
       opened.open && opened.expanded === 'true' &&
-      opened.radios.filter(c => c === 'true').length === 1 && opened.labels,
+      opened.radios.filter(c => c === 'true').length === 1 && opened.labels && opened.segLabels,
       `checked: ${opened.radios.join(',')}`);
     pass('settings rows are thumb-sized', opened.short === 0, `${opened.short} rows under 44px`);
+    pass('skin segments are thumb-sized', opened.smallSeg === 0, `${opened.smallSeg} segments too small`);
+    pass('the selected skin is described', opened.note.trim().length > 10, `note: "${opened.note}"`);
 
     // Switching skin must repaint immediately, not only after a reload.
     const before = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    await page.click('[role="menuitemradio"]:nth-of-type(1) ~ [role="menuitemradio"]');
-    await page.waitForTimeout(250);
-    const after = await page.evaluate(() => ({
-      bg: getComputedStyle(document.body).backgroundColor,
-      skin: document.documentElement.dataset.skin,
-      saved: localStorage.getItem('aw.skin'),
-      closed: document.getElementById('view-menu').hidden
-    }));
-    pass('picking a skin repaints and closes',
-      after.bg !== before && after.skin === 'glare' && after.saved === 'glare' && after.closed,
+    const seg = n => `.seg-o:nth-of-type(${n + 1})`;
+    await page.click(seg(1));
+    await page.waitForTimeout(300);
+    const after = await page.evaluate(() => {
+      const box = document.querySelector('.seg').getBoundingClientRect();
+      const hl = document.querySelector('.seg-hl').getBoundingClientRect();
+      return {
+        bg: getComputedStyle(document.body).backgroundColor,
+        skin: document.documentElement.dataset.skin,
+        saved: localStorage.getItem('aw.skin'),
+        open: !document.getElementById('view-menu').hidden,
+        ticked: [...document.querySelectorAll('.seg-o')].findIndex(o => o.getAttribute('aria-checked') === 'true'),
+        // Which third of the strip the highlight has slid to.
+        third: Math.round(((hl.left + hl.width / 2) - box.left) / box.width * 3 - 0.5),
+        note: document.querySelector('.view-sd').textContent
+      };
+    });
+    pass('picking a skin repaints at once',
+      after.bg !== before && after.skin === 'glare' && after.saved === 'glare',
       `${before} -> ${after.bg}, saved ${after.saved}`);
+    // A strip you can see slide is worth keeping open: comparing skins is the whole task.
+    pass('the strip follows the choice and stays open',
+      after.open && after.ticked === 1 && after.third === 1 && after.note.trim().length > 10,
+      `open=${after.open} ticked=${after.ticked} highlight-third=${after.third}`);
+
+    // The bug this replaced: the skin applied but the menu kept marking the old one, because
+    // nothing rebuilt the popover. Reopening must never disagree with the page.
+    await page.click('#btn-view');
+    await page.click('#btn-view');
+    await page.waitForTimeout(250);
+    const again = await page.evaluate(() => ({
+      skin: document.documentElement.dataset.skin,
+      i: document.querySelector('.seg').dataset.i,
+      ticked: [...document.querySelectorAll('.seg-o')].findIndex(o => o.getAttribute('aria-checked') === 'true'),
+      checked: [...document.querySelectorAll('.seg-o')].filter(o => o.getAttribute('aria-checked') === 'true').length
+    }));
+    pass('reopening shows the skin that is actually applied',
+      again.skin === 'glare' && again.ticked === 1 && again.checked === 1 && again.i === '1',
+      `skin=${again.skin} ticked=${again.ticked} of ${again.checked}`);
+    await page.keyboard.press('Escape');
 
     // Escape and an outside tap both have to dismiss it, or it traps a one-handed user.
     await page.click('#btn-view');
@@ -1497,14 +1553,74 @@ if (want('nav')) {
   pass('default view is US Nationwide', start.country === 'US' && /Nationwide/.test(start.title), JSON.stringify(start));
 
   await page.click('#btn-cty');
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(250);
   const opts = await page.evaluate(() => document.querySelectorAll('#cty-menu .cty-o').length);
+
+  // A popover anchored to the wrong edge of its chip is invisible rather than merely ugly.
+  // This one hung 86px off the left of a 320px screen, taking the country codes with it,
+  // because it was right-anchored to a chip that sits at the left of the header.
+  const place = await page.evaluate(() => {
+    const m = document.querySelector('#cty-menu').getBoundingClientRect();
+    return { left: Math.round(m.left), right: Math.round(m.right), w: innerWidth };
+  });
+  pass('country menu opens fully on screen',
+    place.left >= 0 && place.right <= place.w,
+    `${place.left}..${place.right} in ${place.w}px`);
+
+  // The current country is accent-filled like every other selected thing in the app, so
+  // each of its three pieces has to be legible on the fill rather than on the panel.
+  const mark = await page.evaluate(() => {
+    const sel = document.querySelector('.cty-o[aria-selected="true"]');
+    if (!sel) return null;
+    const lum = c => {
+      const [r, g, b] = (c.match(/[\d.]+/g) || []).slice(0, 3).map(Number).map(v => {
+        v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const fill = getComputedStyle(sel).backgroundColor;
+    const ratio = n => {
+      const a = lum(getComputedStyle(n).color), b = lum(fill);
+      return Math.round(((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)) * 100) / 100;
+    };
+    return {
+      filled: (fill.match(/[\d.]+/g) || []).slice(3)[0] !== '0' && fill !== 'rgba(0, 0, 0, 0)',
+      count: [...document.querySelectorAll('.cty-o[aria-selected="true"]')].length,
+      worst: Math.min(...['.cty-on', '.cty-ok', '.cty-oc'].map(s => ratio(sel.querySelector(s))))
+    };
+  });
+  pass('the current country is filled and readable on the fill',
+    mark && mark.filled && mark.count === 1 && mark.worst >= 4.5,
+    mark ? `worst ${mark.worst}:1 across ${mark.count} marked row(s)` : 'nothing marked');
+
   await page.click('#cty-menu .cty-o:nth-child(2)');
   await page.waitForTimeout(600);
   const cn = await page.evaluate(() => ({
     country: document.querySelector('#cty-k').textContent, hash: location.hash
   }));
   pass('country switch', opts === 2 && cn.country === 'CN' && cn.hash === '#/cn/china-nationwide', JSON.stringify(cn));
+
+  // Both popovers, at the narrowest phone the site claims to support. This is where an
+  // edge-anchoring mistake shows up first, and it is the width least likely to be opened
+  // by hand during development.
+  {
+    const nar = await session({ viewport: { width: 320, height: 640 } });
+    await nar.page.goto(URL + '#/us/bay-area', { waitUntil: 'networkidle' });
+    await nar.page.waitForSelector('.row');
+    for (const [name, btn, menu] of [['country', '#btn-cty', '#cty-menu'], ['display', '#btn-view', '#view-menu']]) {
+      await nar.page.click(btn);
+      await nar.page.waitForTimeout(250);
+      const m = await nar.page.evaluate(sel => {
+        const r = document.querySelector(sel).getBoundingClientRect();
+        return { left: Math.round(r.left), right: Math.round(r.right), w: innerWidth };
+      }, menu);
+      pass(`${name} menu fits a 320px screen`,
+        m.left >= 0 && m.right <= m.w, `${m.left}..${m.right} in ${m.w}px`);
+      await nar.page.keyboard.press('Escape');
+    }
+    pass('320px menus: no console errors', nar.errs.length === 0, nar.errs.join(' | '));
+    await nar.ctx.close();
+  }
 
   await page.goto(URL + '#/link/link-us', { waitUntil: 'networkidle' });
   await page.waitForTimeout(500);

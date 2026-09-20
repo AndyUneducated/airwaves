@@ -36,7 +36,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="tooling" src="https://img.shields.io/badge/scripts-Node%2018%2B%20ESM-339933?logo=nodedotjs&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-Playwright-2ead33?logo=playwright&logoColor=white">
-  <img alt="checks" src="https://img.shields.io/badge/checks-196%20assertions-2ead33">
+  <img alt="checks" src="https://img.shields.io/badge/checks-205%20assertions-2ead33">
 </p>
 
 The point is narrow: you arrive somewhere, you open the site, you find frequencies you can actually receive, and you program them. It works with no signal.
@@ -153,6 +153,8 @@ The alert lookup is the only thing that sends a position anywhere. It goes out r
   | Panel | The default dark instrument panel, for normal light. |
   | Sunlight | Ink on white. A phone cannot out-emit the sun, so readability in direct light comes from a light background rather than a brighter dark one. Every visible word in this mode clears WCAG AA contrast, which the suite asserts by measuring. |
   | Battery | True black. Unlit OLED pixels draw no power, and on a hilltop the battery is the binding constraint. |
+
+  The three sit in one strip with a highlight that slides to your choice, and the menu stays open while you pick, because choosing how the screen looks is a thing you judge by looking at it. A line under the strip describes whichever one is selected.
 
   The same menu holds **keep screen on**, which takes a Screen Wake Lock so the phone does not sleep mid-tune, and retakes it when you come back to the tab. Where the browser refuses the lock the switch stays off rather than promising a screen that sleeps anyway.
 - **Offline** — a service worker precaches every region on first load, so the site works in airplane mode. Installable as a PWA.

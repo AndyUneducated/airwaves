@@ -336,9 +336,14 @@ body::before {
 .cty-menu {
   position: absolute;
   top: calc(100% + 7px);
-  right: 0;
+  /* Opens rightward from the chip, which sits at the left of the header. Anchored to the
+     chip's right edge instead, a 208px menu hung 86px off the left of a 320px screen and
+     took the country codes with it; the display menu can anchor right only because its
+     chip is the last thing in the header. */
+  left: 0;
   z-index: 30;
   min-width: 208px;
+  max-width: calc(100vw - 20px);
   background: var(--bg-2);
   border: 1px solid var(--line-2);
   border-radius: 12px;
@@ -368,7 +373,14 @@ body::before {
   text-align: left;
 }
 .cty-o:hover { background: var(--bg-3); color: var(--tx); }
-.cty-o[aria-selected="true"] { color: var(--tx); }
+/* Accent-filled, like the display strip and every selected chip. A shift from one grey to
+   a brighter grey was the weakest selected state left in the app, and this menu gets
+   opened outdoors along with everything else. Placed after the hover rule so that
+   hovering the current country does not take the fill back off. */
+.cty-o[aria-selected="true"] {
+  background: var(--ac);
+  color: var(--ac-tx);
+}
 
 .cty-ok {
   font-family: var(--mono);
@@ -380,9 +392,12 @@ body::before {
   padding: 1px 5px;
   flex: 0 0 auto;
 }
-.cty-o[aria-selected="true"] .cty-ok { color: var(--ac); border-color: rgba(var(--ac-g), .45); }
 .cty-on { flex: 1 1 auto; }
 .cty-oc { font-family: var(--mono); font-size: 10px; color: var(--tx-3); }
+/* Both of these carry their own colour, so they have to be told about the fill or they
+   stay a grey that only made sense on the panel background. */
+.cty-o[aria-selected="true"] .cty-ok { color: var(--ac-tx); border-color: currentColor; }
+.cty-o[aria-selected="true"] .cty-oc { color: var(--ac-tx); }
 
 /* The two-letter code carries it on a narrow screen — except in Chinese, where the country
    name is two characters and clearer than a latin abbreviation. */
@@ -641,16 +656,66 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
 .view-o:hover { background: var(--bg-3); color: var(--tx); }
 .view-o[aria-checked="true"] { color: var(--tx); }
 
-/* A dot rather than a tick, so the selected state survives being read at arm's length. */
-.view-d {
-  flex: 0 0 auto;
-  width: 15px; height: 15px;
-  border: 1.6px solid var(--line-2);
-  border-radius: 50%;
+/* The skin picker: one control holding a position, not three rows. A solid fill is the
+   strongest selected state available in direct sun, which is when the glare skin is
+   actually being reached for. */
+/* --n segments and --i selected, both set from JS off the same list the buttons are built
+   from. Keeping the count out of the CSS means the highlight cannot end up parked under
+   the wrong label if the list of skins ever grows. */
+.seg {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 3), 1fr);
+  margin: 0 8px;
+  padding: 3px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 10px;
 }
-.view-o[aria-checked="true"] .view-d {
-  border-color: var(--ac);
-  background: radial-gradient(circle, var(--ac) 0 42%, transparent 44%);
+.seg-hl {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--n, 3));
+  background: var(--ac);
+  border-radius: 8px;
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform .17s cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) { .seg-hl { transition: none; } }
+
+.seg-o {
+  position: relative;
+  /* Above the highlight, so the label on the selected segment is not painted over. */
+  z-index: 1;
+  /* Short rows are fine here because each segment is a third of the menu wide; the
+     gloved-thumb target is the whole block, not a 15px dot. */
+  min-height: 40px;
+  padding: 0 2px;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  color: var(--tx-2);
+  font: inherit;
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+  transition: color .17s;
+}
+.seg-o:hover { color: var(--tx); }
+.seg-o[aria-checked="true"] {
+  color: var(--ac-tx);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) { .seg-o { transition: none; } }
+
+/* Describes whichever segment is selected. */
+.view-sd {
+  margin: 7px 9px 2px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--tx-3);
 }
 
 .view-n { flex: 1 1 auto; }
@@ -667,8 +732,9 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
   background: var(--line);
 }
 
-/* The switch is square-cornered where the skin picker is round, so the two kinds of
-   control do not look like one list of five equal options. */
+/* A switch, because this one is genuinely on or off. It sits on its own row below the
+   separator so the shape alone tells you it is a different kind of choice from the
+   three-way strip above. */
 .view-t {
   flex: 0 0 auto;
   width: 30px; height: 17px;

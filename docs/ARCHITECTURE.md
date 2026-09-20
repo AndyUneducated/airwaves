@@ -438,6 +438,20 @@ contrast is not a claim about the skin. Chips are excluded from the surface chec
 opposite reason — a selected chip is accent-filled and so inverts against the page in both
 skins, which is the design.
 
+The background under a word is resolved by hit-testing the paint stack at its centre, not by
+walking up its ancestors. The two differ whenever something paints between a node and its
+parent: the selected segment of the display picker sits on a sliding highlight that is a
+sibling, so an ancestor walk reads it as dark text on the dark strip behind, when what is
+actually on screen is light text on accent.
+
+The picker itself is a three-segment strip rather than three rows, because the skin is one
+choice with three positions, whereas keep-screen-on below it is genuinely on or off; the two
+shapes now say which is which. The count of segments lives in `--n` and the selected index in
+`--i`, both written from the same list the buttons are built from, so the highlight cannot come
+to rest under a label that is not the checked one. The popover is rebuilt on every open for the
+same class of reason: patching each indicator at each site that can change it is how the ticked
+skin came to disagree with the applied one.
+
 Keep-screen-on wraps the Screen Wake Lock API. The lock is dropped whenever the page is hidden,
 so it is retaken on `visibilitychange`, and it is not requested at all on a background tab
 because the request is rejected outright there. A refused lock leaves the switch off: showing it
