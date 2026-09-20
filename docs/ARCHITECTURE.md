@@ -503,6 +503,28 @@ their own expiry, and show their last known value labelled as stale rather than 
 The cost of cache-first is that clients keep the old version until `V` changes. **Bumping `V`
 is part of releasing**, not an optimisation.
 
+### Every fetch has a deadline
+
+Being offline is the easy case. The worker answers from cache, `navigator.onLine` is false so
+the external readings do not even try, and a request that does escape is rejected immediately.
+The case that actually strands the interface is a connection that accepts a request and then
+goes nowhere - a captive portal, or one bar of signal - where a plain `fetch()` never settles
+and whatever placeholder is on screen stays there for as long as the tab is open.
+
+So every request goes through one helper that aborts after a deadline, and each caller has an
+answer ready for the rejection:
+
+| Request | Deadline | What is shown instead |
+| --- | --- | --- |
+| `data/regions.json` | 10s | The page says the data could not be loaded |
+| `data/r/{id}.json` | 10s | An empty region rather than a skeleton that never resolves |
+| `data/places.json` | 10s | Distances are simply absent; nothing else changes |
+| `data/sat.json` | 7s | The Overhead card says the orbits are unavailable and stops offering to open |
+| NOAA space weather, NWS alerts | 7s | Last known reading marked stale, or "Needs a connection" |
+
+A card with nothing behind it drops its chevron and its `role`, because a control that opens an
+empty panel is worse than no control.
+
 ## Tests
 
 `.probe/suite.mjs` drives a real browser through Playwright. It is grouped, and a group name

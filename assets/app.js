@@ -337,7 +337,7 @@
     applyMode();
 
     try {
-      META = await (await fetch('data/regions.json', { cache: 'no-cache' })).json();
+      META = await (await timed('data/regions.json', 10000, { cache: 'no-cache' })).json();
     } catch (e) {
       $('#list').textContent = '';
       $('#ruler').hidden = true;
@@ -348,7 +348,7 @@
     }
     $('#ver').textContent = 'v' + META.version;
     // Coordinates are a nicety, not a dependency: if this fails the site is unchanged.
-    fetch('data/places.json', { cache: 'no-cache' })
+    timed('data/places.json', 10000, { cache: 'no-cache' })
       .then(r => r.json())
       .then(p => { PLACES = p; if (POS.lat != null && REGION) render(); })
       .catch(() => {});
@@ -686,7 +686,7 @@
     if (!CACHE.has(id)) {
       skeleton();
       try {
-        CACHE.set(id, await (await fetch(`data/r/${id}.json`, { cache: 'no-cache' })).json());
+        CACHE.set(id, await (await timed(`data/r/${id}.json`, 10000, { cache: 'no-cache' })).json());
       } catch (e) {
         CACHE.set(id, { id, stations: [] });
       }
@@ -825,6 +825,23 @@
     return t('span')(Math.floor(m / 60), m % 60);
   }
 
+  // Every fetch on the page goes through a deadline. Offline is not the hard case - the
+  // service worker answers from cache and a dead connection rejects at once. The hard case
+  // is a connection that accepts the request and then goes nowhere, on a captive portal or
+  // a phone holding one bar, where an untimed fetch leaves a placeholder on screen for as
+  // long as the tab stays open. A rejection can at least be answered with a fallback.
+  async function timed(url, ms, opts) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), ms);
+    try {
+      const r = await fetch(url, Object.assign({ signal: ctl.signal }, opts));
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   // Live data on a site with no backend: fetched straight from the browser, cut down to the
   // few fields that matter, cached with a TTL. Always optional — a failure leaves the card
   // quiet instead of breaking the page, and a stale reading beats an empty one offline.
@@ -836,18 +853,17 @@
     const had = read();
     if (had && now - had.at < ttl) return had.v;
 
-    const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 7000);
+    // Nothing here is served by the service worker, so with no connection the request can
+    // only fail. Skipping it means the card says so straight away rather than after a
+    // round trip, and the browser logs no failed request for something already known.
+    if (!navigator.onLine) return had ? Object.assign({}, had.v, { old: true }) : null;
+
     try {
-      const r = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const v = reduce(await r.json());
+      const v = reduce(await (await timed(url, 7000, { cache: 'no-store' })).json());
       try { localStorage.setItem('aw.live.' + key, JSON.stringify({ at: now, v })); } catch (e) {}
       return v;
     } catch (e) {
       return had ? Object.assign({}, had.v, { old: true }) : null;
-    } finally {
-      clearTimeout(timer);
     }
   }
 
@@ -965,10 +981,19 @@
 
   function skyCard() {
     const c = panelCard('sky', t('skyT'), () => renderSky());
+    // Nothing to open if the orbits never arrived, or if there is no pass to show, so the
+    // card stops offering. A chevron on a card that opens an empty panel is a lie.
+    const dead = () => {
+      c.classList.add('nw-x-dead');
+      c.classList.remove('nw-hit');
+      c.removeAttribute('role');
+      c.removeAttribute('aria-expanded');
+      c.removeAttribute('tabindex');
+    };
     loadSats().then(ok => {
-      if (!ok || POS.lat == null) { fill(c, t('skyOff'), ''); return; }
+      if (!ok || POS.lat == null) { fill(c, t('skyOff'), ''); dead(); return; }
       const rows = skyPasses(POS.lat, POS.lon);
-      if (!rows.length) { fill(c, t('skyNone'), ''); return; }
+      if (!rows.length) { fill(c, t('skyNone'), ''); dead(); return; }
       const n = rows[0];
       const name = L(n.f, { n: 'n', z: 'z' });
       fill(c, n.live ? t('skyNow') + ' — ' + name : t('skyNext')(name, span(n.aos - Date.now())),
@@ -1239,7 +1264,11 @@
   async function loadSats() {
     if (SATS || SAT_ERR) return SATS;
     try {
-      SATS = await (await fetch('data/sat.json')).json();
+      // Bounded, like every other fetch here. The service worker serves this from cache
+      // offline, but a first-ever visit with no connection, or a connection that accepts
+      // the request and then goes nowhere, would otherwise leave the panel saying it is
+      // working out passes for as long as the tab stays open.
+      SATS = await (await timed('data/sat.json', 7000)).json();
       // One SGP4 init per satellite, reused for every pass search afterwards.
       for (const b of SATS.birds) {
         b.rec = [];

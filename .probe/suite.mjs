@@ -1936,6 +1936,64 @@ if (want('offline')) {
     `reload ${a.rows} rows / ${a.px} pro lines, Beijing ${b} rows`);
   await ctx.setOffline(false);
   await ctx.close();
+
+  // Offline is not the hard case: a dead connection rejects at once and the service worker
+  // answers from cache. The hard case is a connection that accepts a request and then goes
+  // nowhere, which is a captive portal or one bar of signal, and which an untimed fetch
+  // cannot recover from. Every network-backed reading has to reach a stated answer.
+  for (const [label, hang] of [['offline', null], ['requests that hang', ['**/*.noaa.gov/**', '**/api.weather.gov/**', '**/data/sat.json']]]) {
+    const s = await session();
+    await s.page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+    await s.page.waitForSelector('.row');
+    await s.page.waitForTimeout(2500);
+    if (hang) for (const p of hang) await s.page.route(p, () => {});
+    else await s.ctx.setOffline(true);
+
+    await s.page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'domcontentloaded' }).catch(() => {});
+    await s.page.waitForSelector('.row', { timeout: 20000 });
+    await s.page.click('#btn-geo');
+    await s.page.waitForTimeout(10500);
+    const st = await s.page.evaluate(() => ({
+      rows: document.querySelectorAll('.row').length,
+      stuck: [...document.querySelectorAll('#now .nw-v, #sky .sky-m')]
+        .map(n => n.textContent.trim()).filter(x => /·\s+·|…/.test(x)),
+      cards: [...document.querySelectorAll('#now .nw-c')].map(c => c.querySelector('.nw-v').textContent).join(' | ')
+    }));
+    pass(`nothing is left loading (${label})`,
+      st.rows > 0 && st.stuck.length === 0 && s.errs.length === 0,
+      st.stuck.length ? st.stuck.join(', ') : `${st.rows} rows · ${st.cards}` + (s.errs.length ? ' · ' + s.errs.join(' | ') : ''));
+    await s.ctx.close();
+  }
+
+  // The orbit file is the one fetch the service worker would normally hide, so it is tested
+  // with the worker blocked and the request held open.
+  const cold = await browser.newContext({
+    viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+    permissions: ['geolocation'], geolocation: { latitude: 37.7749, longitude: -122.4194 },
+    serviceWorkers: 'block'
+  });
+  const cerr = [];
+  await cold.route('**/data/sat.json', () => {});
+  const cp = await cold.newPage();
+  cp.on('pageerror', e => cerr.push('pageerror: ' + e.message));
+  cp.on('console', m => { if (m.type() === 'error') cerr.push(m.text()); });
+  await cp.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'domcontentloaded' });
+  await cp.waitForSelector('.row', { timeout: 20000 });
+  await cp.click('#btn-geo');
+  const t0 = Date.now();
+  await cp.waitForFunction(() => {
+    const c = document.querySelector('[aria-controls="sky"]');
+    return c && !/·\s+·/.test(c.querySelector('.nw-v').textContent);
+  }, null, { timeout: 20000 }).catch(() => {});
+  const took = Date.now() - t0;
+  const co = await cp.evaluate(() => {
+    const c = document.querySelector('[aria-controls="sky"]');
+    return { v: c.querySelector('.nw-v').textContent, offers: c.classList.contains('nw-hit') };
+  });
+  pass('a held orbit request gives up and the card stops offering',
+    took < 12000 && !/·\s+·/.test(co.v) && !co.offers && cerr.length === 0,
+    `"${co.v}" after ${(took / 1000).toFixed(1)}s, still offers: ${co.offers}` + (cerr.length ? ' · ' + cerr.join(' | ') : ''));
+  await cold.close();
 }
 
 /* ================= no compliance wording ================= */

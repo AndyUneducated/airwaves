@@ -1074,6 +1074,9 @@ html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro,
 .nw-x-c.open { border-color: rgba(var(--ac-g), .36); background: var(--bg-2); }
 .nw-x-c.open .nw-k { color: var(--ac); }
 .nw-x-c.open .dx-c { transform: rotate(180deg); color: var(--ac); }
+/* Nothing behind it to open, so it reads as a plain reading card again. */
+.nw-x-dead { cursor: default; padding-right: 13px; }
+.nw-x-dead .dx-c { display: none; }
 
 /* ---------- category filters ---------- */
 
