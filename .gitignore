@@ -8,3 +8,7 @@ node_modules/
 .probe/*.log
 .probe/msg.txt
 .probe/base-*/
+
+# Natural Earth downloads for scripts/import-geo.mjs: 30 MB of upstream source kept only so
+# a rerun does not fetch it again. What the script writes into data/geo is tracked.
+.cache/

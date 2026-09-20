@@ -169,11 +169,15 @@ graph TD
   R --> MP[make-places.mjs]
   OA --> MP
   MP --> P["data/places.json"]
+  NE["Natural Earth 10m<br/>coast + admin-1"] --> IG[import-geo.mjs]
+  P --> IG
+  IG --> G["data/geo/*.json"]
 ```
 
 The order matters: importers first, then `make-odds.mjs` to score whatever is now there, then
-`make-places.mjs` if any new `ref` appeared. All of them write into the repo and none of them
-run in the browser.
+`make-places.mjs` if any new `ref` appeared, then `import-geo.mjs`, which frames each region's
+outline around the sites `make-places.mjs` just resolved. All of them write into the repo and
+none of them run in the browser.
 
 Every generator holds to the same three rules, learned the hard way:
 
@@ -400,11 +404,55 @@ properties the drawing depends on:
 Because the scale is isotropic, a horizon ring is a plain `<circle>`. That it stays one is the
 cheapest possible regression test for the whole projection.
 
-### What is deliberately absent
+### Three views of one map
 
-There is no coastline. No boundary data exists in this repository, and an invented one would
-read as fact — a wrong shoreline is worse than none. A graticule and a scale bar orient the
-reader without asserting any geography.
+The strip under the map chooses what is drawn over the graticule. They answer different
+questions and stacking them turns the picture into a thicket, so it is one at a time.
+
+| View | Draws | Answers |
+| --- | --- | --- |
+| Reach | Lines to the sites inside your horizon | Which of these could I actually hear |
+| Distance | Lines to every site, each labelled with how far | How far away is all of this |
+| Land | Coastline and administrative borders under everything | Where am I, in ordinary terms |
+
+Distance hangs its figure off the site's own code rather than writing it along the line.
+Lines from one point to sites a few kilometres apart have their midpoints in almost the same
+place, so labelled lines pile up exactly where the map is busiest. The codes already have
+collision avoidance, so the figure inherits it.
+
+### The outline, and why there was none for so long
+
+The panel had no coastline for a long time, on the grounds that an invented one reads as
+fact. That argument was against *inventing* a coastline, not against having one, and the
+answer is survey data rather than a graticule and an apology.
+
+It cannot come from a tile server: the site has no backend and is meant to work with no
+signal. So `scripts/import-geo.mjs` cuts Natural Earth's 1:10m coastline and admin-1
+boundary lines down to what each region's map can actually draw, and commits the result.
+
+```mermaid
+flowchart LR
+  A["Natural Earth 10m<br/>coast + admin-1"] --> B["clip to the frame<br/>this region can draw"]
+  B --> C["Douglas-Peucker<br/>at map resolution"]
+  C --> D["round to 3 decimals"]
+  D --> E["data/geo/{region}.json<br/>about 10 kB each"]
+```
+
+Clipping is what makes this possible at all. A world file is megabytes; a region's frame is a
+few degrees across, and at 1:10m simplified to the resolution it is drawn at, each region is
+about ten kilobytes. The whole set is 288 kB, and a visit fetches one file of it.
+
+They are **not** precached by the service worker. Precaching the set would put 288 kB of
+scenery into every install for a layer most visits never open. Instead the file is fetched
+the first time the view is chosen and kept by the worker from then on; offline with nothing
+cached, the map says so and draws what it always drew. That path asks the Cache API directly
+rather than firing a request that can only fail, so a working offline session logs nothing.
+
+### What is still deliberately absent
+
+No satellite imagery, and no street map. Both are tile servers: they cannot be committed and
+they cannot work offline, so adding them would mean a map that is blank in exactly the
+conditions this site is built for.
 
 Airport codes are placed by hand rather than left to the browser, which will happily stack
 four of them into one smudge; the bay has airports a few kilometres apart. Each label tries

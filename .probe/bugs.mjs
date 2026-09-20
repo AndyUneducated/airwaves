@@ -1,108 +1,57 @@
-// Offline: every network-backed feature has to settle into a stated fallback, with no
-// console error, no unhandled rejection, and no placeholder left spinning.
+// The three map views, online and off.
 import { chromium, serve } from './harness.mjs';
 
 const URL = await serve();
 const b = await chromium.launch();
 
-async function run(label, { warm, hang }) {
+async function shot(offline) {
   const ctx = await b.newContext({
-    viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+    viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
     permissions: ['geolocation'], geolocation: { latitude: 37.7749, longitude: -122.4194 }
   });
   const pg = await ctx.newPage();
   const errs = [];
   pg.on('pageerror', e => errs.push('pageerror: ' + e.message));
-  pg.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 90)); });
+  pg.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 100)); });
+  pg.on('requestfailed', r => { if (!offline) errs.push('reqfail: ' + r.url().slice(-40)); });
 
-  if (warm) {
-    // Let the service worker take the shell and the data first.
-    await pg.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
-    await pg.waitForSelector('.row');
-    await pg.waitForTimeout(2500);
-  }
-  if (hang) {
-    // A connection that accepts the request and then goes nowhere: the case a plain
-    // fetch() cannot recover from.
-    await pg.route('**/data/sat.json', () => {});
-    await pg.route('**/*.noaa.gov/**', () => {});
-    await pg.route('**/api.weather.gov/**', () => {});
-  } else {
-    await ctx.setOffline(true);
-  }
-
-  await pg.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'domcontentloaded' }).catch(() => {});
-  await pg.waitForSelector('.row', { timeout: 20000 }).catch(() => {});
-  await pg.click('#btn-geo').catch(() => {});
-  await pg.waitForTimeout(11000);
-
-  const st = await pg.evaluate(() => ({
-    rows: document.querySelectorAll('.row').length,
-    cards: [...document.querySelectorAll('#now .nw-c')].map(c =>
-      `${c.querySelector('.nw-k').textContent}: ${c.querySelector('.nw-v').textContent}`),
-    spinning: [...document.querySelectorAll('#now .nw-v, #sky .sky-m')]
-      .filter(n => /·\s+·|…/.test(n.textContent)).map(n => n.textContent.trim()),
-    skyHid: document.getElementById('sky').hidden,
-    net: (document.getElementById('net-t') || {}).textContent
-  }));
-  console.log(`\n=== ${label} ===`);
-  console.log('rows', st.rows, '| net badge:', JSON.stringify(st.net));
-  st.cards.forEach(c => console.log('  ', c));
-  console.log('still loading:', st.spinning.length ? JSON.stringify(st.spinning) : 'none');
-  console.log('errors:', errs.length ? errs.join(' | ') : 'none');
-  await ctx.close();
-  return { spinning: st.spinning, errs, rows: st.rows };
-}
-
-// Cold, with only the orbit file hanging: the one path that had no deadline at all, so
-// the service worker must not be allowed to answer it from cache.
-async function cold() {
-  const ctx = await b.newContext({
-    viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
-    permissions: ['geolocation'], geolocation: { latitude: 37.7749, longitude: -122.4194 },
-    serviceWorkers: 'block'
-  });
-  let held = 0;
-  await ctx.route('**/data/sat.json', () => { held++; });
-  const pg = await ctx.newPage();
-  const errs = [];
-  pg.on('pageerror', e => errs.push('pageerror: ' + e.message));
-  pg.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 90)); });
-  await pg.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'domcontentloaded' });
-  await pg.waitForSelector('.row', { timeout: 20000 });
+  await pg.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
+  await pg.waitForSelector('.row');
   await pg.click('#btn-geo');
-  const t0 = Date.now();
-  await pg.waitForFunction(() => {
-    const c = [...document.querySelectorAll('#now .nw-c')].find(x => /OVERHEAD/i.test(x.querySelector('.nw-k').textContent));
-    return c && !/·\s+·/.test(c.querySelector('.nw-v').textContent);
-  }, null, { timeout: 20000 }).catch(() => {});
-  const st = await pg.evaluate(() => {
-    const c = [...document.querySelectorAll('#now .nw-c')].find(x => /OVERHEAD/i.test(x.querySelector('.nw-k').textContent));
-    return {
-      v: c ? c.querySelector('.nw-v').textContent : '(no card)',
-      offers: c ? c.classList.contains('nw-hit') : null,
-      skyHid: document.getElementById('sky').hidden,
-      rows: document.querySelectorAll('.row').length
-    };
-  });
-  console.log('\n=== cold, orbit file hangs (no service worker) ===');
-  console.log(`held ${held} request(s); settled after ${Math.round((Date.now() - t0) / 100) / 10}s: ${JSON.stringify(st)}`);
-  console.log('errors:', errs.length ? errs.join(' | ') : 'none');
+  await pg.waitForTimeout(2500);
+  await pg.evaluate(() => document.querySelector('.nw-x-c[aria-controls="map"]').click());
+  await pg.waitForSelector('.mp-me');
+  if (offline) await ctx.setOffline(true);
+
+  for (const [i, v] of ['plain', 'far', 'land'].entries()) {
+    await pg.evaluate(n => document.querySelectorAll('.mp-seg .seg-o')[n].click(), i);
+    await pg.waitForTimeout(v === 'land' ? 2500 : 500);
+    const st = await pg.evaluate(() => ({
+      checked: [...document.querySelectorAll('.mp-seg .seg-o')].map(o => o.getAttribute('aria-checked')).join(','),
+      links: document.querySelectorAll('.mp-link line').length,
+      kms: document.querySelectorAll('.mp-km').length,
+      coast: document.querySelectorAll('.mp-cst').length,
+      adm: document.querySelectorAll('.mp-adm').length,
+      how: document.querySelector('.mp-how').textContent.slice(0, 46),
+      over: document.documentElement.scrollWidth - document.documentElement.clientWidth
+    }));
+    console.log(`  ${v.padEnd(6)} ${JSON.stringify(st)}`);
+    if (!offline) {
+      await pg.evaluate(() => document.querySelector('#map').scrollIntoView({ block: 'center' }));
+      await pg.waitForTimeout(200);
+      await pg.screenshot({ path: `.probe/map-${v}.png`, clip: await pg.evaluate(() => {
+        const r = document.querySelector('#map').getBoundingClientRect();
+        return { x: Math.max(0, r.x - 6), y: Math.max(0, r.y - 6), width: r.width + 12, height: Math.min(r.height + 12, 880) };
+      }) });
+    }
+  }
+  console.log(`  errors: ${errs.length ? errs.join(' | ') : 'none'}`);
   await ctx.close();
-  return { spinning: /·\s+·/.test(st.v) ? [st.v] : [], errs, rows: st.rows, offers: st.offers };
+  return errs;
 }
 
-const a = await run('offline, warm cache', { warm: true });
-const c = await run('online but requests hang', { warm: true, hang: true });
-const d = await cold();
-if (d.offers) { console.log('\nFAIL cold: card still offers to open an empty panel'); }
-
-let bad = d.offers ? 1 : 0;
-for (const [n, r] of [['warm offline', a], ['hanging', c], ['cold hang', d]]) {
-  if (r.spinning.length) { console.log(`\nFAIL ${n}: left a placeholder`); bad++; }
-  if (r.errs.length) { console.log(`\nFAIL ${n}: ${r.errs.join(' | ')}`); bad++; }
-  if (!r.rows) { console.log(`\nFAIL ${n}: no rows`); bad++; }
-}
-console.log(bad ? `\n${bad} problems` : '\nall offline paths settle');
+console.log('online:');
+await shot(false);
+console.log('offline (outline never fetched):');
+const e = await shot(true);
 await b.close();
-process.exit(bad ? 1 : 0);

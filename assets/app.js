@@ -32,7 +32,14 @@
       mapNlos: 'Over the horizon',
       mapReach: (a, b) => `${a} of ${b} within reach`,
       mapNear: (n, d) => `Closest is ${n}, ${d} away`,
-      mapLine: 'Show distances',
+      mapView: 'What the map shows',
+      mapVPlain: 'Reach',
+      mapVFar: 'Distance',
+      mapVLand: 'Land',
+      mapHowFar: 'Straight-line distance from you to every site, through the ground rather than along a road. Green lines are the ones inside the horizon above; grey ones are further than the curve of the Earth allows, however short the distance looks.',
+      mapHowLand: 'Coastline and administrative borders, clipped to this map from Natural Earth survey data and stored with the site, so it draws with no signal. It is there to tell you where the water and the state line are, not to be a street map.',
+      mapLandWait: 'Fetching the outline for this area…',
+      mapLandOff: 'No outline stored for this area. It downloads once when you are online, and is kept from then on.',
 
       skyT: 'Overhead',
       skyNext: (n, d) => `${n} in ${d}`,
@@ -165,7 +172,14 @@
       mapNlos: '视距外',
       mapReach: (a, b) => `${b} 个站点中有 ${a} 个在视距内`,
       mapNear: (n, d) => `最近的是 ${n}，${d}`,
-      mapLine: '显示距离',
+      mapView: '地图显示内容',
+      mapVPlain: '视距',
+      mapVFar: '距离',
+      mapVLand: '地形',
+      mapHowFar: '你与每个站点之间的直线距离，是穿过地面的直线，不是道路里程。绿线表示在上面那张图的视距之内；灰线表示已经超出地球曲率允许的范围，哪怕距离看起来不远。',
+      mapHowLand: '海岸线与行政区界，取自 Natural Earth 测绘数据并按本图范围裁切后随站点一起保存，因此没有网络也能显示。它只用来告诉你水域和省界在哪里，不是街道地图。',
+      mapLandWait: '正在获取本区域的轮廓…',
+      mapLandOff: '本区域尚未保存轮廓数据。联网时会下载一次，之后一直保留。',
 
       skyT: '头顶',
       skyNext: (n, d) => `${n}，${d}后`,
@@ -1068,17 +1082,86 @@
 
     // The map is drawn one SVG unit to one CSS pixel, so a 11 px label is 11 px on screen.
     // That means the drawing depends on the width, and has to be redone when it changes.
-    box.append(drawMap(sites, me, box.clientWidth || innerWidth));
+    box.append(drawMap(sites, me, box.clientWidth || innerWidth, GEO[REGION.meta.id]));
 
     const legend = el('div', 'mp-lg');
     const inn = sites.filter(s => s.los).length;
     legend.append(el('span', 'mp-k mp-in', t('mapIn')(inn)));
     legend.append(el('span', 'mp-k mp-out', t('mapOut')(sites.length - inn)));
     box.append(legend);
-    box.append(el('p', 'mp-how', t('mapHow')));
+    box.append(mapViews());
+    // Each view is explaining something different, so the line under it changes with it.
+    const geo = GEO[REGION.meta.id];
+    const how = MAP_VIEW === 'far' ? 'mapHowFar'
+      : MAP_VIEW !== 'land' ? 'mapHow'
+        : geo ? 'mapHowLand'
+          : geo === null ? 'mapLandOff' : 'mapLandWait';
+    box.append(el('p', 'mp-how', t(how)));
+
+    if (MAP_VIEW === 'land') loadGeo(REGION.meta.id);
   }
 
-  function drawMap(sites, me, wide) {
+  /* ---------- map layers ---------- */
+
+  // What the map draws besides the sites and their horizons. One at a time, because they
+  // answer different questions and stacking them turns the map into a thicket.
+  const MAP_VIEWS = ['plain', 'far', 'land'];
+  let MAP_VIEW = MAP_VIEWS.includes(localStorage.getItem('aw.mapview')) ? localStorage.getItem('aw.mapview') : 'plain';
+
+  // Outlines are per region and only fetched when asked for. null means it was tried and
+  // there is nothing to draw - offline, or genuinely no coast or border in frame.
+  const GEO = {};
+
+  function loadGeo(id) {
+    if (id in GEO) return Promise.resolve(GEO[id]);
+    GEO[id] = undefined;
+    // Only redraw if you are still looking at the same map when it lands.
+    const back = at => {
+      if (MAP_VIEW === 'land' && REGION && REGION.meta.id === at) renderMap();
+    };
+    const url = `data/geo/${id}.json`;
+    // Offline the outline is either already in the worker's cache or it is not coming, so
+    // the cache is asked directly. Firing a request that can only fail would put a red line
+    // in the console for something that is working exactly as intended.
+    const src = navigator.onLine || !self.caches
+      ? timed(url, 8000)
+      : caches.match(new URL(url, location.href)).then(r => r || Promise.reject(new Error('not cached')));
+
+    return src.then(r => r.json())
+      .then(g => { GEO[id] = g; back(id); return g; })
+      // A missing outline is not a fault: it is scenery, and the map without it is the map
+      // this panel has always drawn.
+      .catch(() => { GEO[id] = null; back(id); return null; });
+  }
+
+  function mapViews() {
+    const names = { plain: 'mapVPlain', far: 'mapVFar', land: 'mapVLand' };
+    const seg = el('div', 'seg mp-seg');
+    seg.setAttribute('role', 'radiogroup');
+    seg.setAttribute('aria-label', t('mapView'));
+    seg.style.setProperty('--i', String(MAP_VIEWS.indexOf(MAP_VIEW)));
+    seg.style.setProperty('--n', String(MAP_VIEWS.length));
+    const hl = el('span', 'seg-hl');
+    hl.setAttribute('aria-hidden', 'true');
+    seg.append(hl);
+    for (const v of MAP_VIEWS) {
+      const o = el('button', 'seg-o', t(names[v]));
+      o.type = 'button';
+      o.setAttribute('role', 'radio');
+      o.setAttribute('aria-checked', String(v === MAP_VIEW));
+      o.addEventListener('click', () => {
+        if (v === MAP_VIEW) return;
+        MAP_VIEW = v;
+        localStorage.setItem('aw.mapview', v);
+        buzz(8);
+        renderMap();
+      });
+      seg.append(o);
+    }
+    return seg;
+  }
+
+  function drawMap(sites, me, wide, geo) {
     const NS = 'http://www.w3.org/2000/svg';
     const mk = (tag, attrs) => {
       const n = document.createElementNS(NS, tag);
@@ -1137,9 +1220,9 @@
       role: 'img', 'aria-label': t('mapT')
     });
 
-    // A graticule rather than a coastline. There is no boundary data in this repository and
-    // inventing one would be worse than having none: a wrong coastline reads as fact. Grid
-    // lines and a scale bar orient the reader without asserting any geography.
+    // The graticule is always there: it is the one layer that asserts no geography at all,
+    // and with the outline off it is the only thing telling you which way is north and how
+    // big the frame is.
     const stepFor = deg => {
       for (const c of [10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05]) if (deg / c >= 2.5) return c;
       return 0.02;
@@ -1154,6 +1237,28 @@
     }
     svg.append(grid);
 
+    // Coast and administrative borders, clipped to this region at build time from Natural
+    // Earth and drawn under everything. The panel went without one for a long time because
+    // an invented coastline reads as fact; a surveyed one is the opposite problem solved.
+    if (MAP_VIEW === 'land' && geo) {
+      const land = mk('g', { class: 'mp-land' });
+      const put = (runs, cls) => {
+        for (const run of runs) {
+          // Whole lines outside the frame are common, since the clip box is generous.
+          let any = false;
+          const d = run.map((p, i) => {
+            const x = X(p[0]), y = Y(p[1]);
+            if (x > -40 && x < W + 40 && y > -40 && y < H + 40) any = true;
+            return `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`;
+          }).join('');
+          if (any) land.append(mk('path', { class: cls, d }));
+        }
+      };
+      put(geo.admin || [], 'mp-adm');
+      put(geo.coast || [], 'mp-cst');
+      svg.append(land);
+    }
+
     // Horizon rings under the markers, so a marker is never hidden by a ring.
     const rings = mk('g', { class: 'mp-rings' });
     for (const st of sites) {
@@ -1165,12 +1270,17 @@
     }
     svg.append(rings);
 
-    // A line from you to each site that is actually in reach.
-    const link = mk('g', { class: 'mp-link' });
-    for (const st of sites.filter(x => x.los)) {
+    // A line from you to each site. Normally only the ones in reach, because a line to a
+    // site you cannot hear says nothing. In distance view every site is joined and labelled
+    // with how far it is, which is the other question worth asking of this picture: not
+    // "can I hear it" but "how far away is all of this".
+    const far = MAP_VIEW === 'far';
+    const link = mk('g', { class: 'mp-link' + (far ? ' far' : '') });
+    for (const st of far ? sites : sites.filter(x => x.los)) {
+      const x1 = X(me.lon), y1 = Y(me.lat), x2 = X(st.lon), y2 = Y(st.lat);
       link.append(mk('line', {
-        x1: X(me.lon).toFixed(1), y1: Y(me.lat).toFixed(1),
-        x2: X(st.lon).toFixed(1), y2: Y(st.lat).toFixed(1)
+        class: st.los ? 'los' : '',
+        x1: x1.toFixed(1), y1: y1.toFixed(1), x2: x2.toFixed(1), y2: y2.toFixed(1)
       }));
     }
     svg.append(link);
@@ -1199,8 +1309,13 @@
       const g = mk('g', { class: 'mp-s' + (st.los ? ' los' : '') });
       g.append(mk('circle', { cx: cx.toFixed(1), cy: cy.toFixed(1), r: 4.5 }));
 
+      // Distance view hangs the figure off the site's own code rather than writing it along
+      // the line. Lines from one point to sites a few kilometres apart have their midpoints
+      // in almost the same place, so labelled lines pile up exactly where the map is
+      // busiest; the codes already have collision avoidance, so the figure inherits it.
+      const text = far ? `${st.ref} ${fmtDist(st.km)}` : st.ref;
       // Half the advance width of the 11px monospace face, plus a little air.
-      const half = st.ref.length * 3.4 + 3;
+      const half = text.length * 3.4 + 3;
       // Above the dot reads best, so it is tried first; the rest are fallbacks, because
       // giving up on the label of a site that is actually in reach costs more than putting
       // its code somewhere less tidy.
@@ -1217,7 +1332,7 @@
         const lbl = mk('text', {
           x: spot.x.toFixed(1), y: spot.y.toFixed(1), 'text-anchor': spot.a
         });
-        lbl.textContent = st.ref;
+        lbl.textContent = text;
         g.append(lbl);
       }
       const title = mk('title');

@@ -481,6 +481,18 @@ body::before {
   stroke-width: 1.5;
 }
 
+/* Distance view joins every site, not only the ones in reach, so the two have to be told
+   apart: a line to somewhere you cannot hear is geography, not a reading. */
+.mp-link.far line { stroke: var(--line-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.mp-link.far line.los { stroke: rgba(var(--ac-g), .5); stroke-width: 1.5; stroke-dasharray: none; }
+
+/* Surveyed geography, drawn under the reading. Faint on purpose: it is there to tell you
+   where the water and the state line are, not to compete with the rings. */
+.mp-cst { fill: none; stroke: var(--tx-3); stroke-width: 1; opacity: .5; }
+.mp-adm { fill: none; stroke: var(--line-2); stroke-width: .8; stroke-dasharray: 4 3; opacity: .8; }
+html[data-skin="glare"] .mp-cst { opacity: .75; }
+html[data-skin="glare"] .mp-adm { opacity: 1; }
+
 /* Sunlight mode is for a screen washed out by the sun, and a 22% stroke that reads indoors
    is simply not there outdoors. The alphas go up rather than the colour changing, so the
    ring stays clearly secondary to the one that is in reach. */
@@ -543,6 +555,10 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
   line-height: 1.45;
   color: var(--tx-3);
 }
+
+/* Same strip as the display picker, because it is the same kind of choice: three ways of
+   looking at one thing, judged by looking. */
+.mp-seg { margin-top: 10px; }
 
 /* ---------- overhead passes ---------- */
 

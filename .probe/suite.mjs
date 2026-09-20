@@ -932,6 +932,62 @@ if (want('map')) {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(400);
 
+  // Three views of the same map. Reach is the horizon reading it has always drawn; distance
+  // joins every site and says how far; land puts a surveyed coast and border under it.
+  const view = async i => {
+    await page.evaluate(n => document.querySelectorAll('.mp-seg .seg-o')[n].click(), i);
+    await page.waitForTimeout(i === 2 ? 2500 : 400);
+    return page.evaluate(() => ({
+      checked: [...document.querySelectorAll('.mp-seg .seg-o')].findIndex(o => o.getAttribute('aria-checked') === 'true'),
+      hl: getComputedStyle(document.querySelector('.mp-seg')).getPropertyValue('--i').trim(),
+      links: document.querySelectorAll('.mp-link line').length,
+      lit: document.querySelectorAll('.mp-link line.los').length,
+      land: document.querySelectorAll('.mp-cst, .mp-adm').length,
+      labels: [...document.querySelectorAll('.mp-s text')].map(n => n.textContent),
+      how: document.querySelector('.mp-how').textContent
+    }));
+  };
+  const vPlain = await view(0), vFar = await view(1), vLand = await view(2);
+
+  pass('map: the strip picks a view and the highlight follows',
+    vPlain.checked === 0 && vFar.checked === 1 && vLand.checked === 2 &&
+    vPlain.hl === '0' && vFar.hl === '1' && vLand.hl === '2',
+    `checked ${vPlain.checked}/${vFar.checked}/${vLand.checked}, highlight ${vPlain.hl}/${vFar.hl}/${vLand.hl}`);
+
+  // Reach joins only what you can hear; distance joins everything, and marks which of those
+  // is nonetheless over the horizon, so a short grey line is not mistaken for a usable one.
+  pass('map: distance joins every site and keeps the reach reading',
+    vFar.links > vPlain.links && vFar.lit === vPlain.links && vFar.links === 8,
+    `reach ${vPlain.links} lines, distance ${vFar.links} of which ${vFar.lit} in reach`);
+
+  // The figure hangs off the site's own code, which already has collision avoidance. Written
+  // along the line instead, labels for sites a few km apart land on top of each other.
+  const withKm = vFar.labels.filter(x => /\d+\s?km/.test(x)).length;
+  pass('map: distance view labels each site with how far it is',
+    withKm >= vFar.labels.length - 1 && withKm > 4 && vPlain.labels.every(x => !/km/.test(x)),
+    `${withKm} of ${vFar.labels.length} labelled, e.g. "${vFar.labels[0]}"`);
+
+  pass('map: land draws a surveyed outline and says where it came from',
+    vLand.land > 0 && /Natural Earth/.test(vLand.how) && vPlain.land === 0,
+    `${vLand.land} outline paths`);
+
+  pass('map: each view explains itself',
+    vPlain.how !== vFar.how && vFar.how !== vLand.how && vPlain.how.length > 40,
+    `"${vPlain.how.slice(0, 22)}…" / "${vFar.how.slice(0, 22)}…" / "${vLand.how.slice(0, 22)}…"`);
+
+  // The choice is worth keeping: it is a preference about the picture, not about this visit.
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  await page.click('#btn-geo');
+  await openPanel(page, 'map');
+  await page.waitForSelector('.mp-me', { timeout: 20000 });
+  await page.waitForTimeout(1200);
+  const kept = await page.evaluate(() =>
+    [...document.querySelectorAll('.mp-seg .seg-o')].findIndex(o => o.getAttribute('aria-checked') === 'true'));
+  pass('map: the view you picked is remembered', kept === 2, `came back on segment ${kept}`);
+  await page.evaluate(() => document.querySelectorAll('.mp-seg .seg-o')[0].click());
+  await page.waitForTimeout(400);
+
   pass('map: no console errors', errs.length === 0, errs.join(' | '));
 
   await page.evaluate(() => document.querySelector('#map').scrollIntoView({ block: 'center' }));
