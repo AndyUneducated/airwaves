@@ -30,8 +30,14 @@
       mapSite: (d, h) => `${d} · site at ${h} m`,
       mapLos: 'Line of sight',
       mapNlos: 'Over the horizon',
+      mapReach: (a, b) => `${a} of ${b} within reach`,
+      mapNear: (n, d) => `Closest is ${n}, ${d} away`,
+      mapLine: 'Show distances',
 
       skyT: 'Overhead',
+      skyNext: (n, d) => `${n} in ${d}`,
+      skyCount: n => n === 1 ? '1 pass in the next 12 h' : `${n} passes in the next 12 h`,
+      skyOff: 'Orbits unavailable',
       skyNone: 'No workable pass in the next 12 hours',
       skyNoPos: 'Share your location to see passes',
       skyWait: 'Working out passes…',
@@ -47,6 +53,7 @@
       skyHigh: 'High pass',
       skyMore: 'All passes',
       skyLess: 'Next few',
+      skyHow: 'Satellites carrying a receivable analog signal, worked out for your position from their orbits. A pass is only usable while the satellite is above your horizon, and the higher it climbs the better it sounds.',
       skyStale: d => `Orbits are ${d} days old`,
 
       view: 'Display and outdoor settings',
@@ -98,7 +105,6 @@
       rulerHint: 'Tap the spectrum to jump to the nearest entry',
       wheelHint: 'Drag to tune · release to jump',
       sound: 'Tuning sound',
-      digNote: 'Struck-through rows are things a VX-6 cannot give you: digital and encrypted systems it has no way to decode, signals outside its tuning range, and a few services that simply do not exist here. They are listed so you know not to spend an evening hunting for them.',
       copyHint: 'Tap any row to copy its frequency',
       proHint: 'Tap any row for detail · copy is inside',
       dOdds: 'Odds',
@@ -157,8 +163,14 @@
       mapSite: (d, h) => `${d} · 站点海拔 ${h} 米`,
       mapLos: '视距内',
       mapNlos: '视距外',
+      mapReach: (a, b) => `${b} 个站点中有 ${a} 个在视距内`,
+      mapNear: (n, d) => `最近的是 ${n}，${d}`,
+      mapLine: '显示距离',
 
       skyT: '头顶',
+      skyNext: (n, d) => `${n}，${d}后`,
+      skyCount: n => `未来 12 小时内有 ${n} 次过顶`,
+      skyOff: '暂无轨道数据',
       skyNone: '未来 12 小时内没有值得一试的过顶',
       skyNoPos: '共享位置后即可查看过顶时刻',
       skyWait: '正在推算过顶…',
@@ -174,6 +186,7 @@
       skyHigh: '高仰角',
       skyMore: '全部过顶',
       skyLess: '只看最近',
+      skyHow: '这些卫星带有可以直接收听的模拟信号，过顶时刻由轨道数据结合你的位置推算。只有当卫星升到地平线以上时才收得到，仰角越高信号越好。',
       skyStale: d => `轨道数据已有 ${d} 天`,
 
       view: '显示与户外设置',
@@ -225,7 +238,6 @@
       rulerHint: '点击频谱可跳到最接近的条目',
       wheelHint: '拖动调谐 · 松手跳转',
       sound: '调谐声',
-      digNote: '带删除线的条目是 VX-6 无法提供的内容：它无法解码的数字与加密系统、超出其调谐范围的信号，以及在当地根本不存在的业务。列出来是为了让你知道不必白费一晚上去找。',
       copyHint: '点击任意一行即可复制频率',
       proHint: '点击任意一行查看详情 · 复制按钮在里面',
       dOdds: '收到概率',
@@ -261,12 +273,12 @@
 
   const FT = {
     'ft.radio.b': {
-      en: 'Built around the Yaesu VX-6R: continuous receive from 0.5 to 999 MHz in AM, NFM and WFM. It is an analog receiver — it cannot decode P25, DMR or NXDN, so digital systems are marked as unreceivable rather than omitted.',
-      zh: '以八重洲 VX-6R 为基准：0.5 至 999 MHz 连续接收，支持 AM、窄带 FM 和宽带 FM。它是模拟接收机——无法解码 P25、DMR 或 NXDN，因此数字系统被标注为“收不到”，而不是直接删掉。'
+      en: 'Built around the Yaesu VX-6R: continuous receive from 0.5 to 999 MHz in AM, NFM and WFM. It is an analog receiver, so it cannot decode P25, DMR or NXDN.',
+      zh: '以八重洲 VX-6R 为基准：0.5 至 999 MHz 连续接收，支持 AM、窄带 FM 和宽带 FM。它是模拟接收机，无法解码 P25、DMR 或 NXDN。'
     },
     'ft.trust.b': {
-      en: 'The bars on each entry are the odds of hearing anything if you tune there. Three bars means a carrier is on it essentially all the time, over a wide area — NOAA weather radio, a broadcast station, an airport ATIS loop. Two means busy but intermittent: a working tower, a port, a maintained repeater. One means quiet, short-range, occasional, or a frequency worth confirming locally before you rely on it — worth programming, not worth sitting on. Entries with no bars are digital or encrypted, so the radio cannot decode them at all.',
-      zh: '每条右侧的信号条表示：把电台调到这个频率，能收到东西的概率。三格代表几乎始终有信号且覆盖面大——NOAA 气象广播、广播电台、机场自动通播。两格代表繁忙但断续：运行中的塔台、港口、有人维护的中继台。一格代表安静、距离短、偶发，或这个频率本身值得先在当地核实——值得存进电台，但不值得一直守着。没有信号条的条目是数字或加密信号，电台根本无法解码。'
+      en: 'The bars on each entry are the odds of hearing anything if you tune there. Three bars means a carrier is on it essentially all the time, over a wide area — NOAA weather radio, a broadcast station, an airport ATIS loop. Two means busy but intermittent: a working tower, a port, a maintained repeater. One means quiet, short-range, occasional, or a frequency worth confirming locally before you rely on it — worth programming, not worth sitting on. Entries with no bars are struck through: those are listed so you know not to spend an evening hunting for them.',
+      zh: '每条右侧的信号条表示：把电台调到这个频率，能收到东西的概率。三格代表几乎始终有信号且覆盖面大——NOAA 气象广播、广播电台、机场自动通播。两格代表繁忙但断续：运行中的塔台、港口、有人维护的中继台。一格代表安静、距离短、偶发，或这个频率本身值得先在当地核实——值得存进电台，但不值得一直守着。没有信号条的条目会加删除线：列出它们是为了让你知道不必白费一晚上去找。'
     }
   };
 
@@ -776,16 +788,6 @@
       acts.append(a);
     });
     box.append(acts);
-
-    // The note explains the struck-through rows, so it sits just above the list rather than
-    // between you and what is happening right now.
-    const slot = $('#notice');
-    slot.textContent = '';
-    if (data.stations.some(s => s.dig)) {
-      const n = el('div', 'notice');
-      n.append(el('span', null, t('digNote')));
-      slot.append(n);
-    }
   }
 
   /* ---------- right now ---------- */
@@ -871,15 +873,26 @@
     const soon = fn => setTimeout(() => { if (gen === nowGen) fn(); }, 350);
 
     const box = $('#now');
+    // The two panels live inside this section, so they have to be rescued before it is
+    // emptied and put back after. Holding the references means a render cannot lose them.
+    SKY_BOX = SKY_BOX || $('#sky');
+    MAP_BOX = MAP_BOX || $('#map');
     box.textContent = '';
-    if (!isPro() || !REGION) { box.hidden = true; return; }
+    // Put them straight back, before any of the early returns below. They are hidden far
+    // more often than not, and leaving the document without them would mean every other
+    // caller has to cope with two elements that exist only in pro mode.
+    const keep = () => {
+      if (SKY_BOX) { SKY_BOX.hidden = true; box.append(SKY_BOX); }
+      if (MAP_BOX) { MAP_BOX.hidden = true; box.append(MAP_BOX); }
+    };
+    if (!isPro() || !REGION) { keep(); box.hidden = true; return; }
 
     // Your own position if you have shared it, otherwise the middle of the region you are
     // reading. Nationwide sets and the link pages have no centre, so they get no panel.
     const own = POS.lat != null;
     const lat = own ? POS.lat : REGION.meta.lat;
     const lon = own ? POS.lon : REGION.meta.lon;
-    if (lat == null || lon == null) { box.hidden = true; return; }
+    if (lat == null || lon == null) { keep(); box.hidden = true; return; }
     box.hidden = false;
 
     const cap = el('div', 'nw-cap');
@@ -901,7 +914,78 @@
       soon(() => fillWx(wx, lat, lon));
     }
 
+    // Passes and the horizon map are the two readings that need a real observer rather than
+    // a region centre, so they only join the grid once you have shared a position.
+    if (own) {
+      grid.append(skyCard());
+      const m = mapCard();
+      if (m) grid.append(m);
+    }
+
     box.append(grid);
+    keep();
+    renderSky();
+    renderMap();
+  }
+
+  // Both of the panels below open from a card rather than sitting on the page. They are the
+  // two tallest things the site draws and neither is wanted on every visit.
+  const OPEN = { sky: false, map: false };
+  let SKY_BOX = null, MAP_BOX = null;
+
+  // A card that owns a panel: it carries the one-line answer, and the panel behind it
+  // carries the working. The chevron is the same one the entry rows use in pro mode.
+  function panelCard(key, label, onToggle) {
+    const c = el('div', 'nw-c nw-hit nw-x-c');
+    c.tabIndex = 0;
+    c.setAttribute('role', 'button');
+    c.setAttribute('aria-controls', key);
+    c.setAttribute('aria-expanded', String(OPEN[key]));
+    c.append(el('div', 'nw-k', label));
+    c.append(el('div', 'nw-v', '·  ·  ·'));
+    c.append(el('div', 'nw-d', ''));
+    const chev = el('span', 'dx-c');
+    chev.setAttribute('aria-hidden', 'true');
+    chev.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5"/></svg>';
+    c.append(chev);
+    const hit = () => {
+      OPEN[key] = !OPEN[key];
+      c.setAttribute('aria-expanded', String(OPEN[key]));
+      c.classList.toggle('open', OPEN[key]);
+      onToggle();
+      buzz(OPEN[key] ? 10 : 6);
+    };
+    c.addEventListener('click', hit);
+    c.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hit(); }
+    });
+    c.classList.toggle('open', OPEN[key]);
+    return c;
+  }
+
+  function skyCard() {
+    const c = panelCard('sky', t('skyT'), () => renderSky());
+    loadSats().then(ok => {
+      if (!ok || POS.lat == null) { fill(c, t('skyOff'), ''); return; }
+      const rows = skyPasses(POS.lat, POS.lon);
+      if (!rows.length) { fill(c, t('skyNone'), ''); return; }
+      const n = rows[0];
+      const name = L(n.f, { n: 'n', z: 'z' });
+      fill(c, n.live ? t('skyNow') + ' — ' + name : t('skyNext')(name, span(n.aos - Date.now())),
+        t('skyCount')(rows.length));
+    });
+    return c;
+  }
+
+  function mapCard() {
+    const sites = mapSites();
+    if (!sites.length) return null;
+    const c = panelCard('map', t('mapT'), () => renderMap());
+    reach(sites, { lat: POS.lat, lon: POS.lon });
+    const inn = sites.filter(s => s.los).length;
+    const near = sites.slice().sort((a, b) => a.km - b.km)[0];
+    fill(c, t('mapReach')(inn, sites.length), t('mapNear')(near.ref, fmtDist(near.km)));
+    return c;
   }
 
   /* ---------- line of sight ---------- */
@@ -930,32 +1014,32 @@
     return [...seen.values()];
   }
 
-  function renderMap() {
-    const box = $('#map');
-    if (!box) return;
-    box.textContent = '';
-    // Held back until the location is known. Without it the panel could draw the sites and
-    // their horizons but not answer the only question it asks - what reaches you - and a
-    // panel this tall appearing on its own after the data loads shoves the tuning rail and
-    // the whole list down the page.
-    if (!isPro() || !REGION || POS.lat == null) { box.hidden = true; return; }
-
-    const sites = mapSites();
-    if (!sites.length) { box.hidden = true; return; }
-    box.hidden = false;
-
-    const cap = el('div', 'nw-cap');
-    cap.append(el('span', 'nw-t', t('mapT')));
-    box.append(cap);
-
-    const me = { lat: POS.lat, lon: POS.lon };
-
-    // Each site's own horizon, plus yours, is how far the two can see each other.
+  // Each site's own horizon, plus yours, is how far the two can see each other.
+  function reach(sites, me) {
     for (const s of sites) {
       s.reach = horizonKm(s.elev + MAST_M) + horizonKm(HAND_M);
       s.km = haversine(me.lat, me.lon, s.lat, s.lon);
       s.los = s.km <= s.reach;
     }
+    return sites;
+  }
+
+  function renderMap() {
+    const box = $('#map');
+    if (!box) return;
+    box.textContent = '';
+    // Held back until the location is known. Without it the panel could draw the sites and
+    // their horizons but not answer the only question it asks - what reaches you.
+    if (!isPro() || !REGION || POS.lat == null) { box.hidden = true; return; }
+
+    const sites = mapSites();
+    if (!sites.length) { box.hidden = true; return; }
+    // The card in the grid above owns whether this is showing.
+    box.hidden = !OPEN.map;
+    if (box.hidden) return;
+
+    const me = { lat: POS.lat, lon: POS.lon };
+    reach(sites, me);
 
     // The map is drawn one SVG unit to one CSS pixel, so a 11 px label is 11 px on screen.
     // That means the drawing depends on the width, and has to be redone when it changes.
@@ -1273,11 +1357,10 @@
     // Passes are only meaningful for a real observer. A region centre would give times that
     // look authoritative and are wrong by however far away you are, so it is not offered.
     if (POS.lat == null) { box.hidden = true; return; }
-    box.hidden = false;
+    // The card in the grid above owns whether this is showing.
+    box.hidden = !OPEN.sky;
+    if (box.hidden) return;
 
-    const cap = el('div', 'nw-cap');
-    cap.append(el('span', 'nw-t', t('skyT')));
-    box.append(cap);
     const list = el('div', 'sky-l');
     list.append(el('p', 'sky-m', t('skyWait')));
     box.append(list);
@@ -1302,6 +1385,10 @@
       // Say so rather than presenting it with the same confidence as a fresh one.
       const age = Math.floor(Date.now() / 86400000 + 2440587.5 - show[0].rec.jdsatepoch);
       if (age >= 7) list.append(el('p', 'sky-m', t('skyStale')(age)));
+
+      // The map below says what its rings are; this says what a pass is, in the one place
+      // where somebody is looking at one and might not know.
+      list.append(el('p', 'sky-why sky-how', t('skyHow')));
     });
   }
 
@@ -2209,7 +2296,24 @@
       renderMap();
     });
 
-    const q = $('#q'), clear = $('#q-clear');
+    const q = $('#q'), clear = $('#q-clear'), find = $('#btn-find');
+
+    // The field takes the region strip's place while it is open, so only one of the two is
+    // ever in the row and the row never changes height.
+    function search(on) {
+      find.setAttribute('aria-expanded', String(on));
+      $('#hd-search').hidden = !on;
+      $('#regions').hidden = on;
+      if (on) { q.focus(); q.select(); return; }
+      // Closing is also how you get the list back, so it drops the query with it rather
+      // than leaving the page filtered by something no longer on screen.
+      if (q.value || Q) { q.value = ''; Q = ''; clear.hidden = true; render(); }
+      q.blur();
+    }
+    const searching = () => find.getAttribute('aria-expanded') === 'true';
+
+    find.addEventListener('click', () => search(!searching()));
+
     let deb;
     q.addEventListener('input', () => {
       clear.hidden = !q.value;
@@ -2220,8 +2324,8 @@
 
     document.addEventListener('keydown', e => {
       const typing = document.activeElement === q;
-      if (e.key === '/' && !typing) { e.preventDefault(); q.focus(); q.select(); }
-      else if (e.key === 'Escape' && typing) { q.value = ''; Q = ''; clear.hidden = true; render(); q.blur(); }
+      if (e.key === '/' && !typing) { e.preventDefault(); search(true); }
+      else if (e.key === 'Escape' && typing) { e.preventDefault(); search(false); find.focus(); }
       else if ((e.key === 'p' || e.key === 'P') && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         toggleMode();

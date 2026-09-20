@@ -97,14 +97,24 @@
     </div>
   </div>
 
-  <div class="hd-search">
-    <svg class="s-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
-    <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Search frequency, station, place…" aria-label="Search">
-    <kbd class="s-kbd">/</kbd>
-    <button class="s-clear" id="q-clear" type="button" aria-label="Clear search" hidden>&times;</button>
-  </div>
+  <!-- Search shares this row with the region chips rather than taking a band of its own.
+       A full-width field above the chips cost 56px of every screen to answer a question
+       most visits never ask; the button is always here and the field replaces the chips
+       only while you are using it. -->
+  <div class="hd-row">
+    <button class="chip chip-find" id="btn-find" type="button" aria-expanded="false" aria-controls="hd-search" aria-label="Search">
+      <svg class="ico-find" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+      <svg class="ico-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
 
-  <nav class="regions" id="regions" aria-label="Regions"></nav>
+    <nav class="regions" id="regions" aria-label="Regions"></nav>
+
+    <div class="hd-search" id="hd-search" hidden>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Search frequency, station, place…" aria-label="Search">
+      <kbd class="s-kbd">/</kbd>
+      <button class="s-clear" id="q-clear" type="button" aria-label="Clear search" hidden>&times;</button>
+    </div>
+  </div>
   <div class="carrier"></div>
 </header>
 
@@ -123,20 +133,19 @@
 
   <section class="now" id="now">
     <div class="sk-x sk-nw-c"></div>
-      <div class="nw-g" id="nw-g">
-        <div class="sk-x sk-nw"></div>
-        <div class="sk-x sk-nw"></div>
+    <div class="nw-g" id="nw-g">
+      <div class="sk-x sk-nw"></div>
+      <div class="sk-x sk-nw"></div>
       <div class="sk-x sk-nw"></div>
     </div>
+
+    <!-- Overhead passes and the horizon map answer the same question as the cards above -
+         what can I hear from this spot - so they live in this panel and open from a card in
+         it. No skeletons: both need your location and both start closed, so they can only
+         appear in answer to a tap and shift nothing on load. -->
+    <div class="nw-x sky" id="sky" hidden></div>
+    <div class="nw-x mp-w" id="map" hidden></div>
   </section>
-
-  <!-- No skeletons here: both panels need your location, so they stay empty until you share
-       it and cannot be sized in advance without reserving space that is usually unused.
-       Because they only ever appear in answer to a tap, they shift nothing on load. -->
-  <section class="sky" id="sky" hidden></section>
-  <section class="mp-w" id="map" hidden></section>
-
-  <div id="notice"></div>
 
   <div class="cats" id="cats" role="group" aria-label="Filter by category"></div>
 

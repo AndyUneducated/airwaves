@@ -25,6 +25,8 @@
   --hd-bg: rgba(8, 9, 11, .82);
   --sh: rgba(0, 0, 0, .55);
   --r: 10px;
+  /* Shared height for every control in the header row. */
+  --chip-h: 28px;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue",
           "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -229,31 +231,65 @@ body::before {
 
 /* ---------- search ---------- */
 
-.hd-search {
-  position: relative;
-  margin: 0 clamp(14px, 4vw, 34px) 12px;
+/* The search button and either the region chips or the search field, on one line. The row
+   owns the gutter and the reserved height so that swapping the chips for the field shifts
+   nothing. */
+.hd-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 clamp(14px, 4vw, 34px) 12px;
+  /* The chip strip and the search field are held to the same height below, so swapping
+     one for the other cannot move the page under your thumb. */
+  min-height: 52px;
 }
 
-.hd-search .s-ico {
-  position: absolute;
-  left: 13px; top: 50%;
-  transform: translateY(-50%);
-  width: 15px; height: 15px;
-  fill: none; stroke: var(--tx-3);
-  stroke-width: 1.8; stroke-linecap: round;
-  pointer-events: none;
+.chip-find {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  position: relative;
 }
+.chip-find svg {
+  width: 16px; height: 16px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.9; stroke-linecap: round;
+}
+/* Same 44px thumb target the header controls get, without growing the pill. */
+.chip-find::after { content: ""; position: absolute; inset: -5px; }
+.chip-find .ico-x { display: none; }
+.chip-find[aria-expanded="true"] { color: var(--tx); border-color: var(--line-2); background: var(--bg-3); }
+.chip-find[aria-expanded="true"] .ico-find { display: none; }
+.chip-find[aria-expanded="true"] .ico-x { display: block; }
+
+.hd-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Matches the chip strip's height, including the room it leaves for a focus ring. */
+  min-height: 40px;
+}
+.hd-search[hidden] { display: none; }
 
 #q {
   width: 100%;
+  box-sizing: border-box;
+  height: 34px;
   appearance: none;
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: var(--r);
+  border-radius: 999px;
   color: var(--tx);
   font: inherit;
-  font-size: 14.5px;
-  padding: 10px 42px 10px 37px;
+  font-size: 14px;
+  padding: 0 40px 0 14px;
   outline: none;
   transition: border-color .16s, background .16s;
 }
@@ -298,13 +334,15 @@ body::before {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  box-sizing: border-box;
+  height: var(--chip-h);
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--tx-2);
   font: inherit;
   font-size: 12.5px;
-  padding: 4px 9px 4px 6px;
+  padding: 0 9px 0 6px;
   cursor: pointer;
   transition: color .14s, border-color .14s, background .14s;
 }
@@ -408,7 +446,6 @@ body::before {
 
 /* ---------- line of sight ---------- */
 
-.mp-w { margin: 0 clamp(14px, 4vw, 34px) 18px; }
 .mp-w[hidden] { display: none; }
 
 .mp {
@@ -509,9 +546,12 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
 
 /* ---------- overhead passes ---------- */
 
-.sky {
-  margin: 0 clamp(14px, 4vw, 34px) 18px;
-}
+/* Both panels now sit inside the right-now section, which already carries the page gutter.
+   They used to add a gutter of their own on top of it and so stood 15px narrower than every
+   other block on the page. */
+.nw-x { margin: 8px 0 0; }
+.nw-x[hidden] { display: none; }
+
 .sky[hidden] { display: none; }
 
 .sky-l {
@@ -579,6 +619,8 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
   line-height: 1.4;
   color: var(--tx-3);
 }
+/* Sits under the list rather than under a pass, so it needs the gap the rows give. */
+.sky-how { margin-top: 2px; max-width: 72ch; }
 
 .sky-b {
   align-self: flex-start;
@@ -598,8 +640,16 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
 
 .view { position: relative; }
 
+/* Square, and the same height as the worded chips beside it. Left to its own padding it
+   stood 5px taller than Pro and the language toggle, which is visible in a row of three. */
 .chip-ico {
-  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--chip-h);
+  height: var(--chip-h);
+  padding: 0;
   line-height: 0;
 }
 .chip-ico svg {
@@ -760,13 +810,19 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
   gap: 7px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 0 clamp(14px, 4vw, 34px) 12px;
   scroll-snap-type: x proximity;
   /* The chips arrive from JS, so hold the row open at one chip's height. Without
      this the sticky header is 34px short at first paint and the whole page drops
-     once the regions land. */
-  min-height: 46px;
+     once the regions land. The row above reserves the outer height; this keeps the
+     strip itself from collapsing while it is empty. */
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 34px;
+  /* Room for the focus ring and the chips' own hit padding, which the old bottom
+     padding on this element used to provide. */
+  padding: 3px 0;
 }
+.regions[hidden] { display: none; }
 .regions::-webkit-scrollbar { display: none; }
 
 .chip {
@@ -791,7 +847,18 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
   font-weight: 550;
 }
 
-.chip-sm { font-size: 11.5px; padding: 4px 10px; font-family: var(--mono); letter-spacing: .04em; }
+/* One height across the header row. The worded chips set it from their own text metrics;
+   the icon button and the country chip are told to match rather than guessing. */
+.chip-sm {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: var(--chip-h);
+  font-size: 11.5px;
+  padding: 0 10px;
+  font-family: var(--mono);
+  letter-spacing: .04em;
+}
 
 /* The one switch that changes what kind of tool this is, so it looks like a fader. */
 .chip-mode { display: inline-flex; align-items: center; gap: 5px; padding-left: 8px; }
@@ -911,14 +978,18 @@ main {
 
 .now { padding: 22px 0 0; }
 
-.nw-cap { display: flex; align-items: baseline; gap: 8px; margin: 0 0 9px; }
-.nw-t {
+.nw-cap { display: flex; align-items: baseline; gap: 7px; margin: 0 0 9px; }
+.nw-t, .nw-w {
   font: 500 9.5px/1 var(--mono);
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--tx-3);
 }
-.nw-w { font-size: 11.5px; color: var(--tx-3); }
+/* The qualifier is the same size and case as the label it follows - one caption, not a
+   heading with a sentence stuck to it - and is separated by a rule rather than a space so
+   the two are still told apart. */
+.nw-w { color: var(--tx-2); }
+.nw-w::before { content: ''; display: inline-block; width: 1px; height: 8px; margin-right: 7px; background: var(--line-2); vertical-align: -1px; }
 
 .nw-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr)); gap: 8px; }
 
@@ -990,6 +1061,19 @@ html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro,
 .nw-c.nw-hit { cursor: pointer; transition: border-color .16s ease, background .16s ease; }
 .nw-c.nw-hit:hover { border-color: var(--line-2); background: var(--bg-2); }
 .nw-c.nw-hit:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+/* A card that opens a panel below the grid. Same shape as the reading cards, so the panel
+   it owns is understood to belong to this section rather than to the page. */
+.nw-x-c { position: relative; padding-right: 34px; }
+.nw-x-c .dx-c {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  margin-top: -9px;
+}
+.nw-x-c.open { border-color: rgba(var(--ac-g), .36); background: var(--bg-2); }
+.nw-x-c.open .nw-k { color: var(--ac); }
+.nw-x-c.open .dx-c { transform: rotate(180deg); color: var(--ac); }
 
 /* ---------- category filters ---------- */
 
@@ -1475,23 +1559,6 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
 }
 
 /* ---------- misc ---------- */
-
-.notice {
-  display: flex;
-  gap: 11px;
-  align-items: flex-start;
-  background: var(--bg-1);
-  border: 1px solid var(--line);
-  border-left: 2px solid var(--warn);
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin: 22px 0 0;
-  font-size: 13.4px;
-  color: var(--tx-2);
-  max-width: 78ch;
-}
-.notice b { color: var(--tx); font-weight: 550; }
-.notice + .notice { margin-top: 10px; }
 
 .empty {
   text-align: center;

@@ -29,6 +29,25 @@ async function session(opts = {}) {
   return { ctx, page, errs };
 }
 
+// Search shares the chip row and is closed until asked for, so the field has to be opened
+// before it can be typed into.
+async function openSearch(page) {
+  if (await page.evaluate(() => document.getElementById('hd-search').hidden)) {
+    await page.click('#btn-find');
+    await page.waitForSelector('#q', { state: 'visible' });
+  }
+}
+
+// Overhead and the horizon map open from a card in the right-now panel rather than sitting
+// on the page, so a test that wants to look inside one has to open it first.
+async function openPanel(page, key) {
+  await page.waitForSelector(`.nw-x-c[aria-controls="${key}"]`, { timeout: 15000 });
+  if (await page.evaluate(k => document.getElementById(k).hidden, key)) {
+    await page.evaluate(k => document.querySelector(`.nw-x-c[aria-controls="${k}"]`).click(), key);
+  }
+  await page.waitForFunction(k => !document.getElementById(k).hidden, key, { timeout: 15000 });
+}
+
 // Switch region and wait for the state, not for a guessed number of milliseconds: the
 // skeleton has to be gone and the chip for this region has to be the selected one.
 async function go(page, id) {
@@ -118,7 +137,7 @@ if (want('mode')) {
   await page.keyboard.press('p');
   await page.waitForTimeout(400);
   const afterKey = await page.evaluate(() => document.documentElement.dataset.mode);
-  await page.click('#q');
+  await openSearch(page);
   await page.type('#q', 'p');
   await page.waitForTimeout(300);
   const afterType = await page.evaluate(() => ({
@@ -736,6 +755,7 @@ if (want('map')) {
   pass('map: hidden until you share your location',
     await page.evaluate(() => document.getElementById('map').hidden) === true);
   await page.click('#btn-geo');
+  await openPanel(page, 'map');
   await page.waitForSelector('.mp-me', { timeout: 20000 });
 
   // The horizon is the one number here that is physics rather than presentation, so it is
@@ -928,6 +948,7 @@ if (want('map')) {
   await p2.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
   await p2.waitForSelector('.row');
   await p2.click('#btn-geo');
+  await openPanel(p2, 'map');
   await p2.waitForSelector('.mp-me', { timeout: 20000 });
   const tiny = await p2.evaluate(() => ({
     over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -1141,6 +1162,7 @@ if (want('sky')) {
       await page.evaluate(() => document.getElementById('sky').hidden) === true);
 
     await page.click('#btn-geo');
+    await openPanel(page, 'sky');
     await page.waitForSelector('.sky-r', { timeout: 40000 });
 
     const m = await page.evaluate(() => {
@@ -1204,6 +1226,7 @@ if (want('sky')) {
     await page.goto(URL + '?pro=1#/us/bay-area', { waitUntil: 'networkidle' });
     await page.waitForSelector('.row');
     await page.click('#btn-geo');
+    await openPanel(page, 'sky');
     await page.waitForSelector('.sky-r', { timeout: 40000 });
     const over = await page.evaluate(() => {
       document.querySelector('#sky').scrollIntoView({ block: 'center' });
@@ -1632,6 +1655,19 @@ if (want('nav')) {
   const copied = await page.evaluate(() => navigator.clipboard.readText().catch(() => 'n/a'));
   pass('tap to copy', /MHz|kHz/.test(copied), copied);
 
+  // Opening search hides the chip strip and swaps in the field, in a row that must not
+  // change height: the list below it is what you are reading while you type.
+  const shut = await page.evaluate(() => document.querySelector('.hd-row').getBoundingClientRect().height);
+  await openSearch(page);
+  const open = await page.evaluate(() => ({
+    h: document.querySelector('.hd-row').getBoundingClientRect().height,
+    chips: document.getElementById('regions').hidden,
+    focus: document.activeElement.id
+  }));
+  pass('search opens in the chip row without moving it',
+    Math.abs(open.h - shut) < 1.5 && open.chips && open.focus === 'q',
+    `${shut}px -> ${open.h}px, chips hidden ${open.chips}, focus ${open.focus}`);
+
   await page.fill('#q', 'zzzz');
   await page.waitForTimeout(250);
   const none = await page.evaluate(() => ({
@@ -1640,8 +1676,21 @@ if (want('nav')) {
     ruler: document.getElementById('ruler').hidden
   }));
   pass('search empty state', none.rows === 0 && none.empty && none.ruler, JSON.stringify(none));
-  await page.fill('#q', '');
-  await page.waitForTimeout(200);
+
+  // Closing has to put the chips back and drop the query with them, or the list stays
+  // filtered by a word that is no longer anywhere on screen.
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(250);
+  const back = await page.evaluate(() => ({
+    hidden: document.getElementById('hd-search').hidden,
+    chips: !document.getElementById('regions').hidden,
+    q: document.getElementById('q').value,
+    rows: document.querySelectorAll('.row').length,
+    h: document.querySelector('.hd-row').getBoundingClientRect().height
+  }));
+  pass('closing search restores the chips and the full list',
+    back.hidden && back.chips && back.q === '' && back.rows > 0 && Math.abs(back.h - shut) < 1.5,
+    JSON.stringify(back));
 
   await page.click('#btn-lang');
   await page.waitForTimeout(500);

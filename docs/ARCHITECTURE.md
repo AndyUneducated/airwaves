@@ -258,6 +258,26 @@ flowchart TB
   G --> H["Overhead panel"]
 ```
 
+### Where the live panels sit
+
+Right now, Overhead and Line of sight all answer the same question - what can I receive from
+this spot, at this moment - so they are one section rather than three. The three readings are
+cards in a grid; Overhead and Line of sight are two further cards in the same grid, each
+carrying its own one-line answer and opening a full panel below the grid when tapped.
+
+They used to be separate top-level sections under it, which cost twice. Both added a page
+gutter on top of the one `#content` already applies, so they stood 15px narrower than every
+other block; and neither had any margin against the panel above, so Overhead began on the
+exact pixel Right now ended and read as though it had been pushed underneath it. Folding them
+in removes both faults by construction: the section owns the gutter once, and the cards are
+laid out by the same grid as their neighbours.
+
+Closed by default matters for more than tidiness. Between them the two panels are roughly
+780px tall, which is a screen and a half of a phone ahead of the frequency list, in answer to
+a question the visit may not be asking. The two elements stay in the document when the panel
+is hidden rather than being created on demand, so nothing else has to cope with them existing
+only in pro mode.
+
 ### What is automated and what is not
 
 The split is not arbitrary. Orbital elements are a fit to a short arc of tracking data: good
