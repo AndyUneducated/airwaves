@@ -38,7 +38,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="tooling" src="https://img.shields.io/badge/scripts-Node%2018%2B%20ESM-339933?logo=nodedotjs&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/tests-Playwright-2ead33?logo=playwright&logoColor=white">
-  <img alt="checks" src="https://img.shields.io/badge/checks-207%20assertions-2ead33">
+  <img alt="checks" src="https://img.shields.io/badge/checks-217%20assertions-2ead33">
 </p>
 
 The point is narrow: you arrive somewhere, you open the site, you find frequencies you can actually receive, and you program them. It works with no signal.

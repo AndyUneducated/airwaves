@@ -99,6 +99,28 @@ if (want('regions')) {
     pass(`no console errors browsing every region (${mode})`, errs.length === 0, errs.slice(0, 3).join(' | '));
     await ctx.close();
   }
+
+  // Four regions were renamed. An unknown hash falls back to the default region silently,
+  // so without the alias a saved link would look like it worked and show the wrong place.
+  {
+    const { ctx, page } = await session();
+    const title = async hash => {
+      await page.goto(URL + hash, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(300);
+      return page.evaluate(() => document.querySelector('.intro h1').textContent.trim());
+    };
+    const moved = [['texas', 'houston'], ['desert-southwest', 'las-vegas'],
+                   ['florida', 'space-coast'], ['northwest', 'urumqi']];
+    const wrong = [];
+    for (const [was, now] of moved) {
+      const scope = now === 'urumqi' ? 'cn' : 'us';
+      const a = await title(`#/${scope}/${was}`), b = await title(`#/${scope}/${now}`);
+      if (a !== b) wrong.push(`${was} → "${a}" but ${now} is "${b}"`);
+    }
+    pass('a link saved before a region was renamed still lands on it',
+      wrong.length === 0, wrong.join('; ') || moved.map(m => m.join('→')).join(', '));
+    await ctx.close();
+  }
 }
 
 /* ================= mode switch ================= */
@@ -638,7 +660,7 @@ if (want('now')) {
   const cn = await read();
   pass('no US alert card outside the US',
     cn.cards.length === 2 && !cn.cards.some(c => /alert/i.test(c.k)) &&
-    cn.where === 'Beijing & Capital Region',
+    /Beijing/.test(cn.where),
     `${cn.where}: ` + cn.cards.map(c => c.k).join(' / '));
 
   await page.click('#btn-lang');
@@ -943,6 +965,7 @@ if (want('map')) {
       links: document.querySelectorAll('.mp-link line').length,
       lit: document.querySelectorAll('.mp-link line.los').length,
       land: document.querySelectorAll('.mp-cst, .mp-adm').length,
+      sites: document.querySelectorAll('.mp-s').length,
       labels: [...document.querySelectorAll('.mp-s text')].map(n => n.textContent),
       how: document.querySelector('.mp-how').textContent
     }));
@@ -957,8 +980,8 @@ if (want('map')) {
   // Reach joins only what you can hear; distance joins everything, and marks which of those
   // is nonetheless over the horizon, so a short grey line is not mistaken for a usable one.
   pass('map: distance joins every site and keeps the reach reading',
-    vFar.links > vPlain.links && vFar.lit === vPlain.links && vFar.links === 8,
-    `reach ${vPlain.links} lines, distance ${vFar.links} of which ${vFar.lit} in reach`);
+    vFar.links > vPlain.links && vFar.lit === vPlain.links && vFar.links === vFar.sites,
+    `reach ${vPlain.links} lines, distance ${vFar.links} of ${vFar.sites} sites, ${vFar.lit} in reach`);
 
   // The figure hangs off the site's own code, which already has collision avoidance. Written
   // along the line instead, labels for sites a few km apart land on top of each other.

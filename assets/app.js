@@ -384,10 +384,21 @@
     await select((hashed || firstIn(SCOPE)).id, false);
   }
 
+  // Four regions were renamed when their names stopped matching the ground they cover.
+  // A link someone saved is the one thing a static site owes them, and without this an old
+  // one lands silently on the default region, which is worse than an error.
+  const MOVED = {
+    texas: 'houston',
+    'desert-southwest': 'las-vegas',
+    florida: 'space-coast',
+    northwest: 'urumqi'
+  };
+
   // Regions live under a country: #/us/bay-area. A bare #/bay-area still resolves.
   function fromHash() {
     const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-    const id = parts.length > 1 ? parts[1] : parts[0];
+    const raw = parts.length > 1 ? parts[1] : parts[0];
+    const id = MOVED[raw] || raw;
     return id ? META.regions.find(r => r.id === id) : null;
   }
 

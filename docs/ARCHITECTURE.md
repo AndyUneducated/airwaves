@@ -470,9 +470,10 @@ flowchart LR
 
 Clipping is what makes this possible at all. A world file is megabytes; a region's frame is a
 few degrees across, and at 1:10m simplified to the resolution it is drawn at, each region is
-about ten kilobytes. The whole set is 288 kB, and a visit fetches one file of it.
+about ten kilobytes. The whole set is 551 kB across fifty regions, and a visit fetches one
+file of it.
 
-They are **not** precached by the service worker. Precaching the set would put 288 kB of
+They are **not** precached by the service worker. Precaching the set would put half a megabyte of
 scenery into every install for a layer most visits never open. Instead the file is fetched
 the first time the view is chosen and kept by the worker from then on; offline with nothing
 cached, the map says so and draws what it always drew. That path asks the Cache API directly
@@ -643,7 +644,7 @@ and measure it somewhere other than where it already passes.
 - **No framework.** The whole interface is a list, a rail and a header. A framework would
   be more code than the application.
 - **No bundler.** Two script tags, plus a dozen inline lines that must beat the first paint.
-  The payload is 160 KB of code.
+  The payload is 181 KB of code.
 - **No map tiles.** A third-party tile server is a network dependency and a privacy leak on a
   site whose selling point is neither.
 - **No analytics.** Nothing is sent anywhere except the three live readings, one of which
