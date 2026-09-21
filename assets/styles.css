@@ -244,19 +244,10 @@ body::before {
   min-height: 52px;
 }
 
-.chip-find {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  position: relative;
-}
+/* Sizing lives with the other square icon buttons, below .chip-sm. */
+.chip-find { flex: 0 0 auto; position: relative; }
 .chip-find svg {
-  width: 16px; height: 16px;
+  width: 18px; height: 18px;
   fill: none; stroke: currentColor;
   stroke-width: 1.9; stroke-linecap: round;
 }
@@ -658,18 +649,9 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
 
 /* Square, and the same height as the worded chips beside it. Left to its own padding it
    stood 5px taller than Pro and the language toggle, which is visible in a row of three. */
-.chip-ico {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  width: var(--chip-h);
-  height: var(--chip-h);
-  padding: 0;
-  line-height: 0;
-}
+/* Sizing lives with the other square icon buttons, below .chip-sm. */
 .chip-ico svg {
-  width: 17px; height: 17px;
+  width: 18px; height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.6;
@@ -876,6 +858,20 @@ html[data-skin="glare"] .mp-grid line { stroke-width: .8; }
   letter-spacing: .04em;
 }
 
+/* Square icon buttons, holding one glyph and no text. These must come after .chip and
+   .chip-sm: all three are single-class selectors, so source order settles it, and the side
+   padding meant for a worded chip leaves a 28px button 6px of room for a 18px icon. */
+.chip-ico, .chip-find {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  line-height: 0;
+}
+.chip-ico { width: var(--chip-h); height: var(--chip-h); }
+.chip-find { width: 34px; height: 34px; }
+
 /* The one switch that changes what kind of tool this is, so it looks like a fader. */
 .chip-mode { display: inline-flex; align-items: center; gap: 5px; padding-left: 8px; }
 .chip-mode svg {
@@ -966,7 +962,18 @@ main {
   margin: 0 0 18px;
 }
 
-.acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+/* Under the list, separated by a rule so it reads as an appendix rather than another row.
+   Empty until a region is drawn, and an empty flex row would still take its margins. */
+.acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 26px 0 6px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.acts:empty { display: none; }
 
 .btn {
   display: inline-flex;
@@ -1007,13 +1014,28 @@ main {
 .nw-w { color: var(--tx-2); }
 .nw-w::before { content: ''; display: inline-block; width: 1px; height: 8px; margin-right: 7px; background: var(--line-2); vertical-align: -1px; }
 
-.nw-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr)); gap: 8px; }
+/* Two rows: the three readings, then the two cards that open a panel. Each row is its own
+   grid and divides the full width between whatever it holds, so neither ends in a gap.
+   Counting children in CSS is what :has() is for — the readings are three in the US and two
+   in China, and the second row loses the map where a region has no plotted sites. */
+.nw-g { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.nw-g + .nw-g { margin-top: 8px; }
+
+@media (min-width: 620px) {
+  .nw-g { grid-template-columns: repeat(3, 1fr); }
+  .nw-g:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, 1fr); }
+  .nw-g:has(> :first-child:last-child) { grid-template-columns: 1fr; }
+}
 
 /* The right-now panel ships as a placeholder in the markup so it occupies its space at
    first paint. Only pro mode has it, and China has one fewer reading, so both are read
    from the attributes the inline script sets before anything is drawn. */
 html:not([data-mode="pro"]) #now { display: none; }
 html[data-scope="cn"] #now > .nw-g > .sk-nw:nth-child(3) { display: none; }
+/* The hidden third skeleton is still a child, so the count rule above cannot see it. */
+@media (min-width: 620px) {
+  html[data-scope="cn"] #now > .nw-g:has(.sk-nw) { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* Nationwide sets and the link pages have no centre and so get no panel at all. Reserving
    370px for one that never arrives dropped the list half a screen once the data landed, so
@@ -1028,21 +1050,21 @@ html[data-sk-now="n"] #now:has(.sk-x) { display: none; }
    half as far as they used to. The rule lapses the moment the bars are replaced.
    Where app.js remembers the exact height it last drew at this width, --sk-intro carries it
    and every median below is bypassed. */
-#intro:has(.sk-x) { min-height: var(--sk-intro, 284px); }
-@media (max-width: 600px) { #intro:has(.sk-x) { min-height: var(--sk-intro, 316px); } }
-@media (max-width: 400px) { #intro:has(.sk-x) { min-height: var(--sk-intro, 360px); } }
+#intro:has(.sk-x) { min-height: var(--sk-intro, 251px); }
+@media (max-width: 600px) { #intro:has(.sk-x) { min-height: var(--sk-intro, 283px); } }
+@media (max-width: 400px) { #intro:has(.sk-x) { min-height: var(--sk-intro, 327px); } }
 
 /* A landing page with nothing remembered opens on a nationwide set, and those two intros
    are nothing like the median region: 225px in the US against 493px in China on a phone.
    Country is known at first paint, so they are reserved separately. */
-html[data-land] #intro:has(.sk-x) { min-height: var(--sk-intro, 225px); }
-html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 381px); }
+html[data-land] #intro:has(.sk-x) { min-height: var(--sk-intro, 192px); }
+html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 348px); }
 @media (max-width: 400px) {
-  html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 493px); }
+  html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 460px); }
 }
 @media (min-width: 601px) {
-  html[data-land] #intro:has(.sk-x) { min-height: var(--sk-intro, 214px); }
-  html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 351px); }
+  html[data-land] #intro:has(.sk-x) { min-height: var(--sk-intro, 181px); }
+  html[data-land][data-scope="cn"] #intro:has(.sk-x) { min-height: var(--sk-intro, 318px); }
 }
 
 /* A fixed height, not a minimum. The detail line wraps to two lines on a narrow phone and
@@ -1216,7 +1238,6 @@ html[data-mode="pro"] .ru-h.ru-live {
   pointer-events: none;
 }
 .ru-k.k-dig { background: var(--dead); height: 10px; opacity: .55; box-shadow: none; }
-.ru-k.k-avd { background: var(--warn); height: 13px; box-shadow: 0 0 6px rgba(var(--wn-g), .3); }
 
 /* ---------- pro: the rail becomes a tuning knob ---------- */
 
@@ -1313,7 +1334,6 @@ html[data-mode="pro"] .ru-rail:not(.lock) .ru-out { background: var(--tx-3); col
 .sk-h1 { width: min(62%, 330px); height: 31px; margin: 0 0 13px; border-radius: 7px; }
 .sk-b { width: min(94%, 640px); margin: 0 0 8px; }
 .sk-b2 { width: min(70%, 480px); margin: 0 0 22px; }
-.sk-btn { width: 164px; height: 33px; border-radius: 8px; margin-bottom: 4px; }
 .sk-ru-c { width: 86px; height: 10px; margin-bottom: 7px; }
 .sk-ru-r { height: 34px; border-radius: 8px; margin-bottom: 17px; }
 html[data-mode="pro"] .sk-ru-r { height: 46px; }
@@ -1475,10 +1495,7 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
 .tag-t { color: rgb(var(--t-t)); border-color: rgba(var(--t-t), .22); }
 .tag-o { color: rgb(var(--t-o)); border-color: rgba(var(--t-o), .22); }
 .tag-std { color: var(--ac); border-color: rgba(var(--ac-g), .25); }
-.tag-high { color: var(--tx-2); }
-.tag-check { color: var(--warn); border-color: rgba(var(--wn-g), .28); }
 .tag-dig { color: var(--warn); border-color: rgba(var(--wn-g), .28); background: var(--warn-dim); }
-.tag-avd { color: var(--warn); border-color: rgba(var(--wn-g), .35); background: var(--warn-dim); font-weight: 600; }
 
 /* The detail panel, opened by tapping a row in pro mode. It sits in the list rather than in
    a sheet or a new screen: you are usually comparing two or three entries, and a modal that
@@ -1559,12 +1576,6 @@ html[data-mode="pro"] .sk-ru-r { height: 46px; }
 .od-3 .od-w { color: var(--ac); }
 .od-2 .od-b i.on { background: var(--tx-2); }
 .od-1 .od-b i.on { background: var(--tx-3); }
-
-/* Avoid: a real frequency you should not work on. Dimmed, but not struck through like a
-   digital system, because you may still want it in the radio to monitor. */
-.row.avd { opacity: .72; }
-.row.avd .f { color: var(--warn); }
-.row.avd:hover { opacity: 1; }
 
 @media (max-width: 700px) {
   .row {

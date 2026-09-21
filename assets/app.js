@@ -46,7 +46,6 @@
       skyCount: n => n === 1 ? '1 pass in the next 12 h' : `${n} passes in the next 12 h`,
       skyOff: 'Orbits unavailable',
       skyNone: 'No workable pass in the next 12 hours',
-      skyNoPos: 'Share your location to see passes',
       skyWait: 'Working out passes…',
       skyNow: 'Overhead now',
       skyUp: d => `in ${d}`,
@@ -107,12 +106,10 @@
       proLabel: 'Pro mode',
       proOn: 'Pro mode — the technical detail behind every entry',
       proOff: 'Simple mode',
-      rptIn: 'in',
       spectrum: 'Spectrum',
       rulerHint: 'Tap the spectrum to jump to the nearest entry',
       wheelHint: 'Drag to tune · release to jump',
       sound: 'Tuning sound',
-      copyHint: 'Tap any row to copy its frequency',
       proHint: 'Tap any row for detail · copy is inside',
       dOdds: 'Odds',
       dMode: 'Set the radio to',
@@ -138,7 +135,6 @@
       dSw: 'shortwave',
       dBcast: 'broadcast FM',
       verify: 'Verify locally',
-      avoid: 'Avoid',
       'ft.radio': 'Your radio',
       'ft.trust': 'How much to trust this',
       'ft.offline': 'Cached for offline use'
@@ -186,7 +182,6 @@
       skyCount: n => `未来 12 小时内有 ${n} 次过顶`,
       skyOff: '暂无轨道数据',
       skyNone: '未来 12 小时内没有值得一试的过顶',
-      skyNoPos: '共享位置后即可查看过顶时刻',
       skyWait: '正在推算过顶…',
       skyNow: '正在头顶',
       skyUp: d => `${d}后`,
@@ -247,12 +242,10 @@
       proLabel: '专业模式',
       proOn: '专业模式 —— 每条频率背后的技术细节',
       proOff: '简洁模式',
-      rptIn: '上行',
       spectrum: '频谱',
       rulerHint: '点击频谱可跳到最接近的条目',
       wheelHint: '拖动调谐 · 松手跳转',
       sound: '调谐声',
-      copyHint: '点击任意一行即可复制频率',
       proHint: '点击任意一行查看详情 · 复制按钮在里面',
       dOdds: '收到概率',
       dMode: '电台设置为',
@@ -278,7 +271,6 @@
       dSw: '短波',
       dBcast: '调频广播',
       verify: '请在当地核实',
-      avoid: '避免',
       'ft.radio': '你的电台',
       'ft.trust': '可信度说明',
       'ft.offline': '已缓存，可离线使用'
@@ -807,7 +799,11 @@
     const intro = LANG === 'zh' ? (data.introz || data.intro) : data.intro;
     if (intro) box.append(el('p', 'body', intro));
 
-    const acts = el('div', 'acts');
+    // Below the list, not here. Exporting and checking a source are both things you do after
+    // reading the frequencies, and a button between the intro and the list read as the point
+    // of the page.
+    const acts = $('#acts');
+    acts.textContent = '';
 
     const csv = el('button', 'btn btn-a');
     csv.type = 'button';
@@ -826,7 +822,6 @@
       a.rel = 'noopener';
       acts.append(a);
     });
-    box.append(acts);
   }
 
   /* ---------- right now ---------- */
@@ -969,15 +964,19 @@
       soon(() => fillWx(wx, lat, lon));
     }
 
-    // Passes and the horizon map are the two readings that need a real observer rather than
-    // a region centre, so they only join the grid once you have shared a position.
-    if (own) {
-      grid.append(skyCard());
-      const m = mapCard();
-      if (m) grid.append(m);
-    }
-
     box.append(grid);
+
+    // Passes and the horizon map need a real observer rather than a region centre, so they
+    // only appear once you have shared a position. They get a row of their own rather than
+    // trailing the readings: they are the two cards that open something, and sharing a row
+    // with the readings left them a fifth of the width, too narrow for their own labels.
+    if (own) {
+      const panels = el('div', 'nw-g');
+      panels.append(skyCard());
+      const m = mapCard();
+      if (m) panels.append(m);
+      box.append(panels);
+    }
     keep();
     renderSky();
     renderMap();
@@ -1844,7 +1843,7 @@
 
     const ticks = new Map();
     pts.forEach(s => {
-      const k = el('span', 'ru-k' + (s.dig ? ' k-dig' : s.avoid ? ' k-avd' : ''));
+      const k = el('span', 'ru-k' + (s.dig ? ' k-dig' : ''));
       k.style.left = pct(pos(s.f));
       ticks.set(s.k, k);
       rail.append(k);
@@ -2256,7 +2255,7 @@
   }
 
   function row(s) {
-    const b = el('button', 'row' + (s.dig ? ' dig' : '') + (s.avoid ? ' avd' : ''));
+    const b = el('button', 'row' + (s.dig ? ' dig' : ''));
     b.type = 'button';
     b.dataset.k = s.k;
 
@@ -2282,7 +2281,6 @@
     b.append(nm);
 
     const m = el('div', 'meta');
-    if (s.avoid) m.append(el('span', 'tag tag-avd', t('avoid')));
     if (s.m) m.append(el('span', 'tag ' + (s.dig ? 'tag-dig' : 'tag-m'), s.m));
     if (s.o) m.append(el('span', 'tag tag-o', s.o));
     if (s.t) m.append(el('span', 'tag tag-t',
@@ -2378,7 +2376,7 @@
       'URCALL', 'RPT1CALL', 'RPT2CALL', 'DVCODE'];
 
     const rows = REGION.data.stations
-      .filter(s => s.f > 0 && !s.dig && !s.avoid && s.f >= 0.5 && s.f <= 999)
+      .filter(s => s.f > 0 && !s.dig && s.f >= 0.5 && s.f <= 999)
       .map((s, i) => {
         const dup = s.o ? (/^[-−]/.test(s.o) ? '-' : '+') : '';
         const off = s.o ? Math.abs(parseFloat(s.o.replace(/[−–]/g, '-'))).toFixed(6) : '0.000000';

@@ -295,9 +295,15 @@ flowchart TB
 ### Where the live panels sit
 
 Right now, Overhead and Line of sight all answer the same question - what can I receive from
-this spot, at this moment - so they are one section rather than three. The three readings are
-cards in a grid; Overhead and Line of sight are two further cards in the same grid, each
-carrying its own one-line answer and opening a full panel below the grid when tapped.
+this spot, at this moment - so they are one section rather than three. The section is two
+rows of cards: the readings on the first, Overhead and Line of sight on the second, each of
+those carrying its own one-line answer and opening a full panel below when tapped.
+
+Each row is its own grid and divides the full width between whatever it holds, because the
+count varies — China has no weather alert reading, and a region with no plotted sites has no
+map. One row of five left the two panel cards a fifth of the width each, too narrow for their
+own labels; splitting the rows gives them half each and costs nothing on a phone, where
+everything stacks anyway.
 
 They used to be separate top-level sections under it, which cost twice. Both added a page
 gutter on top of the one `#content` already applies, so they stood 15px narrower than every
@@ -644,7 +650,7 @@ and measure it somewhere other than where it already passes.
 - **No framework.** The whole interface is a list, a rail and a header. A framework would
   be more code than the application.
 - **No bundler.** Two script tags, plus a dozen inline lines that must beat the first paint.
-  The payload is 181 KB of code.
+  The payload is 182 KB of code.
 - **No map tiles.** A third-party tile server is a network dependency and a privacy leak on a
   site whose selling point is neither.
 - **No analytics.** Nothing is sent anywhere except the three live readings, one of which
