@@ -1,0 +1,38 @@
+{
+  "id": "wuhan",
+  "intro": "Wuhan is three cities around the junction of the Yangtze and the Han, and the rivers make it the busiest inland waterway in China. Ocean-going vessels reach here from the sea, more than six hundred miles upstream, so the marine band carries genuine deep-water shipping a very long way inland. It is also the rail crossroads of the country — the north-south and east-west trunk routes cross here — and the flat lake country around it gives VHF an easy time in every direction.",
+  "introz": "武汉是环绕长江与汉江交汇处的三座城，而河流让它成为中国最繁忙的内河航道。远洋船只能从入海口上溯一千公里到达这里，所以海事频段在深居内陆的地方仍承载着真正的远洋航运。它同时也是全国的铁路十字路口——南北与东西干线在此交汇；周围平坦的湖沼地形让 VHF 在各个方向都畅通无阻。",
+  "stations": [
+    { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 118.000, "n": "Tower band — scan 118.000–121.400", "z": "塔台频段 · 扫 118.000–121.400", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "d": "Tianhe is central China’s main hub and works a heavy domestic schedule.", "dz": "天河是华中的主要枢纽，国内航班班次密集。", "odds": 1 },
+    { "f": 125.000, "n": "Approach band — scan 119.000–128.000", "z": "进场管制频段 · 扫 119.000–128.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 132.000, "n": "Area control band — scan 128.000–136.000", "z": "区域管制频段 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 126.600, "n": "WUH ATIS", "z": "WUH 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Wuhan Tianhe International Airport (ZHHH)", "ref": "ZHHH", "src": "oa", "odds": 3 },
+    { "f": 122.700, "n": "WUH Tower", "z": "WUH 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Wuhan Tianhe International Airport (ZHHH)", "ref": "ZHHH", "src": "oa", "odds": 2 },
+    { "f": 121.650, "n": "WUH Ground", "z": "WUH 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Wuhan Tianhe International Airport (ZHHH)", "ref": "ZHHH", "src": "oa", "odds": 2 },
+
+    { "f": 0.000, "n": "No continuous weather radio in China", "z": "中国没有连续气象广播", "c": "wx", "m": "—", "dig":true, "conf": "high", "a": "Weather" },
+
+    { "f": 145.500, "n": "2 m FM Calling (IARU Region 3)", "z": "2 米 FM 呼叫频率（IARU 三区）", "c": "ham", "m": "FM", "conf": "high", "a": "Amateur — 144–146 MHz", "d": "Flat lake country. From the Yellow Crane Tower or any river bridge, simplex covers all three cities.", "dz": "平坦的湖区地形。在黄鹤楼或任何一座江桥上，直通都能覆盖三镇。", "odds": 1 },
+    { "f": 439.500, "n": "Repeater outputs — scan 439.000–440.000", "z": "中继台下行 · 扫 439.000–440.000", "c": "ham", "m": "FM", "conf": "check", "o": "−5.000", "a": "Amateur — 430–440 MHz", "odds": 1 },
+    { "f": 144.800, "n": "APRS — Regions 1 & 3", "z": "APRS 数据 · 一区与三区", "c": "ham", "m": "FM", "conf": "std", "a": "Amateur — 144–146 MHz", "odds": 1 },
+
+    { "f": 156.800, "n": "Marine Ch 16 — Distress & Calling", "z": "海事 16 频道 · 遇险与呼叫", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine VHF", "d": "Ocean-going ships reach Wuhan, a thousand kilometres from the sea. Along with the river tows and the ferries, this channel is busy all day.", "dz": "远洋船能上溯一千公里到武汉。加上江上的顶推船队和轮渡，这个频道整天都忙。", "odds": 2 },
+    { "f": 156.650, "n": "Marine Ch 13 — Bridge-to-Bridge", "z": "海事 13 频道 · 船桥互通", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine VHF", "d": "The Yangtze through the city is narrow, bridged many times over, and the passing arrangements are worked constantly.", "dz": "穿城的长江河段狭窄，桥梁众多，会船安排不断在谈。", "odds": 2 },
+
+    { "f": 450.025, "n": "无线列调 — conventional railway dispatch", "z": "无线列调 · 普速铁路调度", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway", "d": "The Beijing–Guangzhou and the east-west trunk lines cross here, and the conventional yards around Jiangan work around the clock.", "dz": "京广线与东西干线在此交汇，江岸一带的普速编组场昼夜运转。", "odds": 1 },
+    { "f": 0.000, "n": "High-speed rail — GSM-R digital", "z": "高铁 · GSM-R 数字系统", "c": "rail", "m": "GSM-R", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 87.500, "n": "交通广播 — scan 87.0–108.0 MHz", "z": "交通广播 · 扫 87.0–108.0 MHz", "c": "broadcast", "m": "WFM", "conf": "std", "a": "Broadcast", "odds": 1 },
+    { "f": 0.531, "n": "Medium wave — scan 531–1602 kHz", "z": "中波 · 扫 531–1602 kHz", "c": "broadcast", "m": "AM", "conf": "std", "a": "Broadcast", "odds": 1 },
+
+    { "f": 409.750, "n": "公众对讲机 Ch 1", "z": "公众对讲机 1 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "d": "Hankou’s wholesale markets are one of the densest concentrations of 409 MHz traffic in China.", "dz": "汉口的批发市场是全国 409 MHz 通话最密集的地方之一。", "odds": 1 },
+    { "f": 409.800, "n": "公众对讲机 Ch 5", "z": "公众对讲机 5 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "odds": 1 },
+    { "f": 409.988, "n": "公众对讲机 Ch 20", "z": "公众对讲机 20 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "odds": 1 },
+    { "f": 0.000, "n": "公安 350 MHz — encrypted PDT digital", "z": "公安 350 MHz · PDT 数字加密", "c": "safety", "m": "PDT", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 10.000, "n": "BPM — China’s shortwave time station", "z": "BPM 短波授时台", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "odds": 2 },
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "FM", "conf": "std", "a": "Satellites", "odds": 1 },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "odds": 1 }
+  ]
+}

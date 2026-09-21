@@ -32,7 +32,8 @@
     { "f": 122.850, "n": "TVL CTAF", "z": "TVL 无塔机场公共频率", "c": "air", "m": "AM", "conf": "high", "a": "Lake Tahoe Airport (KTVL)", "ref": "KTVL", "src": "oa", "odds": 1 },
 
     { "f": 162.450, "n": "NOAA — Sierra Nevada", "z": "NOAA 内华达山区", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Mountain forecasts, snow levels and winter-storm warnings. Coverage is patchy in the canyons — try from a pass or ridge.", "dz": "山区预报、雪线和冬季风暴警报。峡谷里覆盖不稳定——到山口或山脊上试。", "odds": 3 },
-    { "f": 162.550, "n": "NOAA — Lake Tahoe / Reno", "z": "NOAA 太浩湖 / 里诺", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
+    { "f": 162.475, "n": "WWF59 — Hawthorne, NV", "z": "WWF59 · Hawthorne", "c": "wx", "m": "NFM", "conf": "high", "kw":0.1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.525, "n": "WNG595 — Conway Summit, CA", "z": "WNG595 · Conway Summit", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "The most important memory channel in the backcountry. From a summit like Half Dome, Dana or Whitney a 5 W handheld covers a startling distance.", "dz": "荒野中最重要的一个信道。在半圆顶、Dana 峰或惠特尼峰这样的山顶，5 瓦手台的覆盖距离惊人。", "odds": 1 },
     { "f": 146.940, "n": "Tahoe-area repeater", "z": "太浩湖地区中继", "c": "ham", "m": "FM", "conf": "check", "o": "−0.600", "t": "100.0", "a": "Repeaters", "d": "The Tahoe basin has good repeater coverage from the surrounding peaks. Confirm on RepeaterBook for Placer, El Dorado and Washoe counties.", "dz": "太浩湖盆地周边山峰的中继覆盖不错。请在 RepeaterBook 查 Placer、El Dorado 和 Washoe 县确认。", "odds": 2 },

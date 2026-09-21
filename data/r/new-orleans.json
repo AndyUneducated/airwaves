@@ -1,0 +1,58 @@
+{
+  "id": "new-orleans",
+  "intro": "New Orleans is the most marine-heavy region on this site. The lower Mississippi from Baton Rouge to the passes is one of the densest concentrations of commercial shipping anywhere: ocean vessels, river tows, crew boats, and the pilot associations that hand them off to each other, all on VHF, all day. Offshore, the helicopter traffic serving the Gulf rigs is constant. And hurricane season makes the weather transmitters and the interoperability channels a genuine safety matter rather than a curiosity.",
+  "introz": "新奥尔良是本站海事内容最重的地区。从巴吞鲁日到河口的密西西比河下游，是全球商业航运最密集的水域之一：远洋船、河上顶推船、交通艇，以及在它们之间交接的引航员协会，全天都在 VHF 上通话。近海方向，服务墨西哥湾钻井平台的直升机往来不断。而飓风季节让气象发射台和互通频道成为真正的安全事项，而非猎奇。",
+  "stations": [
+    { "f": 121.500, "n": "Guard", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Emergency", "odds": 1 },
+    { "f": 122.800, "n": "Regional CTAF", "z": "无塔机场公共频率", "c": "air", "m": "AM", "conf": "std", "a": "General Aviation", "d": "Gulf helicopter operations run out of several fields south of the city and the traffic is continuous in daylight.", "dz": "墨西哥湾的直升机作业从城南几座机场起降，白天往来不断。", "odds": 1 },
+    { "f": 122.900, "n": "MULTICOM — air-to-air and survey work", "z": "MULTICOM · 空空与航测作业", "c": "air", "m": "AM", "conf": "std", "a": "General Aviation", "odds": 1 },
+    { "f": 311.000, "n": "Military UHF — scan 225–380 MHz", "z": "军航 UHF · 扫 225–380 MHz", "c": "air", "m": "AM", "conf": "std", "a": "Military", "odds": 1 },
+    { "f": 127.550, "n": "MSY ATIS", "z": "MSY 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Louis Armstrong New Orleans International Airport (KMSY)", "ref": "KMSY", "src": "oa", "odds": 3 },
+    { "f": 119.500, "n": "MSY Tower", "z": "MSY 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Louis Armstrong New Orleans International Airport (KMSY)", "ref": "KMSY", "src": "oa", "odds": 2 },
+    { "f": 121.900, "n": "MSY Ground", "z": "MSY 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Louis Armstrong New Orleans International Airport (KMSY)", "ref": "KMSY", "src": "oa", "odds": 2 },
+    { "f": 127.200, "n": "MSY Clearance Delivery", "z": "MSY 放行许可", "c": "air", "m": "AM", "conf": "high", "a": "Louis Armstrong New Orleans International Airport (KMSY)", "ref": "KMSY", "src": "oa", "odds": 2 },
+    { "f": 124.900, "n": "NEW ATIS", "z": "NEW 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Lakefront Airport (KNEW)", "ref": "KNEW", "src": "oa", "odds": 3 },
+    { "f": 118.950, "n": "NEW Tower", "z": "NEW 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Lakefront Airport (KNEW)", "ref": "KNEW", "src": "oa", "odds": 2 },
+    { "f": 121.700, "n": "NEW Ground", "z": "NEW 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Lakefront Airport (KNEW)", "ref": "KNEW", "src": "oa", "odds": 2 },
+    { "f": 123.800, "n": "NBG Tower", "z": "NBG 塔台", "c": "air", "m": "AM", "conf": "high", "a": "New Orleans NAS JRB/Alvin Callender Field (KNBG)", "ref": "KNBG", "src": "oa", "odds": 2 },
+    { "f": 121.600, "n": "NBG Ground", "z": "NBG 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "New Orleans NAS JRB/Alvin Callender Field (KNBG)", "ref": "KNBG", "src": "oa", "odds": 2 },
+    { "f": 123.850, "n": "NBG Approach / Departure", "z": "NBG 进离场管制", "c": "air", "m": "AM", "conf": "high", "a": "New Orleans NAS JRB/Alvin Callender Field (KNBG)", "ref": "KNBG", "src": "oa", "odds": 2 },
+    { "f": 119.450, "n": "GPT ATIS", "z": "GPT 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Gulfport Biloxi International Airport (KGPT)", "ref": "KGPT", "src": "oa", "odds": 3 },
+    { "f": 123.700, "n": "GPT Tower", "z": "GPT 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Gulfport Biloxi International Airport (KGPT)", "ref": "KGPT", "src": "oa", "odds": 2 },
+    { "f": 120.400, "n": "GPT Ground", "z": "GPT 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Gulfport Biloxi International Airport (KGPT)", "ref": "KGPT", "src": "oa", "odds": 2 },
+    { "f": 120.750, "n": "BIX Tower", "z": "BIX 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Keesler Air Force Base (KBIX)", "ref": "KBIX", "src": "oa", "odds": 2 },
+    { "f": 121.800, "n": "BIX Ground", "z": "BIX 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Keesler Air Force Base (KBIX)", "ref": "KBIX", "src": "oa", "odds": 2 },
+    { "f": 124.600, "n": "BIX Approach / Departure", "z": "BIX 进离场管制", "c": "air", "m": "AM", "conf": "high", "a": "Keesler Air Force Base (KBIX)", "ref": "KBIX", "src": "oa", "odds": 2 },
+    { "f": 125.200, "n": "BTR ATIS", "z": "BTR 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Baton Rouge Metropolitan Airport (KBTR)", "ref": "KBTR", "src": "oa", "odds": 3 },
+    { "f": 118.450, "n": "BTR Tower", "z": "BTR 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Baton Rouge Metropolitan Airport (KBTR)", "ref": "KBTR", "src": "oa", "odds": 2 },
+    { "f": 119.400, "n": "BTR Clearance Delivery", "z": "BTR 放行许可", "c": "air", "m": "AM", "conf": "high", "a": "Baton Rouge Metropolitan Airport (KBTR)", "ref": "KBTR", "src": "oa", "odds": 2 },
+    { "f": 162.400, "n": "KIH21 — Gulfport, MS", "z": "KIH21 · Gulfport", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.475, "n": "WXL41 — Buras, LA", "z": "WXL41 · Buras", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.525, "n": "WNG521 — Bogalusa, LA", "z": "WNG521 · Bogalusa", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.550, "n": "KHB43 — New Orleans, LA", "z": "KHB43 · New Orleans", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "Flat, wet and at sea level. Over-water paths across the lake work well; over-land paths through the city do not.", "dz": "地势平坦、潮湿、海拔近于零。跨湖的水面路径效果很好，穿城的陆地路径则不然。", "odds": 1 },
+    { "f": 146.700, "n": "2 m repeater outputs — scan 145.110–147.390", "z": "2 米中继下行 · 扫 145.110–147.390", "c": "ham", "m": "FM", "conf": "check", "a": "Repeaters", "odds": 1 },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "odds": 1 },
+    { "f": 144.390, "n": "APRS — North America", "z": "APRS 数据 · 北美", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "odds": 1 },
+
+    { "f": 168.625, "n": "National Interagency Air Guard", "z": "跨部门航空守护频率", "c": "parks", "m": "NFM", "conf": "std", "a": "Wildland Fire & Air", "odds": 1 },
+
+    { "f": 156.800, "n": "Marine Ch 16 — Distress & Calling", "z": "海事 16 频道 · 遇险与呼叫", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine VHF", "d": "The busiest working stretch of water in the United States. Pilots, tows, ships and the Coast Guard all here.", "dz": "全美最繁忙的作业水域。引航员、顶推船、远洋船和海岸警卫队都在这里。", "odds": 2 },
+    { "f": 156.650, "n": "Marine Ch 13 — Bridge-to-Bridge", "z": "海事 13 频道 · 船桥互通", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine VHF", "d": "Bridge-to-bridge on the river is essentially continuous conversation between vessels passing in a bend.", "dz": "河上的船桥互通基本上是弯道会船时不间断的对话。", "odds": 2 },
+    { "f": 157.100, "n": "Marine Ch 22A — US Coast Guard", "z": "海事 22A 频道 · 美国海岸警卫队", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine VHF", "d": "Coast Guard Sector New Orleans covers the river and the Gulf approaches, and broadcasts notices to mariners here.", "dz": "海岸警卫队新奥尔良分区负责河道和湾口进港水域，航行通告也在此播发。", "odds": 2 },
+    { "f": 156.450, "n": "Marine Ch 09 — Hailing", "z": "海事 09 频道 · 呼叫", "c": "marine", "m": "NFM", "conf": "std", "a": "Marine VHF", "odds": 2 },
+
+    { "f": 160.650, "n": "Road channels — scan 160.215–161.565", "z": "铁路调度 · 扫 160.215–161.565", "c": "rail", "m": "NFM", "conf": "std", "a": "Rail", "d": "Six Class I railroads meet in New Orleans and the Huey P. Long bridge is the crossing they share.", "dz": "六家一级铁路公司在新奥尔良交汇，休伊·朗大桥是它们共用的跨河通道。", "odds": 1 },
+
+    { "f": 155.752, "n": "VCALL10 — national interop calling", "z": "VCALL10 · 全国互通呼叫", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "d": "Hurricane season is why these channels exist. In an evacuation they carry the traffic that matters.", "dz": "这些频道存在的理由就是飓风季。在疏散时它们承载最要紧的通信。", "odds": 1 },
+    { "f": 151.137, "n": "VTAC11 — national interop tactical", "z": "VTAC11 · 全国互通战术", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "odds": 1 },
+    { "f": 462.563, "n": "FRS / GMRS Ch 1", "z": "FRS / GMRS 1 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "odds": 1 },
+    { "f": 464.500, "n": "Business band — scan 461–469 MHz", "z": "商用频段 · 扫 461–469 MHz", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "odds": 1 },
+    { "f": 0.000, "n": "Metro police and fire — P25 trunked", "z": "都会区警消 · P25 集群数字", "c": "safety", "m": "P25", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites", "odds": 1 },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "odds": 1 },
+    { "f": 8.992, "n": "HFGCS — Skyking", "z": "美军全球高频指挥网 · Skyking", "c": "misc", "m": "AM", "conf": "std", "a": "Shortwave", "d": "Gulf coast HF conditions are good and the military high-frequency network is easy to find here.", "dz": "墨西哥湾沿岸的短波条件不错，美军高频网络在这里很容易找到。", "odds": 1 }
+  ]
+}

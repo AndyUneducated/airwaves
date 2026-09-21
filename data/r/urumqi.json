@@ -1,6 +1,6 @@
 {
-  "id": "northwest",
-  "intro": "The northwest gives you the best radio propagation in China. Flat gravel desert, no vegetation, no electrical noise and enormous distances between towns mean VHF travels further here than anywhere except the plateau. It is also the most linguistically interesting part of the broadcast band, with Uyghur, Kazakh, Mongolian and Mandarin services all sharing the dial, and at night the medium wave band fills with signals from Central Asia and Russia.",
+  "id": "urumqi",
+  "intro": "Xinjiang gives you the best radio propagation in China. Flat gravel desert, no vegetation, no electrical noise and enormous distances between towns mean VHF travels further here than anywhere except the plateau, and the Tianshan rising straight out of the city puts a genuinely exceptional VHF site within an afternoon's drive. It is also the most linguistically interesting part of the broadcast band, with Uyghur, Kazakh, Mongolian and Mandarin services all sharing the dial, and at night medium wave fills with signals from Central Asia and Russia.",
   "introz": "西北拥有中国最好的无线电传播条件。平坦的砾石戈壁、没有植被、没有电气噪声，加上城镇之间的巨大距离，让 VHF 在这里传得比除高原以外任何地方都远。这里也是广播波段上语言最丰富的地区，维吾尔语、哈萨克语、蒙古语和普通话共用同一频段，入夜后中波里挤满来自中亚和俄罗斯的信号。",
   "stations": [
     { "f": 409.9750, "n": "公众对讲机 Ch 19 — convoy channel", "z": "公众对讲机 19 频道 · 车队频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Convoy communication", "d": "The Duku Highway, the Xinjiang–Tibet route and the Hexi Corridor all see organised self-drive groups running 409 MHz walkie-talkies. On open desert the 0.5 W limit performs far better than it does in a city — several kilometres is normal with line of sight.", "dz": "独库公路、新藏线和河西走廊都有成队的自驾团体使用 409 MHz 公众对讲机。在开阔戈壁上，0.5 瓦的表现远好于城市——视野通畅时几公里是常态。", "odds": 1 },

@@ -3,8 +3,8 @@
 Curated radio frequencies worth listening to, organised by region, built for an analog handheld — specifically the **Yaesu VX-6R**.
 
 <p>
-  <img alt="entries" src="https://img.shields.io/badge/entries-1%2C537-5ef2a8">
-  <img alt="regions" src="https://img.shields.io/badge/regions-31-5ef2a8">
+  <img alt="entries" src="https://img.shields.io/badge/entries-2%2C603-5ef2a8">
+  <img alt="regions" src="https://img.shields.io/badge/regions-54-5ef2a8">
   <img alt="categories" src="https://img.shields.io/badge/categories-10-5ef2a8">
   <img alt="languages" src="https://img.shields.io/badge/languages-English%20%2B%20Chinese-5ef2a8">
 </p>
@@ -15,7 +15,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
   <img alt="framework" src="https://img.shields.io/badge/framework-none-success">
   <img alt="javascript" src="https://img.shields.io/badge/JavaScript-ES2017-f7df1e?logo=javascript&logoColor=black">
   <img alt="css" src="https://img.shields.io/badge/CSS-hand%20written-1572b6?logo=css3&logoColor=white">
-  <img alt="payload" src="https://img.shields.io/badge/payload-160%20KB%20code%20%2B%20491%20KB%20data-blue">
+  <img alt="payload" src="https://img.shields.io/badge/payload-181%20KB%20code%20%2B%201.3%20MB%20data-blue">
 </p>
 
 <p>
@@ -29,6 +29,8 @@ Curated radio frequencies worth listening to, organised by region, built for an 
 <p>
   <img alt="data: FCC" src="https://img.shields.io/badge/data-FCC%20licensing-informational">
   <img alt="data: ourairports" src="https://img.shields.io/badge/data-ourairports-informational">
+  <img alt="data: NOAA Weather Radio" src="https://img.shields.io/badge/data-NOAA%20Weather%20Radio-informational">
+  <img alt="data: Natural Earth" src="https://img.shields.io/badge/data-Natural%20Earth-informational">
   <img alt="data: NOAA SWPC" src="https://img.shields.io/badge/live-NOAA%20SWPC-informational">
   <img alt="data: NWS" src="https://img.shields.io/badge/live-NWS%20alerts-informational">
 </p>
@@ -47,9 +49,11 @@ For how it is put together, see **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
 
 You pick a country once in the header; everything below it is a region of that country.
 
-**United States** — twenty regions: a nationwide set plus SF Bay Area, San Jose & South Bay, Central Coast, Sierra Nevada, Los Angeles & Orange County, San Diego, Desert Southwest, Utah Canyon Country, Colorado Rockies, Texas Triangle, Chicago & Great Lakes, Boston & New England, New York Metro, Washington DC, Florida & Space Coast, Yellowstone & Tetons, Pacific Northwest, Alaska and Hawai‘i.
+**A region is a place you can stand, not an area on a map.** This sounds like pedantry and is not. Everything local in a region — its airports, its broadcast stations, its weather transmitters — is gathered from public databases within about 120 km of a single point, because that is roughly as far as any of it is audible. So a region named after something larger than that radius is writing a cheque its data cannot cash: a "Texas Triangle" centred between four cities was 255 km from Dallas and 226 km from San Antonio, and listed the frequencies of neither. Region names and subtitles here claim only what is inside the circle.
 
-**China** — nine regions: a nationwide set covering the band plan and the 409 MHz walkie-talkie channels, plus Beijing & the capital region, Shanghai & the Yangtze Delta, Qingdao & the Shandong coast, Chengdu & Chongqing, the Greater Bay Area, the Western Plateau, the Northwest, and the Northeast. The divisions follow how radio actually behaves rather than provincial boundaries — the plateau and the northwest are grouped by terrain and road corridor because that is what determines what you can hear.
+**United States** — thirty-seven regions. Seattle, Portland, SF Bay Area, San Jose & South Bay, Sacramento, Central Coast, Yosemite & the High Sierra, Los Angeles & Orange County, San Diego, Las Vegas & the Mojave, Phoenix, Albuquerque, Salt Lake & the Wasatch, Utah Canyon Country, Denver & the Front Range, Yellowstone & Tetons, Minneapolis & Saint Paul, Chicago, Detroit, St Louis, Nashville, Dallas & Fort Worth, Houston, New Orleans, Atlanta, Charlotte, Pittsburgh, Washington DC, Philadelphia, New York Metro, Boston, the Space Coast, Miami, Alaska and Hawai‘i — plus a nationwide set and Private Link.
+
+**China** — fifteen regions: a nationwide set covering the band plan and the 409 MHz walkie-talkie channels, plus Beijing, Harbin, Shenyang, Qingdao, Xi‘an, Shanghai, Wuhan, Chengdu, Xiamen, the Greater Bay Area, Kunming, the Western Sichuan Plateau, Lhasa, Lanzhou and Ürümqi. China's regions carry fewer entries than America's, for reasons set out under [Data sources](#where-the-data-comes-from) — there is no open register of Chinese broadcast licences and no NOAA-equivalent weather service to import.
 
 **Private Link** — recommended clean, quiet channels for talking to your own group. It is the last entry in each country's region strip, set apart by a divider because it is a channel set rather than a place, and the answer is genuinely different in each country.
 
@@ -95,15 +99,18 @@ Chinese entries lean much harder on `check` than American ones, and deliberately
 
 | Provenance | Entries | Source | Licence |
 | --- | --- | --- | --- |
-| Written for this guide | 865 | Band plans, published allocations, and local knowledge. Everything with prose attached. | — |
-| `src: "oa"` | 377 | [ourairports.com](https://ourairports.com) airport frequency database | Public domain |
-| `src: "fcc"` | 295 | FCC Media Bureau FM and AM licensing queries | Public domain (US government) |
+| Written for this guide | 1,302 | Band plans, published allocations, and local knowledge. Everything with prose attached. | — |
+| `src: "oa"` | 691 | [ourairports.com](https://ourairports.com) airport frequency database | Public domain |
+| `src: "fcc"` | 499 | FCC Media Bureau FM and AM licensing queries | Public domain (US government) |
+| `src: "nwr"` | 111 | NOAA Weather Radio county coverage list — callsign, frequency, power and position of every transmitter on the air | Public domain (US government) |
 
 Imports exist because the hand-written entries cover the places worth writing prose about and miss the dozen other towered fields within an hour's drive — often the better listening, since a training field with six aircraft in the pattern is busier than an international airport and far easier to follow. That is a coverage gap, not an editorial choice, and public data already answers it. Inventing those frequencies would be unforgivable; importing them is free and checkable.
 
-What keeps it a curated guide rather than a directory dump: each region takes a small quota, the imports only keep the positions a listener actually wants, and nothing may shadow a hand-written entry. Both importers are idempotent — they strip their own previous output before regenerating — and they refuse to write a file that does not parse.
+What keeps it a curated guide rather than a directory dump: each region takes a small quota, the imports only keep the positions a listener actually wants, and nothing may shadow a hand-written entry. Every importer is idempotent — it strips its own previous output before regenerating — and refuses to write a file that does not parse.
 
-**China is thinner, and this is why.** There is no FCC equivalent: no open, machine-readable register of Chinese broadcast licences. Wikidata, the only structured candidate, holds frequency claims for four Chinese stations in total. Chinese regions therefore grew only where international data covers them — Beijing Capital, Daxing and Tianjin all publish their air traffic positions upstream — and sit at 261 entries against 1,276 for the United States. The alternative was to invent numbers, which would make the whole reference worthless.
+Weather is the exception to the one-region-owns-it rule the other importers follow. An airport belongs somewhere, and listing SFO under four Bay Area regions would be four copies of one entry; but a 1000 W weather transmitter on a ridge genuinely is the weather radio for everyone within 40 miles of it, and a region that omitted it because a neighbour was marginally closer would be hiding its single most useful frequency.
+
+**China is thinner, and this is why.** There is no FCC equivalent: no open, machine-readable register of Chinese broadcast licences. Wikidata, the only structured candidate, holds frequency claims for four Chinese stations in total. There is also no NOAA Weather Radio — no continuous 162 MHz service to import, because the service does not exist. Chinese regions therefore grew only where international data covers them, chiefly aviation, and sit at 420 entries against 2,183 for the United States. The alternative was to invent numbers, which would make the whole reference worthless.
 
 ## Two modes
 
@@ -191,10 +198,11 @@ The build and test scripts are ES modules and need **Node 18 or newer** for glob
 
 ### Adding a region
 
-1. Add an entry to `data/regions.json` with an `id`, a `scope` (the country, `us` or `cn`), bilingual names, and a `lat`/`lon` centroid for the "near me" search. Add `"kind": "link"` for a private-link page, which moves it past a divider at the end of the strip. A region with a null `lat` is skipped by "near me".
-2. Create `data/r/<id>.json` with an `intro`, `introz` and a `stations` array.
-3. Run `node scripts/make-odds.mjs` to score the new entries.
-4. Bump `V` in `sw.js` so clients pick up the change. The region file list is derived from `regions.json` at install time, so there is nothing to add by hand.
+1. Add an entry to `data/regions.json` with an `id`, a `scope` (the country, `us` or `cn`), bilingual names, and a `lat`/`lon` centroid. The centroid is not decoration — it decides what the importers collect and what "near me" matches, so put it where a listener would stand, not at the area's geometric middle. Add `"kind": "link"` for a private-link page, which moves it past a divider at the end of the strip. A region with a null `lat` is skipped by "near me".
+2. Name it after somewhere inside about 120 km of that centroid, and write the subtitle the same way. A region cannot have the frequencies of a place the importers do not reach.
+3. Create `data/r/<id>.json` with an `intro`, `introz` and a `stations` array. Hand-write only what you can stand behind; the local detail arrives in step 4.
+4. Run the importers — `import-air`, `import-bcast`, `import-wx` for a US region, `import-air` alone for a Chinese one — then `make-odds`, `make-places` and `import-geo`. All are idempotent and safe to run repeatedly.
+5. Bump `V` in `sw.js` so clients pick up the change. The region file list is derived from `regions.json` at install time, so there is nothing to add by hand.
 
 Station files are written by hand, one station per line, with frequencies keeping their trailing zeros as `122.900`. The scripts edit those lines in place rather than re-serialising the file, because `JSON.stringify` throws all of that away and turns a one-field change into a ten-thousand-line diff.
 
@@ -233,6 +241,8 @@ All of these are build-time steps, committed to the repo, because the site is st
 | `node scripts/make-places.mjs` | Rebuilds `data/places.json`, the coordinates and elevation of every airport referenced by `ref`. |
 | `node scripts/import-air.mjs` | Adds airport frequencies from ourairports. `--dry` to preview. |
 | `node scripts/import-bcast.mjs` | Adds US broadcast stations from the FCC. `--dry` to preview. |
+| `node scripts/import-wx.mjs` | Adds NOAA Weather Radio transmitters from the NWS county coverage list. `--dry` to preview. |
+| `node scripts/import-geo.mjs` | Rebuilds `data/geo/*.json`, the coast and border outlines the map's Land view draws. |
 | `node scripts/make-icons.mjs` | Regenerates the PNG icons from a hand-written rasteriser, so there is nothing to install. |
 
 ### Tests

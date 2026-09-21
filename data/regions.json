@@ -1,5 +1,5 @@
 {
-  "version": "2026.09.06",
+  "version": "2026.09.19",
   "radio": "Yaesu VX-6R",
   "scopes": [
     { "id": "us", "n": "United States", "z": "美国", "k": "US" },
@@ -38,6 +38,22 @@
       "links": []
     },
     {
+      "id": "pnw", "scope": "us",
+      "n": "Seattle & Puget Sound", "z": "西雅图与普吉特海湾",
+      "sub": "Sea-Tac · the Sound · Rainier · the ferries",
+      "subz": "西塔机场 · 普吉特海湾 · 雷尼尔 · 渡轮",
+      "lat": 47.61, "lon": -122.33,
+      "links": [{ "l": "RepeaterBook — Washington", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "portland", "scope": "us",
+      "n": "Portland & the Gorge", "z": "波特兰与哥伦比亚峡谷",
+      "sub": "PDX · the Columbia Gorge · Mount Hood · Vancouver",
+      "subz": "波特兰机场 · 哥伦比亚峡谷 · 胡德山 · 温哥华市",
+      "lat": 45.52, "lon": -122.68,
+      "links": [{ "l": "RepeaterBook — Oregon", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
       "id": "bay-area", "scope": "us",
       "n": "SF Bay Area", "z": "旧金山湾区",
       "sub": "San Francisco · Peninsula · East Bay",
@@ -57,18 +73,26 @@
       "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
+      "id": "sacramento", "scope": "us",
+      "n": "Sacramento & the Delta", "z": "萨克拉门托与三角洲",
+      "sub": "The capital · the Delta · Mather · the Causeway",
+      "subz": "加州首府 · 河口三角洲 · 马瑟机场 · 高架公路",
+      "lat": 38.58, "lon": -121.49,
+      "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
       "id": "central-coast", "scope": "us",
       "n": "Central Coast", "z": "中加州海岸",
-      "sub": "Monterey · Big Sur · SLO · Santa Barbara",
-      "subz": "蒙特雷 · 大苏尔 · 圣路易斯奥比斯波 · 圣芭芭拉",
+      "sub": "Monterey · Big Sur · Salinas · San Luis Obispo",
+      "subz": "蒙特雷 · 大苏尔 · 萨利纳斯 · 圣路易斯奥比斯波",
       "lat": 36.24, "lon": -121.55,
       "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
       "id": "sierra", "scope": "us",
-      "n": "Sierra Nevada", "z": "内华达山脉",
-      "sub": "Yosemite · Tahoe · Sequoia · Mammoth",
-      "subz": "优胜美地 · 太浩湖 · 红杉 · 猛犸",
+      "n": "Yosemite & the High Sierra", "z": "优胜美地与高地内华达",
+      "sub": "Yosemite · Mammoth · Tioga · the eastern escarpment",
+      "subz": "优胜美地 · 猛犸 · 蒂奥加山口 · 东坡断崖",
       "lat": 37.75, "lon": -119.59,
       "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
@@ -89,76 +113,52 @@
       "links": [{ "l": "RepeaterBook — California", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "desert-southwest", "scope": "us",
-      "n": "Desert Southwest", "z": "西南沙漠",
-      "sub": "Las Vegas · Death Valley · Joshua Tree · Grand Canyon · Zion",
-      "subz": "拉斯维加斯 · 死谷 · 约书亚树 · 大峡谷 · 锡安",
+      "id": "las-vegas", "scope": "us",
+      "n": "Las Vegas & the Mojave", "z": "拉斯维加斯与莫哈韦",
+      "sub": "The Strip · Red Rock · Lake Mead · Mount Charleston",
+      "subz": "赌城大道 · 红岩峡谷 · 米德湖 · 查尔斯顿山",
       "lat": 36.17, "lon": -115.14,
       "links": [{ "l": "RepeaterBook — Nevada", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
+      "id": "phoenix", "scope": "us",
+      "n": "Phoenix & the Sonoran Desert", "z": "凤凰城与索诺兰沙漠",
+      "sub": "Sky Harbor · Luke AFB · the Superstitions · Scottsdale",
+      "subz": "天港机场 · 卢克空军基地 · 迷信山 · 斯科茨代尔",
+      "lat": 33.45, "lon": -112.07,
+      "links": [{ "l": "RepeaterBook — Arizona", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "albuquerque", "scope": "us",
+      "n": "Albuquerque & the Rio Grande", "z": "阿尔伯克基与格兰德河",
+      "sub": "Sandia Crest · Kirtland · Santa Fe · the Jemez",
+      "subz": "桑迪亚峰 · 柯特兰基地 · 圣塔菲 · 赫梅斯山",
+      "lat": 35.08, "lon": -106.65,
+      "links": [{ "l": "RepeaterBook — New Mexico", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "salt-lake", "scope": "us",
+      "n": "Salt Lake & the Wasatch", "z": "盐湖城与瓦萨奇山",
+      "sub": "The canyons · Provo · Ogden · the Great Salt Lake",
+      "subz": "瓦萨奇峡谷 · 普罗沃 · 奥格登 · 大盐湖",
+      "lat": 40.76, "lon": -111.89,
+      "links": [{ "l": "RepeaterBook — Utah", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
       "id": "utah", "scope": "us",
       "n": "Utah Canyon Country", "z": "犹他峡谷地带",
-      "sub": "Moab · Arches · Canyonlands · Capitol Reef · Salt Lake",
-      "subz": "摩押 · 拱门 · 峡谷地 · 圆顶礁 · 盐湖城",
+      "sub": "Moab · Arches · Canyonlands · the La Sals",
+      "subz": "摩押 · 拱门 · 峡谷地 · 拉萨尔山",
       "lat": 38.57, "lon": -109.55,
       "links": [{ "l": "RepeaterBook — Utah", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
       "id": "colorado", "scope": "us",
-      "n": "Colorado Rockies", "z": "科罗拉多落基山",
-      "sub": "Denver · Rocky Mountain NP · Fort Collins · San Juans",
-      "subz": "丹佛 · 落基山国家公园 · 柯林斯堡 · 圣胡安山",
+      "n": "Denver & the Front Range", "z": "丹佛与前山",
+      "sub": "Denver · Boulder · Rocky Mountain NP · Fort Collins",
+      "subz": "丹佛 · 博尔德 · 落基山国家公园 · 柯林斯堡",
       "lat": 39.74, "lon": -104.99,
       "links": [{ "l": "RepeaterBook — Colorado", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
-    },
-    {
-      "id": "texas", "scope": "us",
-      "n": "Texas Triangle", "z": "德州三角",
-      "sub": "Houston · Dallas–Fort Worth · Austin · San Antonio",
-      "subz": "休斯顿 · 达拉斯 · 奥斯汀 · 圣安东尼奥",
-      "lat": 30.5, "lon": -96.5,
-      "links": [{ "l": "RepeaterBook — Texas", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
-    },
-    {
-      "id": "chicago", "scope": "us",
-      "n": "Chicago & Great Lakes", "z": "芝加哥与五大湖",
-      "sub": "O'Hare · Lake Michigan · the national rail hub",
-      "subz": "奥黑尔 · 密歇根湖 · 全美铁路枢纽",
-      "lat": 41.88, "lon": -87.63,
-      "links": [{ "l": "RepeaterBook — Illinois", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
-    },
-    {
-      "id": "new-england", "scope": "us",
-      "n": "Boston & New England", "z": "波士顿与新英格兰",
-      "sub": "Logan · Cape Cod · White Mountains · Acadia",
-      "subz": "洛根机场 · 科德角 · 白山 · 阿卡迪亚",
-      "lat": 42.36, "lon": -71.06,
-      "links": [{ "l": "RepeaterBook — Massachusetts", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
-    },
-    {
-      "id": "nyc", "scope": "us",
-      "n": "New York Metro", "z": "纽约都会区",
-      "sub": "Five boroughs · Long Island · North Jersey",
-      "subz": "五大区 · 长岛 · 北新泽西",
-      "lat": 40.71, "lon": -73.94,
-      "links": [{ "l": "RepeaterBook — New York", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
-    },
-    {
-      "id": "dc", "scope": "us",
-      "n": "Washington DC", "z": "华盛顿特区",
-      "sub": "District · Northern Virginia · Baltimore",
-      "subz": "特区 · 北弗吉尼亚 · 巴尔的摩",
-      "lat": 38.9, "lon": -77.04,
-      "links": [{ "l": "RepeaterBook — DC / MD / VA", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
-    },
-    {
-      "id": "florida", "scope": "us",
-      "n": "Florida & Space Coast", "z": "佛罗里达与太空海岸",
-      "sub": "Cape Canaveral · Miami · Orlando · the Keys",
-      "subz": "卡纳维拉尔角 · 迈阿密 · 奥兰多 · 群岛礁",
-      "lat": 28.2, "lon": -80.9,
-      "links": [{ "l": "RepeaterBook — Florida", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
       "id": "yellowstone", "scope": "us",
@@ -169,12 +169,140 @@
       "links": [{ "l": "RepeaterBook — Wyoming", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
-      "id": "pnw", "scope": "us",
-      "n": "Pacific Northwest", "z": "西北太平洋",
-      "sub": "Seattle · Puget Sound · Rainier · Portland",
-      "subz": "西雅图 · 普吉特海湾 · 雷尼尔 · 波特兰",
-      "lat": 47.61, "lon": -122.33,
-      "links": [{ "l": "RepeaterBook — Washington", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+      "id": "twin-cities", "scope": "us",
+      "n": "Minneapolis & Saint Paul", "z": "明尼阿波利斯与圣保罗",
+      "sub": "MSP · the Mississippi · the St Croix · the northern winter",
+      "subz": "明州机场 · 密西西比河 · 圣克罗伊河 · 北方的冬天",
+      "lat": 44.98, "lon": -93.27,
+      "links": [{ "l": "RepeaterBook — Minnesota", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "chicago", "scope": "us",
+      "n": "Chicago & Lake Michigan", "z": "芝加哥与密歇根湖",
+      "sub": "O'Hare · the lakefront · the national rail hub",
+      "subz": "奥黑尔 · 湖滨 · 全美铁路枢纽",
+      "lat": 41.88, "lon": -87.63,
+      "links": [{ "l": "RepeaterBook — Illinois", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "detroit", "scope": "us",
+      "n": "Detroit & the Border", "z": "底特律与边境",
+      "sub": "DTW · Windsor · the Detroit River · Ann Arbor",
+      "subz": "底特律机场 · 温莎 · 底特律河 · 安娜堡",
+      "lat": 42.33, "lon": -83.05,
+      "links": [{ "l": "RepeaterBook — Michigan", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "st-louis", "scope": "us",
+      "n": "St Louis & the Confluence", "z": "圣路易斯与两河交汇",
+      "sub": "Lambert · the Mississippi · the Missouri · Scott AFB",
+      "subz": "兰伯特机场 · 密西西比河 · 密苏里河 · 斯科特空军基地",
+      "lat": 38.63, "lon": -90.2,
+      "links": [{ "l": "RepeaterBook — Missouri", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "nashville", "scope": "us",
+      "n": "Nashville & Middle Tennessee", "z": "纳什维尔与中田纳西",
+      "sub": "BNA · the Cumberland · Smyrna · the Highland Rim",
+      "subz": "纳什维尔机场 · 坎伯兰河 · 士麦那 · 高地边缘",
+      "lat": 36.16, "lon": -86.78,
+      "links": [{ "l": "RepeaterBook — Tennessee", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "dallas", "scope": "us",
+      "n": "Dallas & Fort Worth", "z": "达拉斯与沃思堡",
+      "sub": "DFW · Love Field · Alliance · the Metroplex",
+      "subz": "达福机场 · 爱田机场 · 联盟机场 · 双城都会区",
+      "lat": 32.78, "lon": -96.8,
+      "links": [{ "l": "RepeaterBook — Texas", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "houston", "scope": "us",
+      "n": "Houston & the Gulf Coast", "z": "休斯顿与墨西哥湾岸",
+      "sub": "Bush · Hobby · the Ship Channel · Galveston",
+      "subz": "布什机场 · 霍比机场 · 航道 · 加尔维斯顿",
+      "lat": 29.76, "lon": -95.37,
+      "links": [{ "l": "RepeaterBook — Texas", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "new-orleans", "scope": "us",
+      "n": "New Orleans & the Delta", "z": "新奥尔良与密西西比三角洲",
+      "sub": "MSY · the lower Mississippi · Pontchartrain · the marsh",
+      "subz": "新奥尔良机场 · 密西西比河下游 · 庞恰特雷恩湖 · 沼泽",
+      "lat": 29.95, "lon": -90.07,
+      "links": [{ "l": "RepeaterBook — Louisiana", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "atlanta", "scope": "us",
+      "n": "Atlanta", "z": "亚特兰大",
+      "sub": "Hartsfield-Jackson · Dobbins · the north Georgia foothills",
+      "subz": "哈兹菲尔德机场 · 多宾斯基地 · 佐治亚北部丘陵",
+      "lat": 33.75, "lon": -84.39,
+      "links": [{ "l": "RepeaterBook — Georgia", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "charlotte", "scope": "us",
+      "n": "Charlotte & the Piedmont", "z": "夏洛特与皮埃蒙特",
+      "sub": "CLT · the Catawba · Concord · the Carolina foothills",
+      "subz": "夏洛特机场 · 卡托巴河 · 康科德 · 卡罗来纳丘陵",
+      "lat": 35.23, "lon": -80.84,
+      "links": [{ "l": "RepeaterBook — North Carolina", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "pittsburgh", "scope": "us",
+      "n": "Pittsburgh & the Three Rivers", "z": "匹兹堡与三河",
+      "sub": "PIT · the Allegheny locks · the Mon Valley · the Laurels",
+      "subz": "匹兹堡机场 · 阿勒格尼船闸 · 蒙河谷 · 劳雷尔高地",
+      "lat": 40.44, "lon": -80.0,
+      "links": [{ "l": "RepeaterBook — Pennsylvania", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "dc", "scope": "us",
+      "n": "Washington DC", "z": "华盛顿特区",
+      "sub": "District · Northern Virginia · Baltimore",
+      "subz": "特区 · 北弗吉尼亚 · 巴尔的摩",
+      "lat": 38.9, "lon": -77.04,
+      "links": [{ "l": "RepeaterBook — DC / MD / VA", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "philadelphia", "scope": "us",
+      "n": "Philadelphia & the Delaware", "z": "费城与特拉华河",
+      "sub": "PHL · the river ports · Wilmington · Trenton",
+      "subz": "费城机场 · 河港 · 威尔明顿 · 特伦顿",
+      "lat": 39.95, "lon": -75.17,
+      "links": [{ "l": "RepeaterBook — Pennsylvania", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "nyc", "scope": "us",
+      "n": "New York Metro", "z": "纽约都会区",
+      "sub": "Five boroughs · Long Island · North Jersey",
+      "subz": "五大区 · 长岛 · 北新泽西",
+      "lat": 40.71, "lon": -73.94,
+      "links": [{ "l": "RepeaterBook — New York", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "new-england", "scope": "us",
+      "n": "Boston & Southern New England", "z": "波士顿与南新英格兰",
+      "sub": "Logan · Cape Cod · Providence · Worcester",
+      "subz": "洛根机场 · 科德角 · 普罗维登斯 · 伍斯特",
+      "lat": 42.36, "lon": -71.06,
+      "links": [{ "l": "RepeaterBook — Massachusetts", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "space-coast", "scope": "us",
+      "n": "Space Coast & Orlando", "z": "太空海岸与奥兰多",
+      "sub": "Cape Canaveral · Kennedy · Orlando · Daytona",
+      "subz": "卡纳维拉尔角 · 肯尼迪航天中心 · 奥兰多 · 代托纳",
+      "lat": 28.2, "lon": -80.9,
+      "links": [{ "l": "RepeaterBook — Florida", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
+    },
+    {
+      "id": "miami", "scope": "us",
+      "n": "Miami & the Everglades", "z": "迈阿密与大沼泽",
+      "sub": "MIA · Fort Lauderdale · Biscayne Bay · the Glades",
+      "subz": "迈阿密机场 · 劳德代尔堡 · 比斯坎湾 · 大沼泽地",
+      "lat": 25.76, "lon": -80.19,
+      "links": [{ "l": "RepeaterBook — Florida", "u": "https://www.repeaterbook.com/repeaters/index.php" }]
     },
     {
       "id": "alaska", "scope": "us",
@@ -203,66 +331,122 @@
     },
     {
       "id": "beijing", "scope": "cn",
-      "n": "Beijing & Capital Region", "z": "北京与京津冀",
-      "sub": "Beijing · Tianjin · Hebei",
-      "subz": "北京 · 天津 · 河北",
+      "n": "Beijing & the Capital Region", "z": "北京与京津冀",
+      "sub": "Capital · Daxing · Tianjin · the Yan Mountains",
+      "subz": "首都机场 · 大兴机场 · 天津 · 燕山",
       "lat": 39.9, "lon": 116.41,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
-      "id": "shanghai", "scope": "cn",
-      "n": "Shanghai & Yangtze Delta", "z": "上海与长三角",
-      "sub": "Shanghai · Suzhou · Hangzhou · Nanjing · Ningbo",
-      "subz": "上海 · 苏州 · 杭州 · 南京 · 宁波",
-      "lat": 31.23, "lon": 121.47,
+      "id": "harbin", "scope": "cn",
+      "n": "Harbin & Heilongjiang", "z": "哈尔滨与黑龙江",
+      "sub": "Taiping · the Songhua · Daqing · the deep winter",
+      "subz": "太平机场 · 松花江 · 大庆 · 严冬",
+      "lat": 45.8, "lon": 126.53,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "shenyang", "scope": "cn",
+      "n": "Shenyang & Liaoning", "z": "沈阳与辽宁",
+      "sub": "Taoxian · Fushun · Anshan · the old industrial belt",
+      "subz": "桃仙机场 · 抚顺 · 鞍山 · 老工业带",
+      "lat": 41.8, "lon": 123.43,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
       "id": "qingdao", "scope": "cn",
-      "n": "Qingdao & Shandong Coast", "z": "青岛与山东半岛",
-      "sub": "Qingdao · Yantai · Weihai · Rizhao",
-      "subz": "青岛 · 烟台 · 威海 · 日照",
+      "n": "Qingdao & the Shandong Coast", "z": "青岛与山东半岛",
+      "sub": "Jiaodong · the Yellow Sea · Rizhao · the harbour",
+      "subz": "胶东 · 黄海 · 日照 · 港口",
       "lat": 36.07, "lon": 120.38,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
+      "id": "xian", "scope": "cn",
+      "n": "Xi\u02bcan & Guanzhong", "z": "西安与关中",
+      "sub": "Xianyang · Weinan · the Qinling foothills · the loess",
+      "subz": "咸阳 · 渭南 · 秦岭北麓 · 黄土塬",
+      "lat": 34.27, "lon": 108.95,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "shanghai", "scope": "cn",
+      "n": "Shanghai & the Yangtze Delta", "z": "上海与长三角",
+      "sub": "Pudong · Hongqiao · Suzhou · the estuary",
+      "subz": "浦东 · 虹桥 · 苏州 · 长江口",
+      "lat": 31.23, "lon": 121.47,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "wuhan", "scope": "cn",
+      "n": "Wuhan & Central China", "z": "武汉与华中",
+      "sub": "Tianhe · the Yangtze–Han confluence · Ezhou · Xiaogan",
+      "subz": "天河机场 · 江汉交汇 · 鄂州 · 孝感",
+      "lat": 30.59, "lon": 114.31,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
       "id": "chengdu", "scope": "cn",
-      "n": "Chengdu & Chongqing", "z": "成都与成渝地区",
-      "sub": "Chengdu · Chongqing · the Sichuan Basin",
-      "subz": "成都 · 重庆 · 四川盆地",
+      "n": "Chengdu & the Sichuan Basin", "z": "成都与四川盆地",
+      "sub": "Shuangliu · Tianfu · Deyang · the basin edge",
+      "subz": "双流 · 天府 · 德阳 · 盆地边缘",
       "lat": 30.57, "lon": 104.07,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "xiamen", "scope": "cn",
+      "n": "Xiamen & the Taiwan Strait", "z": "厦门与台湾海峡",
+      "sub": "Gaoqi · Quanzhou · Kinmen · the strait shipping lanes",
+      "subz": "高崎机场 · 泉州 · 金门 · 海峡航道",
+      "lat": 24.48, "lon": 118.09,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
       "id": "greater-bay", "scope": "cn",
       "n": "Greater Bay Area", "z": "粤港澳大湾区",
-      "sub": "Guangzhou · Shenzhen · Hong Kong · Macau",
-      "subz": "广州 · 深圳 · 香港 · 澳门",
+      "sub": "Shenzhen · Hong Kong · Guangzhou · Macau",
+      "subz": "深圳 · 香港 · 广州 · 澳门",
       "lat": 22.54, "lon": 114.06,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
+      "id": "kunming", "scope": "cn",
+      "n": "Kunming & Yunnan", "z": "昆明与云南",
+      "sub": "Changshui · Dian Lake · Yuxi · the plateau",
+      "subz": "长水机场 · 滇池 · 玉溪 · 云贵高原",
+      "lat": 25.04, "lon": 102.72,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
       "id": "west-plateau", "scope": "cn",
-      "n": "Western Plateau", "z": "川藏高原",
-      "sub": "Western Sichuan · Tibet · Yunnan highlands · the G318",
-      "subz": "川西 · 西藏 · 滇西北 · 318 国道",
+      "n": "Western Sichuan Plateau", "z": "川西高原",
+      "sub": "Litang · Kangding · Daocheng · the G318",
+      "subz": "理塘 · 康定 · 稻城 · 318 国道",
       "lat": 30.05, "lon": 100.5,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
-      "id": "northwest", "scope": "cn",
-      "n": "Northwest China", "z": "西北",
-      "sub": "Xinjiang · Gansu · Qinghai · the Hexi Corridor",
-      "subz": "新疆 · 甘肃 · 青海 · 河西走廊",
-      "lat": 43.83, "lon": 87.62,
+      "id": "lhasa", "scope": "cn",
+      "n": "Lhasa & the Kyichu Valley", "z": "拉萨与拉萨河谷",
+      "sub": "Gonggar · the Kyichu · Yamdrok · the thin air",
+      "subz": "贡嘎机场 · 拉萨河 · 羊卓雍措 · 稀薄空气",
+      "lat": 29.65, "lon": 91.14,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
     {
-      "id": "harbin", "scope": "cn",
-      "n": "Northeast China", "z": "东北",
-      "sub": "Harbin · Shenyang · Dalian · Changbaishan",
-      "subz": "哈尔滨 · 沈阳 · 大连 · 长白山",
-      "lat": 43.5, "lon": 125.5,
+      "id": "lanzhou", "scope": "cn",
+      "n": "Lanzhou & the Yellow River", "z": "兰州与黄河",
+      "sub": "Zhongchuan · the river through the city · Baiyin · the corridor",
+      "subz": "中川机场 · 穿城黄河 · 白银 · 河西走廊起点",
+      "lat": 36.06, "lon": 103.83,
+      "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
+    },
+    {
+      "id": "urumqi", "scope": "cn",
+      "n": "\u00dcr\u00fcmqi & Xinjiang", "z": "乌鲁木齐与新疆",
+      "sub": "Diwopu · the Tianshan · Turpan · the long distances",
+      "subz": "地窝堡机场 · 天山 · 吐鲁番 · 漫长距离",
+      "lat": 43.83, "lon": 87.62,
       "links": [{ "l": "CRAC", "u": "https://www.crac.org.cn/" }]
     },
 

@@ -1,0 +1,33 @@
+{
+  "id": "lanzhou",
+  "intro": "Lanzhou is a city squeezed into a narrow valley with the Yellow River running straight through the middle of it, and the valley walls rise steeply on both sides. For radio this means the city itself is a trench — coverage along the valley is good and coverage across the ridges is nil — while the hills immediately above are excellent sites. It is the gateway to the Hexi Corridor, so the railway west is heavy and conventional, and the airport is an hour out of town on the plateau because there is nowhere closer to put one.",
+  "introz": "兰州是一座挤在狭长河谷里的城市，黄河从中间穿城而过，两侧谷壁陡峭上升。对无线电来说，城市本身就是一条沟——沿河谷方向覆盖良好，翻过山脊则完全没有信号，而紧邻其上的山岗是绝佳站点。这里是河西走廊的门户，西行铁路运量大且以普速为主；机场则在一小时车程外的塬上，因为更近的地方根本放不下。",
+  "stations": [
+    { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 118.000, "n": "Tower band — scan 118.000–121.400", "z": "塔台频段 · 扫 118.000–121.400", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "d": "Zhongchuan is seventy kilometres out on the plateau, because the valley has no room for a runway.", "dz": "中川机场在七十公里外的塬上，因为河谷里放不下跑道。", "odds": 1 },
+    { "f": 125.000, "n": "Approach band — scan 119.000–128.000", "z": "进场管制频段 · 扫 119.000–128.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 132.000, "n": "Area control band — scan 128.000–136.000", "z": "区域管制频段 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 118.100, "n": "LHW Tower", "z": "LHW 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Lanzhou Zhongchuan International Airport (ZLLL)", "ref": "ZLLL", "src": "oa", "odds": 2 },
+
+    { "f": 0.000, "n": "No continuous weather radio in China", "z": "中国没有连续气象广播", "c": "wx", "m": "—", "dig":true, "conf": "high", "a": "Weather" },
+
+    { "f": 145.500, "n": "2 m FM Calling (IARU Region 3)", "z": "2 米 FM 呼叫频率（IARU 三区）", "c": "ham", "m": "FM", "conf": "high", "a": "Amateur — 144–146 MHz", "d": "A trench of a city. Along the valley simplex works well; across the ridge it does not work at all. Get above the city and everything changes.", "dz": "一座沟谷里的城市。沿河谷直通效果好，翻过山脊完全不通。爬到城市上方，一切就都变了。", "odds": 1 },
+    { "f": 439.500, "n": "Repeater outputs — scan 439.000–440.000", "z": "中继台下行 · 扫 439.000–440.000", "c": "ham", "m": "FM", "conf": "check", "o": "−5.000", "a": "Amateur — 430–440 MHz", "odds": 1 },
+    { "f": 144.800, "n": "APRS — Regions 1 & 3", "z": "APRS 数据 · 一区与三区", "c": "ham", "m": "FM", "conf": "std", "a": "Amateur — 144–146 MHz", "odds": 1 },
+
+    { "f": 450.025, "n": "无线列调 — conventional railway dispatch", "z": "无线列调 · 普速铁路调度", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway", "d": "The Lanxin line west into the corridor is one of the heaviest conventional freight routes in China, and the yards here work continuously.", "dz": "西行进入走廊的兰新线是中国运量最大的普速货运线之一，这里的编组场连续作业。", "odds": 1 },
+    { "f": 0.000, "n": "High-speed rail — GSM-R digital", "z": "高铁 · GSM-R 数字系统", "c": "rail", "m": "GSM-R", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 87.500, "n": "交通广播 — scan 87.0–108.0 MHz", "z": "交通广播 · 扫 87.0–108.0 MHz", "c": "broadcast", "m": "WFM", "conf": "std", "a": "Broadcast", "d": "Gansu traffic radio covers the corridor expressways, where dust storms and winter ice close the road regularly.", "dz": "甘肃交通广播覆盖走廊上的高速公路，那里沙尘暴和冬季结冰经常封路。", "odds": 1 },
+    { "f": 0.531, "n": "Medium wave — scan 531–1602 kHz", "z": "中波 · 扫 531–1602 kHz", "c": "broadcast", "m": "AM", "conf": "std", "a": "Broadcast", "d": "Dry air and high ground. At night the band brings in Central Asia and western China clearly.", "dz": "空气干燥、地势高。夜间频段能清晰收到中亚和中国西部的信号。", "odds": 1 },
+
+    { "f": 409.750, "n": "公众对讲机 Ch 1", "z": "公众对讲机 1 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "d": "The markets along the river and the endless construction in the valley are both heavy users.", "dz": "沿河的市场和谷地里不停的施工都是重度用户。", "odds": 1 },
+    { "f": 409.800, "n": "公众对讲机 Ch 5", "z": "公众对讲机 5 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "odds": 1 },
+    { "f": 409.988, "n": "公众对讲机 Ch 20", "z": "公众对讲机 20 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "odds": 1 },
+    { "f": 0.000, "n": "公安 350 MHz — encrypted PDT digital", "z": "公安 350 MHz · PDT 数字加密", "c": "safety", "m": "PDT", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 10.000, "n": "BPM — China’s shortwave time station", "z": "BPM 短波授时台", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "odds": 2 },
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "FM", "conf": "std", "a": "Satellites", "odds": 1 },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "odds": 1 }
+  ]
+}

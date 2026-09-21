@@ -98,6 +98,20 @@ const km = (a1, o1, a2, o2) => {
   return 2 * R * Math.asin(Math.sqrt(h));
 };
 
+/* Where in the file a new entry belongs. The data files group by category and the categories
+ * run in a fixed order, so an import lands after the last entry of its own category — or,
+ * for a region that has none yet, after the last entry of the nearest category above it. */
+const ORDER = ['link', 'air', 'wx', 'ham', 'parks', 'marine', 'rail', 'broadcast', 'safety', 'misc'];
+function anchor(lines, cat) {
+  const want = ORDER.indexOf(cat);
+  let last = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(/"c":\s*"(\w+)"/);
+    if (m && ORDER.indexOf(m[1]) >= 0 && ORDER.indexOf(m[1]) <= want) last = i;
+  }
+  return last;
+}
+
 const [airports, freqRows] = await Promise.all([table(AIRPORTS), table(FREQS)]);
 
 const byIdent = new Map();
@@ -260,12 +274,14 @@ for (const region of placed) {
     .replace(/,"/g, ', "')
     .replace(/\}$/, ' }');
 
-  let last = -1;
-  for (let i = 0; i < lines.length; i++) if (/"c":\s*"air"/.test(lines[i])) last = i;
+  const last = anchor(lines, 'air');
   if (last < 0) continue;
 
+  // The last entry in the array carries no comma, so inserting after it needs one added,
+  // which in turn leaves the new last entry with one it should not have.
+  if (!/,\s*$/.test(lines[last])) lines[last] += ',';
   lines.splice(last + 1, 0, ...fresh.map(s => fmt(s) + ','));
-  const next = lines.join(eol);
+  const next = lines.join(eol).replace(/,(\s*\]\s*\}\s*)$/, '$1');
 
   // Never hand back a file that does not parse. Splicing text into hand-formatted JSON is
   // the kind of thing that works until it silently does not.

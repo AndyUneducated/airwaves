@@ -1,0 +1,54 @@
+{
+  "id": "nashville",
+  "intro": "Nashville is a broadcast town before it is anything else. The FM dial is denser and better engineered than almost any market its size, WSM’s clear-channel AM signal has been reaching half the country at night since 1925, and the medium wave band here after dark is genuinely worth sitting through. Beyond the transmitters, the metro sprawls across rolling limestone country with no single dominant high point, so repeater coverage is patchy in a way that makes local knowledge matter.",
+  "introz": "纳什维尔首先是一座广播之城。它的调频频段比同等规模市场都更密、工程水平更高；WSM 的清频中波自 1925 年起入夜就能覆盖半个美国，天黑后这里的中波频段真的值得坐下来慢慢听。除了发射台之外，都会区铺展在起伏的石灰岩地形上，没有一个绝对制高点，所以中继覆盖是零碎的——这让本地经验变得重要。",
+  "stations": [
+    { "f": 121.500, "n": "Guard", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Emergency", "odds": 1 },
+    { "f": 122.800, "n": "Regional CTAF", "z": "无塔机场公共频率", "c": "air", "m": "AM", "conf": "std", "a": "General Aviation", "odds": 1 },
+    { "f": 122.900, "n": "MULTICOM — air-to-air and survey work", "z": "MULTICOM · 空空与航测作业", "c": "air", "m": "AM", "conf": "std", "a": "General Aviation", "odds": 1 },
+    { "f": 311.000, "n": "Military UHF — scan 225–380 MHz", "z": "军航 UHF · 扫 225–380 MHz", "c": "air", "m": "AM", "conf": "std", "a": "Military", "odds": 1 },
+    { "f": 135.100, "n": "BNA ATIS", "z": "BNA 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Nashville International Airport (KBNA)", "ref": "KBNA", "src": "oa", "odds": 3 },
+    { "f": 118.600, "n": "BNA Tower", "z": "BNA 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Nashville International Airport (KBNA)", "ref": "KBNA", "src": "oa", "odds": 2 },
+    { "f": 121.900, "n": "BNA Ground", "z": "BNA 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Nashville International Airport (KBNA)", "ref": "KBNA", "src": "oa", "odds": 2 },
+    { "f": 126.050, "n": "BNA Clearance Delivery", "z": "BNA 放行许可", "c": "air", "m": "AM", "conf": "high", "a": "Nashville International Airport (KBNA)", "ref": "KBNA", "src": "oa", "odds": 2 },
+    { "f": 119.125, "n": "MQY ASOS", "z": "MQY 自动气象观测", "c": "air", "m": "AM", "conf": "high", "a": "Smyrna Airport (KMQY)", "ref": "KMQY", "src": "oa", "odds": 3 },
+    { "f": 118.500, "n": "MQY Tower", "z": "MQY 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Smyrna Airport (KMQY)", "ref": "KMQY", "src": "oa", "odds": 2 },
+    { "f": 121.400, "n": "MQY Ground", "z": "MQY 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Smyrna Airport (KMQY)", "ref": "KMQY", "src": "oa", "odds": 2 },
+    { "f": 125.175, "n": "HOP ATIS", "z": "HOP 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Campbell Army Airfield (Fort Campbell) (KHOP)", "ref": "KHOP", "src": "oa", "odds": 3 },
+    { "f": 120.900, "n": "HOP Tower", "z": "HOP 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Campbell Army Airfield (Fort Campbell) (KHOP)", "ref": "KHOP", "src": "oa", "odds": 2 },
+    { "f": 121.800, "n": "HOP Ground", "z": "HOP 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Campbell Army Airfield (Fort Campbell) (KHOP)", "ref": "KHOP", "src": "oa", "odds": 2 },
+    { "f": 127.825, "n": "BWG ASOS", "z": "BWG 自动气象观测", "c": "air", "m": "AM", "conf": "high", "a": "Bowling Green Warren County Regional Airport (KBWG)", "ref": "KBWG", "src": "oa", "odds": 3 },
+    { "f": 133.850, "n": "BWG Center", "z": "BWG 区域管制", "c": "air", "m": "AM", "conf": "high", "a": "Bowling Green Warren County Regional Airport (KBWG)", "ref": "KBWG", "src": "oa", "odds": 2 },
+    { "f": 123.000, "n": "BWG UNICOM", "z": "BWG 通用航空服务", "c": "air", "m": "AM", "conf": "high", "a": "Bowling Green Warren County Regional Airport (KBWG)", "ref": "KBWG", "src": "oa", "odds": 1 },
+    { "f": 127.075, "n": "KJWN AWOS", "z": "KJWN 自动气象观测", "c": "air", "m": "AM", "conf": "high", "a": "John C Tune Airport (KJWN)", "ref": "KJWN", "src": "oa", "odds": 3 },
+    { "f": 124.550, "n": "KJWN Clearance Delivery", "z": "KJWN 放行许可", "c": "air", "m": "AM", "conf": "high", "a": "John C Tune Airport (KJWN)", "ref": "KJWN", "src": "oa", "odds": 2 },
+    { "f": 133.975, "n": "KMBT AWOS", "z": "KMBT 自动气象观测", "c": "air", "m": "AM", "conf": "high", "a": "City of Murfreesboro Airport (KMBT)", "ref": "KMBT", "src": "oa", "odds": 3 },
+    { "f": 118.400, "n": "KMBT Approach / Departure", "z": "KMBT 进离场管制", "c": "air", "m": "AM", "conf": "high", "a": "City of Murfreesboro Airport (KMBT)", "ref": "KMBT", "src": "oa", "odds": 2 },
+    { "f": 162.400, "n": "WXK62 — Waverly, IN", "z": "WXK62 · Waverly", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.425, "n": "WWF84 — Lawrenceburg, TN", "z": "WWF84 · Lawrenceburg", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.525, "n": "KWN52 — Lobelville, TN", "z": "KWN52 · Lobelville", "c": "wx", "m": "NFM", "conf": "high", "kw":1.02, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.550, "n": "KIG79 — Nashville, TN", "z": "KIG79 · Nashville", "c": "wx", "m": "NFM", "conf": "high", "kw":1.02, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+
+    { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "Rolling karst country with no dominant ridge. Simplex range changes a lot over a few miles, which is the opposite of the flat Midwest.", "dz": "起伏的喀斯特地形，没有主导性山脊。直通距离在几公里内就有很大变化，和平坦的中西部完全相反。", "odds": 1 },
+    { "f": 146.700, "n": "2 m repeater outputs — scan 145.110–147.390", "z": "2 米中继下行 · 扫 145.110–147.390", "c": "ham", "m": "FM", "conf": "check", "a": "Repeaters", "d": "Coverage here is genuinely patchy and the machines that work are the ones on the few real high points. Worth checking RepeaterBook before you need it.", "dz": "这里的覆盖确实零碎，好用的中继都在为数不多的真正高点上。在需要之前先查一下 RepeaterBook。", "odds": 1 },
+    { "f": 446.000, "n": "70 cm Simplex Calling", "z": "70 厘米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "odds": 1 },
+    { "f": 144.390, "n": "APRS — North America", "z": "APRS 数据 · 北美", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "odds": 1 },
+
+    { "f": 168.625, "n": "National Interagency Air Guard", "z": "跨部门航空守护频率", "c": "parks", "m": "NFM", "conf": "std", "a": "Wildland Fire & Air", "odds": 1 },
+    { "f": 170.000, "n": "Federal band — scan 162.000–174.000", "z": "联邦频段 · 扫 162.000–174.000", "c": "parks", "m": "NFM", "conf": "std", "a": "Federal", "odds": 1 },
+
+    { "f": 160.650, "n": "Road channels — scan 160.215–161.565", "z": "铁路调度 · 扫 160.215–161.565", "c": "rail", "m": "NFM", "conf": "std", "a": "Rail", "d": "CSX runs the Nashville terminal and the Radnor Yard south of town is one of the larger classification yards in the southeast.", "dz": "CSX 运营纳什维尔枢纽，城南的 Radnor 编组场是美国东南部较大的解编场之一。", "odds": 1 },
+    { "f": 452.938, "n": "End-of-train telemetry", "z": "列尾装置遥测", "c": "rail", "m": "NFM", "conf": "std", "a": "Rail", "odds": 1 },
+
+    { "f": 155.752, "n": "VCALL10 — national interop calling", "z": "VCALL10 · 全国互通呼叫", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "d": "Middle Tennessee gets both tornadoes and serious river flooding, and the interop channels see real use in both.", "dz": "中田纳西既有龙卷风也有严重的河流洪水，两种情况下互通频道都会被真正用上。", "odds": 1 },
+    { "f": 151.137, "n": "VTAC11 — national interop tactical", "z": "VTAC11 · 全国互通战术", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "odds": 1 },
+    { "f": 462.563, "n": "FRS / GMRS Ch 1", "z": "FRS / GMRS 1 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "odds": 1 },
+    { "f": 151.820, "n": "MURS Ch 1 — shop and site crews", "z": "MURS 1 频道 · 商铺与工地", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "odds": 1 },
+    { "f": 464.500, "n": "Business band — scan 461–469 MHz", "z": "商用频段 · 扫 461–469 MHz", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "odds": 1 },
+    { "f": 0.000, "n": "Metro police and fire — P25 trunked", "z": "都会区警消 · P25 集群数字", "c": "safety", "m": "P25", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "NFM", "conf": "std", "a": "Satellites", "odds": 1 },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "odds": 1 },
+    { "f": 10.000, "n": "WWV Time Signal", "z": "WWV 标准时间信号", "c": "misc", "m": "AM", "conf": "std", "a": "Shortwave", "odds": 2 }
+  ]
+}

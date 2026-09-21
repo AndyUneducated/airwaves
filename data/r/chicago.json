@@ -42,7 +42,10 @@
     { "f": 156.450, "n": "Marine Ch 09 — Hailing", "z": "海事 09 频道 · 呼叫", "c": "marine", "m": "NFM", "conf": "std", "a": "Lake Michigan", "odds": 2 },
 
     { "f": 162.550, "n": "NOAA — Chicago (KWO39)", "z": "NOAA 芝加哥 KWO39", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Severe thunderstorm and tornado warnings in summer, lake-effect snow in winter. The nearshore forecast matters if you are on the water.", "dz": "夏季有强雷暴和龙卷警报，冬季有湖效应降雪。在水上活动时，近岸预报很重要。", "odds": 3 },
-    { "f": 162.400, "n": "NOAA — Romeoville / outlying", "z": "NOAA Romeoville / 外围", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
+    { "f": 162.400, "n": "KXI58 — Plano, IL", "z": "KXI58 · Plano", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.425, "n": "KZZ81 — Lockport, IL", "z": "KZZ81 · Lockport", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.450, "n": "WNG689 — Hebron, IN", "z": "WNG689 · Hebron", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.500, "n": "KJY62 — Michigan City, IN", "z": "KJY62 · Michigan City", "c": "wx", "m": "NFM", "conf": "high", "kw":1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 146.520, "n": "2 m Simplex Calling", "z": "2 米直通呼叫", "c": "ham", "m": "FM", "conf": "std", "a": "Simplex", "d": "The over-water path across the lake gives a shoreline handheld unusual reach toward Michigan and Indiana.", "dz": "越湖水路径让岸边手台向密歇根和印第安纳方向的覆盖格外可观。", "odds": 1 },
     { "f": 145.230, "n": "Chicago-area repeater", "z": "芝加哥地区中继", "c": "ham", "m": "FM", "conf": "check", "o": "−0.600", "t": "107.2", "a": "Repeaters", "d": "Several machines on downtown high-rises give metro-wide coverage. Confirm on RepeaterBook for Cook County.", "dz": "市中心多座高层上的中继覆盖整个都会区。请在 RepeaterBook 查 Cook County 确认。", "odds": 2 },

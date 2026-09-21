@@ -1,6 +1,6 @@
 {
-  "id": "desert-southwest",
-  "intro": "Flat terrain, dry air and no vegetation make the desert the best VHF/UHF propagation you will experience with a handheld. From a ridge in Death Valley or the South Rim you can work distances that seem impossible. This is also the most interesting military airspace in the world — the Nevada Test and Training Range sits just north of Las Vegas and it talks on AM in 225–380 MHz.",
+  "id": "las-vegas",
+  "intro": "Flat terrain, dry air and no vegetation make the Mojave the best VHF/UHF propagation you will experience with a handheld. From the Red Rock escarpment or the road up Mount Charleston you can work distances that seem impossible. This is also the most interesting military airspace in the world — the Nevada Test and Training Range begins immediately north of the city and it talks on AM in 225–380 MHz, which your VX-6 covers. Against all of that sits the Strip, where several thousand two-way radios are in use inside one square mile.",
   "introz": "地形平坦、空气干燥、没有植被，沙漠是手台能体验到的最好的 VHF/UHF 传播环境。在死谷或大峡谷南缘的山脊上，通联距离会好到不可思议。这里也拥有全球最有意思的军事空域——内华达试验与训练靶场就在拉斯维加斯以北，其通话位于 225–380 MHz 的 AM 波段。",
   "stations": [
     { "f": 119.900, "n": "Harry Reid Tower", "z": "哈里·里德机场塔台", "c": "air", "m": "AM", "conf": "check", "a": "Las Vegas (KLAS)", "ref": "KLAS", "d": "Extremely high volume with unusual peaks around conventions and fight weekends. Listen from the airport's aircraft viewing area on Sunset Road.", "dz": "流量极高，展会和拳赛周末会出现异常高峰。可在 Sunset 路的观机点收听。", "odds": 2 },
@@ -30,8 +30,8 @@
     { "f": 119.275, "n": "IGM ASOS", "z": "IGM 自动气象观测", "c": "air", "m": "AM", "conf": "high", "a": "Kingman Airport (KIGM)", "ref": "KIGM", "src": "oa", "odds": 3 },
 
     { "f": 162.550, "n": "NOAA — Las Vegas", "z": "NOAA 拉斯维加斯", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "In summer this is not optional. Flash-flood warnings for slot canyons come out here first.", "dz": "夏天这不是可选项。狭缝峡谷的暴洪警报最先从这里发出。", "odds": 3 },
-    { "f": 162.400, "n": "NOAA — Flagstaff / Grand Canyon", "z": "NOAA 弗拉格斯塔夫 / 大峡谷", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
-    { "f": 162.475, "n": "NOAA — Zion / St. George", "z": "NOAA 锡安 / 圣乔治", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
+    { "f": 162.400, "n": "WNG634 — Pahrump, NV", "z": "WNG634 · Pahrump", "c": "wx", "m": "NFM", "conf": "high", "kw":0.1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.500, "n": "KQC45 — Bullhead City, NV", "z": "KQC45 · Bullhead City", "c": "wx", "m": "NFM", "conf": "high", "kw":0.2, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 172.400, "n": "Grand Canyon NPS operations", "z": "大峡谷国家公园局作业", "c": "parks", "m": "NFM", "conf": "check", "a": "National Parks", "d": "Ranger, trail patrol and helicopter rescue traffic. The inner-canyon rescue calls are sobering and are the best possible argument for carrying more water. Scan 162–174 MHz to find current channels.", "dz": "护林员、步道巡逻和直升机救援通话。峡谷内部的救援呼叫听着令人清醒，也是多带水的最佳理由。扫 162–174 MHz 找当前频率。", "odds": 1 },
     { "f": 171.700, "n": "Death Valley NPS", "z": "死谷国家公园局", "c": "parks", "m": "NFM", "conf": "check", "a": "National Parks", "odds": 1 },

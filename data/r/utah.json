@@ -35,7 +35,8 @@
     { "f": 127.550, "n": "BDG Center", "z": "BDG 区域管制", "c": "air", "m": "AM", "conf": "high", "a": "Blanding Municipal Airport (KBDG)", "ref": "KBDG", "src": "oa", "odds": 2 },
 
     { "f": 162.400, "n": "NOAA — Moab / southeast Utah", "z": "NOAA 摩押 / 犹他东南", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Flash-flood warnings for the slot canyons. In monsoon season, from July through September, this is the difference between a good day and a fatal one.", "dz": "狭缝峡谷的暴洪警报。七月到九月的季风季，这就是好日子和致命日子之间的区别。", "odds": 3 },
-    { "f": 162.550, "n": "NOAA — Salt Lake City", "z": "NOAA 盐湖城", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
+    { "f": 162.450, "n": "WNG687 — Monticello, UT", "z": "WNG687 · Monticello", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.475, "n": "WNG556 — Moab, UT", "z": "WNG556 · Moab", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 160.650, "n": "UP through the canyons — scan 160.215–161.565", "z": "联合太平洋穿峡谷 · 扫 160.215–161.565", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "The line along the Green and Price rivers, and the potash spur down to Moab. Remote track with long stretches of nothing.", "dz": "沿 Green 河和 Price 河的线路，以及通往摩押的钾盐支线。轨道偏远，很长路段空无一物。", "odds": 1 },
 

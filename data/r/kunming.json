@@ -1,0 +1,36 @@
+{
+  "id": "kunming",
+  "intro": "Kunming sits at 1,900 metres on the Yunnan plateau, and altitude is the whole advantage. The air is thin, dry and almost free of electrical noise, the plateau is broad and open rather than sharply mountainous, and VHF carries much further than it does in any lowland Chinese city. Changshui is the gateway to Southeast Asia, so the airband carries international traffic heading for Bangkok, Yangon and Vientiane. Beyond the city the terrain breaks up fast, and in the mountains west and north of here a handheld stops being a novelty.",
+  "introz": "昆明位于云贵高原一千九百米处，海拔本身就是最大的优势。空气稀薄干燥，几乎没有电气噪声；高原开阔而非陡峻，VHF 传播距离远超中国任何低地城市。长水机场是通往东南亚的门户，航空波段上有飞往曼谷、仰光、万象的国际航班。出城之后地形迅速破碎，在西边和北边的山里，手台就不再是个新鲜玩意儿了。",
+  "stations": [
+    { "f": 121.500, "n": "Aeronautical Emergency", "z": "航空紧急频率", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 118.000, "n": "Tower band — scan 118.000–121.400", "z": "塔台频段 · 扫 118.000–121.400", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "d": "Changshui is China’s gateway to Southeast Asia, so there is more English on the airband here than at most inland Chinese airports.", "dz": "长水是中国通往东南亚的门户，所以这里航空波段上的英语通话比多数内陆机场都多。", "odds": 1 },
+    { "f": 125.000, "n": "Approach band — scan 119.000–128.000", "z": "进场管制频段 · 扫 119.000–128.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 132.000, "n": "Area control band — scan 128.000–136.000", "z": "区域管制频段 · 扫 128.000–136.000", "c": "air", "m": "AM", "conf": "std", "a": "Aviation — international AM airband", "odds": 1 },
+    { "f": 128.450, "n": "KMG ATIS", "z": "KMG 自动通播", "c": "air", "m": "AM", "conf": "high", "a": "Kunming Changshui International Airport (ZPPP)", "ref": "ZPPP", "src": "oa", "odds": 3 },
+    { "f": 118.100, "n": "KMG Tower", "z": "KMG 塔台", "c": "air", "m": "AM", "conf": "high", "a": "Kunming Changshui International Airport (ZPPP)", "ref": "ZPPP", "src": "oa", "odds": 2 },
+    { "f": 121.850, "n": "KMG Ground", "z": "KMG 地面管制", "c": "air", "m": "AM", "conf": "high", "a": "Kunming Changshui International Airport (ZPPP)", "ref": "ZPPP", "src": "oa", "odds": 2 },
+    { "f": 124.220, "n": "KMG Approach", "z": "KMG 进场管制", "c": "air", "m": "AM", "conf": "high", "a": "Kunming Changshui International Airport (ZPPP)", "ref": "ZPPP", "src": "oa", "odds": 2 },
+
+    { "f": 0.000, "n": "No continuous weather radio in China", "z": "中国没有连续气象广播", "c": "wx", "m": "—", "dig":true, "conf": "high", "a": "Weather", "d": "Yunnan’s weather changes fast with altitude, and provincial traffic radio is the practical source in the mountains.", "dz": "云南的天气随海拔变化极快，在山里省级交通广播是最实用的来源。" },
+
+    { "f": 145.500, "n": "2 m FM Calling (IARU Region 3)", "z": "2 米 FM 呼叫频率（IARU 三区）", "c": "ham", "m": "FM", "conf": "high", "a": "Amateur — 144–146 MHz", "d": "1,900 metres of altitude and dry air. Simplex from the hills around Dian Lake reaches a long way across the plateau.", "dz": "一千九百米海拔加上干燥空气。在滇池周边山上直通，能沿高原打出很远。", "odds": 1 },
+    { "f": 439.500, "n": "Repeater outputs — scan 439.000–440.000", "z": "中继台下行 · 扫 439.000–440.000", "c": "ham", "m": "FM", "conf": "check", "o": "−5.000", "a": "Amateur — 430–440 MHz", "odds": 1 },
+    { "f": 144.800, "n": "APRS — Regions 1 & 3", "z": "APRS 数据 · 一区与三区", "c": "ham", "m": "FM", "conf": "std", "a": "Amateur — 144–146 MHz", "odds": 1 },
+
+    { "f": 450.025, "n": "无线列调 — conventional railway dispatch", "z": "无线列调 · 普速铁路调度", "c": "rail", "m": "NFM", "conf": "check", "a": "Railway", "d": "The metre-gauge line to Vietnam and the conventional network to Guizhou both still run analog dispatch.", "dz": "通往越南的米轨线和通往贵州的普速路网都仍在使用模拟调度。", "odds": 1 },
+    { "f": 0.000, "n": "High-speed rail — GSM-R digital", "z": "高铁 · GSM-R 数字系统", "c": "rail", "m": "GSM-R", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 87.500, "n": "交通广播 — scan 87.0–108.0 MHz", "z": "交通广播 · 扫 87.0–108.0 MHz", "c": "broadcast", "m": "WFM", "conf": "std", "a": "Broadcast", "d": "Yunnan traffic radio is essential on the mountain roads west and north of the city, where landslides close roads without warning.", "dz": "在城西和城北的山路上，云南交通广播是必需的——那里滑坡封路毫无预兆。", "odds": 1 },
+    { "f": 0.531, "n": "Medium wave — scan 531–1602 kHz", "z": "中波 · 扫 531–1602 kHz", "c": "broadcast", "m": "AM", "conf": "std", "a": "Broadcast", "d": "At this altitude, and this close to the border, the night-time band brings in Southeast Asia clearly.", "dz": "在这个海拔、又离边境这么近，夜间频段能清晰收到东南亚的信号。", "odds": 1 },
+
+    { "f": 409.750, "n": "公众对讲机 Ch 1", "z": "公众对讲机 1 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "d": "Yunnan’s tourism industry runs on 409 MHz — every tour group, every scenic area, every hotel.", "dz": "云南的旅游业就跑在 409 MHz 上——每个旅行团、每个景区、每家酒店。", "odds": 1 },
+    { "f": 409.800, "n": "公众对讲机 Ch 5", "z": "公众对讲机 5 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "odds": 1 },
+    { "f": 409.988, "n": "公众对讲机 Ch 20", "z": "公众对讲机 20 频道", "c": "safety", "m": "NFM", "conf": "std", "a": "Walkie-talkie band", "odds": 1 },
+    { "f": 0.000, "n": "公安 350 MHz — encrypted PDT digital", "z": "公安 350 MHz · PDT 数字加密", "c": "safety", "m": "PDT", "dig":true, "conf": "high", "a": "Not receivable" },
+
+    { "f": 10.000, "n": "BPM — China’s shortwave time station", "z": "BPM 短波授时台", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "odds": 2 },
+    { "f": 145.800, "n": "ISS Voice Downlink", "z": "国际空间站语音下行", "c": "misc", "m": "FM", "conf": "std", "a": "Satellites", "d": "Thin air and almost no noise floor. Satellite reception here is as good as anywhere in China outside Tibet.", "dz": "空气稀薄，底噪极低。除西藏外，这里的卫星接收条件是全国最好的。", "odds": 1 },
+    { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 气象图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "odds": 1 }
+  ]
+}

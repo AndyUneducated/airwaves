@@ -43,6 +43,10 @@
 
     { "f": 162.550, "n": "NOAA — Denver", "z": "NOAA 丹佛", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Afternoon thunderstorms above treeline are the main hazard for hikers here, and they are remarkably punctual. Get the forecast before you start walking.", "dz": "林线以上的午后雷暴是这里徒步者的主要危险，而且时间惊人地规律。出发前先听预报。", "odds": 3 },
     { "f": 162.400, "n": "NOAA — mountain zones", "z": "NOAA 山区", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Coverage is patchy in the valleys. Try from a pass.", "dz": "山谷里覆盖不稳定，请在山口尝试。", "odds": 3 },
+    { "f": 162.450, "n": "WNG550 — Franktown, CO", "z": "WNG550 · Franktown", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.475, "n": "WXM51 — Mead/Longmont, CO", "z": "WXM51 · Mead/Longmont", "c": "wx", "m": "NFM", "conf": "high", "kw":0.1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.500, "n": "WZ2544 — North Cottonwood, CO", "z": "WZ2544 · North Cottonwood", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.525, "n": "KWN40 — Fort Morgan, CO", "z": "KWN40 · Fort Morgan", "c": "wx", "m": "NFM", "conf": "high", "kw":0.3, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 160.650, "n": "UP over the Divide — scan 160.215–161.565", "z": "联合太平洋越分水岭 · 扫 160.215–161.565", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "The Moffat Tunnel route through the Front Range and the line up the Colorado River canyon are spectacular railroad territory. Helper locomotives and tunnel ventilation coordination make for interesting listening.", "dz": "穿越前山的 Moffat 隧道线路和沿科罗拉多河峡谷上行的线路是极为壮观的铁路路段。补机作业和隧道通风协调的通话很有意思。", "odds": 1 },
     { "f": 161.100, "n": "Durango & Silverton narrow gauge", "z": "Durango & Silverton 窄轨铁路", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "A working coal-fired steam railroad using modern radio. The combination is a genuine curiosity.", "dz": "一条仍在运营的燃煤蒸汽铁路，却使用现代无线电。这个组合本身就很有意思。", "odds": 2 },

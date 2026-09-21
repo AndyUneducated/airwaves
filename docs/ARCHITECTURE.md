@@ -141,15 +141,43 @@ A station is deliberately flat — no nesting, no references except `ref`. It is
 far more often than it is read by a program, and a shape you can scan in a text editor is
 worth more than a normalised one.
 
+### A region is a point, not an area
+
+`regions.json` gives each region a single `lat`/`lon`. Nothing in the system stores a
+boundary, and that is not a simplification waiting to be fixed — it is the honest shape of
+the data. Everything local is gathered by distance from that point:
+
+| Radius | What it decides |
+| --- | --- |
+| 150 km | How far `import-air.mjs` reaches for airports |
+| 120 km | How far `import-bcast.mjs` reaches for broadcast transmitters |
+| 110 km | How far `import-wx.mjs` reaches for weather transmitters |
+| nearest | Which region "near me" jumps to, and how the region strip is ordered |
+
+So a region is only ever as large as that circle, whatever its name implies, and a name that
+implies more is a bug rather than a rounding error. A region once called the Texas Triangle
+sat in the empty middle of Dallas, Houston, San Antonio and Austin: 255 km from the first,
+226 km from the last, and in possession of the frequencies of none of them. It is now
+Houston, centred downtown, and Dallas is its own region.
+
+Two consequences follow, and both are deliberate:
+
+- **Regions may not tile a country.** There is no obligation to cover the gaps between them,
+  and inventing a region to fill one would produce a page with nothing local on it.
+- **Regions may overlap.** SF Bay Area and San Jose are 70 km apart and share airports. That
+  is correct: someone in Palo Alto can hear both, and which page they open should not change
+  what they are told is on the air.
+
 ### Provenance
 
-Entries come from three places, and an entry knows which.
+Entries come from four places, and an entry knows which.
 
 | `src` | Origin | Written by |
 | --- | --- | --- |
 | absent | Hand written, usually with prose | A person |
 | `oa` | ourairports airport frequency database | `scripts/import-air.mjs` |
 | `fcc` | FCC FM and AM licensing queries | `scripts/import-bcast.mjs` |
+| `nwr` | NOAA Weather Radio county coverage list | `scripts/import-wx.mjs` |
 
 This field is what makes the importers safe to re-run. Each one strips the lines carrying its
 own marker before regenerating, so it is idempotent and a rule change replaces its output
@@ -162,8 +190,10 @@ destroyed by a generator, which is the failure that would matter.
 graph TD
   OA["ourairports.com<br/>airports + frequencies CSV"] --> IA[import-air.mjs]
   FCC["FCC fmq / amq<br/>licensing queries"] --> IB[import-bcast.mjs]
+  CCL["NWS county coverage list<br/>NWR transmitters"] --> IW[import-wx.mjs]
   IA --> R["data/r/*.json"]
   IB --> R
+  IW --> R
   R --> MO[make-odds.mjs]
   MO --> R
   R --> MP[make-places.mjs]

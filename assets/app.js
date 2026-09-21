@@ -604,7 +604,7 @@
     const nav = $('#regions');
     nav.textContent = '';
     const pool = inScope(SCOPE);
-    const places = pool.filter(r => r.kind !== 'link');
+    const places = byDistance(pool.filter(r => r.kind !== 'link'));
     const links = pool.filter(r => r.kind === 'link');
 
     if (places.some(r => r.lat != null)) {
@@ -633,6 +633,20 @@
       });
     }
     edgeFades(nav);
+  }
+
+  /* The strip is several phone-widths long, so once you have said where you are it puts the
+   * closest regions first. That is the order the site is for: the question is what you can
+   * hear from where you are standing, and the answer is nearly always one of the first few.
+   * Without a position the file's own order stands, which runs roughly west to east.
+   *
+   * The nationwide set stays pinned at the front either way, because it is not a place and
+   * is equally valid wherever you happen to be. */
+  function byDistance(list) {
+    if (POS.lat == null) return list;
+    const far = r => r.lat == null ? Infinity : haversine(POS.lat, POS.lon, r.lat, r.lon);
+    return list.slice().sort((a, b) =>
+      (!!b.pin - !!a.pin) || (far(a) - far(b)));
   }
 
   function regionChip(r) {

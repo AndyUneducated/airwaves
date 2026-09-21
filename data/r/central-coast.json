@@ -26,7 +26,8 @@
     { "f": 122.900, "n": "KIC CTAF", "z": "KIC 无塔机场公共频率", "c": "air", "m": "AM", "conf": "high", "a": "Mesa Del Rey Airport (KKIC)", "ref": "KKIC", "src": "oa", "odds": 1 },
 
     { "f": 162.550, "n": "NOAA — Monterey", "z": "NOAA 蒙特雷台", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "Coastal and offshore waters forecast. Essential if you are anywhere near the surf.", "dz": "近岸与近海海况预报。只要靠近浪区就必备。", "odds": 3 },
-    { "f": 162.400, "n": "NOAA — San Luis Obispo area", "z": "NOAA 圣路易斯奥比斯波区", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
+    { "f": 162.450, "n": "WWF64 — Monterey Marine, CA", "z": "WWF64 · Monterey Marine", "c": "wx", "m": "NFM", "conf": "high", "kw":0.1, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.525, "n": "WNG592 — San Simeon, CA", "z": "WNG592 · San Simeon", "c": "wx", "m": "NFM", "conf": "high", "kw":0.128, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 156.800, "n": "Marine Ch 16", "z": "海事 16 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Monterey Bay", "d": "Whale-watch boats, kayak outfitters, research vessels and the Coast Guard. The most reliably active thing on the Central Coast.", "dz": "观鲸船、皮划艇租赁、科考船和海警。中加州海岸最稳定活跃的频道。", "odds": 2 },
     { "f": 157.100, "n": "USCG — Ch 22A", "z": "海警 22A 频道", "c": "marine", "m": "NFM", "conf": "std", "a": "Monterey Bay", "d": "Safety broadcasts, and search-and-rescue coordination when it happens.", "dz": "安全通告，以及搜救行动时的协调。", "odds": 2 },
@@ -46,6 +47,8 @@
     { "f": 91.3, "n": "KCPR — Cal Poly", "z": "KCPR 加州理工州立大学", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Long-running student freeform station in San Luis Obispo.", "dz": "圣路易斯奥比斯波历史悠久的学生自由形式电台。", "odds": 3 },
     { "f": 91.9, "n": "KCSB — UC Santa Barbara", "z": "KCSB 加州大学圣芭芭拉台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "odds": 3 },
     { "f": 88.9, "n": "KZSC — UC Santa Cruz", "z": "KZSC 加州大学圣克鲁兹台", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "odds": 3 },
+
+    { "f": 160.650, "n": "UP Coast Line", "z": "联合太平洋海岸线", "c": "rail", "m": "NFM", "conf": "check", "a": "Freight & Amtrak", "d": "The Coast Starlight runs this route. Scan 160.215–161.565 near the tracks in Salinas, Paso Robles or Santa Barbara.", "dz": "Coast Starlight 号走这条线。在萨利纳斯、帕索罗布尔斯或圣芭芭拉靠近轨道时扫 160.215–161.565。", "odds": 2 },
     { "f": 0.540, "n": "KRXA — Carmel Valley", "z": "KRXA · 中波 · 新闻与谈话", "c": "broadcast", "m": "AM", "conf": "high", "kw":10, "by": "El Sembrador Ministries", "a": "AM — news, talk and sport", "src": "fcc", "odds": 3 },
     { "f": 0.880, "n": "KKMC — Gonzales", "z": "KKMC · 中波 · 新闻与谈话", "c": "broadcast", "m": "AM", "conf": "high", "kw":10, "by": "El Sembrador Ministries", "a": "AM — news, talk and sport", "src": "fcc", "odds": 3 },
     { "f": 1.200, "n": "KYAA — Soquel", "z": "KYAA · 中波 · 新闻与谈话", "c": "broadcast", "m": "AM", "conf": "high", "kw":25, "by": "Relevant Radio, Inc.", "a": "AM — news, talk and sport", "src": "fcc", "odds": 3 },
@@ -61,8 +64,6 @@
     { "f": 90.700, "n": "KESI — San Miguel", "z": "KESI · 公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "kw":3, "by": "Radio Bilingue, Inc.", "a": "Public radio", "src": "fcc", "odds": 3 },
     { "f": 90.900, "n": "KHDC — Chualar", "z": "KHDC · 公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "kw":3, "by": "Radio Bilingue, Inc.", "a": "Public radio", "src": "fcc", "odds": 3 },
     { "f": 91.700, "n": "KNBX — San Ardo", "z": "KNBX · 公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "kw":3, "by": "KCBX, Inc.", "a": "Public radio", "src": "fcc", "odds": 3 },
-
-    { "f": 160.650, "n": "UP Coast Line", "z": "联合太平洋海岸线", "c": "rail", "m": "NFM", "conf": "check", "a": "Freight & Amtrak", "d": "The Coast Starlight runs this route. Scan 160.215–161.565 near the tracks in Salinas, Paso Robles or Santa Barbara.", "dz": "Coast Starlight 号走这条线。在萨利纳斯、帕索罗布尔斯或圣芭芭拉靠近轨道时扫 160.215–161.565。", "odds": 2 },
 
     { "f": 4.724, "n": "HFGCS — Skyking", "z": "美空军高频指挥网", "c": "misc", "m": "AM", "conf": "high", "a": "Shortwave", "d": "Big Sur at night with no cell service and no light pollution is an excellent place to tune HF and hear things that make no sense.", "dz": "深夜的大苏尔没有手机信号也没有光污染，非常适合调短波，听一些完全无法理解的东西。", "odds": 1 },
     { "f": 137.100, "n": "NOAA-19 APT", "z": "NOAA-19 图传", "c": "misc", "m": "NFM", "conf": "high", "a": "Satellites", "d": "Clear ocean horizon to the west makes coastal ridges good for satellite passes.", "dz": "西面是开阔的海平线，沿海山脊很适合接收卫星过顶。", "odds": 1 }

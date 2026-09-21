@@ -37,8 +37,8 @@
     { "f": 120.100, "n": "TIW Approach / Departure", "z": "TIW 进离场管制", "c": "air", "m": "AM", "conf": "high", "a": "Tacoma Narrows Airport (KTIW)", "ref": "KTIW", "src": "oa", "odds": 2 },
 
     { "f": 162.550, "n": "NOAA — Seattle (KHB60)", "z": "NOAA 西雅图 KHB60", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "d": "The inland waters forecast segments are the most useful thing on the air in this region.", "dz": "内海海况预报是本区空中最有用的内容。", "odds": 3 },
-    { "f": 162.425, "n": "NOAA — Olympic Peninsula", "z": "NOAA 奥林匹克半岛", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
-    { "f": 162.400, "n": "NOAA — Portland", "z": "NOAA 波特兰", "c": "wx", "m": "NFM", "conf": "check", "a": "NOAA Weather Radio", "odds": 3 },
+    { "f": 162.425, "n": "WWG24 — Puget Sound Marine, WA", "z": "WWG24 · Puget Sound Marine", "c": "wx", "m": "NFM", "conf": "high", "kw":0.09, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
+    { "f": 162.475, "n": "WXM62 — Capitol Peak, WA", "z": "WXM62 · Capitol Peak", "c": "wx", "m": "NFM", "conf": "high", "kw":0.284, "a": "NOAA Weather Radio", "src": "nwr", "odds": 3 },
 
     { "f": 172.475, "n": "Mount Rainier NPS", "z": "雷尼尔山国家公园局", "c": "parks", "m": "NFM", "conf": "check", "a": "National Parks", "d": "Climbing rangers, road status at Paradise and high-altitude rescues. Scan 162–174 MHz in NFM once you are in the park.", "dz": "攀登护林员、Paradise 一带路况和高海拔救援。进园后用 NFM 扫 162–174 MHz。", "odds": 1 },
     { "f": 171.675, "n": "Olympic NP", "z": "奥林匹克国家公园", "c": "parks", "m": "NFM", "conf": "check", "a": "National Parks", "d": "The Hoh and the coastal strip are among the quietest RF environments in the lower 48.", "dz": "Hoh 雨林和海岸带是美国本土射频最安静的环境之一。", "odds": 1 },
@@ -57,6 +57,9 @@
     { "f": 91.3, "n": "KBCS — Bellevue College", "z": "KBCS 贝尔维尤学院", "c": "broadcast", "m": "WFM", "conf": "check", "a": "FM Broadcast", "d": "Volunteer community station with excellent roots and world music.", "dz": "志愿者社区电台，根源音乐和世界音乐节目出色。", "odds": 3 },
     { "f": 90.7, "n": "KBOO — Portland community radio", "z": "KBOO 波特兰社区电台", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "d": "Fiercely independent, volunteer-run since 1968.", "dz": "自 1968 年起由志愿者运营，极度独立。", "odds": 3 },
     { "f": 91.5, "n": "KOPB — Oregon Public Broadcasting", "z": "KOPB 俄勒冈公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "a": "FM Broadcast", "odds": 3 },
+
+    { "f": 160.650, "n": "BNSF Seattle Subdivision (scan)", "z": "BNSF 西雅图支线（扫描）", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "The waterfront mainline through downtown and the tunnel under the city. Scan 160.215–161.565.", "dz": "穿过市中心滨水区和城市地下隧道的干线。扫 160.215–161.565。", "odds": 1 },
+    { "f": 161.100, "n": "Sounder / Amtrak Cascades", "z": "Sounder / Amtrak Cascades", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "odds": 2 },
     { "f": 0.710, "n": "KIRO — Seattle", "z": "KIRO · 中波 · 新闻与谈话", "c": "broadcast", "m": "AM", "conf": "high", "kw":50, "by": "Bonneville International Corporation", "a": "AM — news, talk and sport", "src": "fcc", "odds": 3 },
     { "f": 0.770, "n": "KTTH — Seattle", "z": "KTTH · 中波 · 新闻与谈话", "c": "broadcast", "m": "AM", "conf": "high", "kw":50, "by": "Bonneville International Corporation", "a": "AM — news, talk and sport", "src": "fcc", "odds": 3 },
     { "f": 0.820, "n": "KGNW — Burien-Seattle", "z": "KGNW · 中波 · 新闻与谈话", "c": "broadcast", "m": "AM", "conf": "high", "kw":50, "by": "Inspiration Media, Inc.", "a": "AM — news, talk and sport", "src": "fcc", "odds": 3 },
@@ -73,9 +76,6 @@
     { "f": 88.900, "n": "KPLK — Sedro-Woolley", "z": "KPLK · 公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "kw":4.2, "by": "Pacific Public Media", "a": "Public radio", "src": "fcc", "odds": 3 },
     { "f": 91.900, "n": "KPTZ — Port Townsend", "z": "KPTZ · 公共广播", "c": "broadcast", "m": "WFM", "conf": "high", "kw":1.95, "by": "Radio Port Townsend", "a": "Public radio", "src": "fcc", "odds": 3 },
     { "f": 91.700, "n": "KYFQ — Tacoma", "z": "KYFQ · 宗教广播", "c": "broadcast", "m": "WFM", "conf": "high", "kw":4.3, "by": "Bible Broadcasting Network, Inc.", "a": "Religious broadcasters", "src": "fcc", "odds": 3 },
-
-    { "f": 160.650, "n": "BNSF Seattle Subdivision (scan)", "z": "BNSF 西雅图支线（扫描）", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "d": "The waterfront mainline through downtown and the tunnel under the city. Scan 160.215–161.565.", "dz": "穿过市中心滨水区和城市地下隧道的干线。扫 160.215–161.565。", "odds": 1 },
-    { "f": 161.100, "n": "Sounder / Amtrak Cascades", "z": "Sounder / Amtrak Cascades", "c": "rail", "m": "NFM", "conf": "check", "a": "Rail", "odds": 2 },
 
     { "f": 154.570, "n": "MURS — outdoor guides & film", "z": "MURS · 户外向导与拍摄", "c": "safety", "m": "NFM", "conf": "std", "a": "Commercial", "odds": 1 },
     { "f": 155.7525, "n": "VCALL10 — interop", "z": "VCALL10 互通呼叫", "c": "safety", "m": "NFM", "conf": "std", "a": "Interoperability", "odds": 1 },
