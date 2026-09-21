@@ -3,7 +3,7 @@
 Curated radio frequencies worth listening to, organised by region, built for an analog handheld — specifically the **Yaesu VX-6R**.
 
 <p>
-  <img alt="entries" src="https://img.shields.io/badge/entries-2%2C603-5ef2a8">
+  <img alt="entries" src="https://img.shields.io/badge/entries-2%2C580-5ef2a8">
   <img alt="regions" src="https://img.shields.io/badge/regions-54-5ef2a8">
   <img alt="categories" src="https://img.shields.io/badge/categories-10-5ef2a8">
   <img alt="languages" src="https://img.shields.io/badge/languages-English%20%2B%20Chinese-5ef2a8">
@@ -15,7 +15,7 @@ Curated radio frequencies worth listening to, organised by region, built for an 
   <img alt="framework" src="https://img.shields.io/badge/framework-none-success">
   <img alt="javascript" src="https://img.shields.io/badge/JavaScript-ES2017-f7df1e?logo=javascript&logoColor=black">
   <img alt="css" src="https://img.shields.io/badge/CSS-hand%20written-1572b6?logo=css3&logoColor=white">
-  <img alt="payload" src="https://img.shields.io/badge/payload-181%20KB%20code%20%2B%201.3%20MB%20data-blue">
+  <img alt="payload" src="https://img.shields.io/badge/payload-182%20KB%20code%20%2B%201.3%20MB%20data-blue">
 </p>
 
 <p>
@@ -55,7 +55,7 @@ You pick a country once in the header; everything below it is a region of that c
 
 **China** — fifteen regions: a nationwide set covering the band plan and the 409 MHz walkie-talkie channels, plus Beijing, Harbin, Shenyang, Qingdao, Xi‘an, Shanghai, Wuhan, Chengdu, Xiamen, the Greater Bay Area, Kunming, the Western Sichuan Plateau, Lhasa, Lanzhou and Ürümqi. China's regions carry fewer entries than America's, for reasons set out under [Data sources](#where-the-data-comes-from) — there is no open register of Chinese broadcast licences and no NOAA-equivalent weather service to import.
 
-**Private Link** — recommended clean, quiet channels for talking to your own group. It is the last entry in each country's region strip, set apart by a divider because it is a channel set rather than a place, and the answer is genuinely different in each country.
+**Private Link** — six clean channels for talking to your own group, each with a codename, because "go to Birch" is the only channel plan that survives cold hands and a bad signal. They are grouped by the radio your group actually has rather than by band: two that need no licence at all, and four that work on any dual-band handheld. It is the last entry in each country's region strip, set apart by a divider because it is a channel set rather than a place, and the answer is genuinely different in each country.
 
 Ten categories: private link, aviation, weather, amateur, parks and public lands, marine, rail and transit, broadcast, public safety, and oddities such as satellites, HF time signals and travellers' information stations.
 
@@ -67,7 +67,7 @@ Rather than quietly omitting them, digital and encrypted systems are listed with
 
 Two consequences worth knowing before you travel:
 
-- **1.25 m is the radio's hidden advantage in America.** Almost no other handheld transmits on 222–225 MHz, so the band is close to empty. That makes it the cleanest place to run a private group — provided everyone you talk to also has a 1.25 m radio.
+- **The empty band is a trap.** 222–225 MHz is close to deserted in America precisely because almost no handheld transmits there — the VX-6R is unusual in that it can. A channel your group cannot all reach is not a quiet channel, it is no channel, so Private Link stays on the bands a twenty-dollar Baofeng can work.
 - **The US channel set is illegal in China and vice versa.** China allocates 144–146 and 430–440 MHz to amateurs, so every American 2 m simplex channel above 146.000 and everything at 446 MHz falls outside the band. 1.25 m is not an amateur band in China at all. Build two memory banks, not one.
 
 ## Odds of hearing something
@@ -148,7 +148,7 @@ The alert lookup is the only thing that sends a position anywhere. It goes out r
 - **Country as a setting** — a compact control in the header switches between the United States and China. It is chosen once and remembered, which leaves the chip strip below as the only place picker rather than two strips that look alike.
 - **Spectrum ruler** — a log-scale rail above the list shows where the visible entries sit across 0.5–999 MHz, split into HF, VHF and UHF. Tap it to jump to the nearest entry; the ticks also show at a glance how busy each band is.
 - **Near me** — browser geolocation picks the closest region across both countries and switches country automatically.
-- **CHIRP export** — download a region as a CHIRP-compatible CSV and program the radio in one shot. Digital entries, "avoid" entries and anything outside 0.5–999 MHz are filtered out automatically, and the tuning step is set to 5 or 12.5 kHz per channel as appropriate.
+- **CHIRP export** — download a region as a CHIRP-compatible CSV and program the radio in one shot. Digital entries and anything outside 0.5–999 MHz are filtered out automatically, and the tuning step is set to 5 or 12.5 kHz per channel as appropriate.
 - **Overhead passes** (Pro) — opened from its card in the Right now panel: the next satellite passes worth tuning, each with its downlink frequency, when it rises, how high it gets, which way to look, and the Doppler shift to chase. Orbits are propagated on your phone with a from-scratch SGP4 implementation, so this works in airplane mode; the elements are refreshed daily by a GitHub Action. Only passes above 10° are offered, because a lower one spends its time in the atmosphere and in whatever is on your horizon.
 
   Satellites are curated, not scraped. The orbital elements are automated because they genuinely go stale, but which satellites are worth tuning is a judgement: the SatNOGS database lists 29 transmitters for the ISS alone, including Soyuz suit channels and a 1990s Progress beacon. The NOAA APT weather satellites — the classic beginner catch on 137 MHz — are deliberately absent: all three were decommissioned during 2025 and APT is no longer transmitted by anything, yet their orbital elements are still published, so a tracker built on orbits alone would cheerfully predict passes for three silent satellites.
@@ -217,7 +217,6 @@ Station files are written by hand, one station per line, with frequencies keepin
 | `t` | CTCSS tone in Hz, or a DCS code. |
 | `o` | Repeater offset, e.g. `−0.600`. |
 | `dig` | `true` marks it as digital or encrypted, and excludes it from CSV export. |
-| `avoid` | `true` marks a real frequency you should not work on — a calling channel, data segment or reserved band. Kept visible for monitoring, excluded from CSV export. |
 | `conf` | `std`, `high` or `check`. |
 | `odds` | `3`, `2` or `1`. Generated — do not edit by hand; use `oddsFix` to override. |
 | `oddsFix` | Pins `odds` where local knowledge beats the rules. |
